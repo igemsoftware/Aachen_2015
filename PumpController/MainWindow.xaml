@@ -1,0 +1,34 @@
+﻿<Window x:Class="PumpController.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:toolkit="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+        Title="Pump Controller" Height="350" Width="525" DataContext="{StaticResource ViewModel}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <GroupBox Grid.Row="0" Header="Connection" DataContext="{Binding PrimarySerial}">
+                <StackPanel Margin="5,0">
+                    <TextBlock Text="Port" Style="{StaticResource SubtleTextBlockStyle}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ComboBox x:Name="portBox" Grid.Column="0" ItemsSource="{Binding PortNames}" SelectedIndex="{Binding SelectedPort, Mode=TwoWay}" />
+                        <Button Grid.Column="1" Content="&#xE117;" FontFamily="Segoe UI Symbol" Margin="5,0,0,0" Width="22" FontSize="11" Command="{Binding CommandRefreshPorts}" />
+                    </Grid>
+                    <TextBlock Text="Baud Rate" Style="{StaticResource SubtleTextBlockStyle}" />
+                    <ComboBox x:Name="baudrateBox" SelectedItem="{Binding ActivePort.BaudRate, Mode=TwoWay, Converter={StaticResource UIConverter}, ConverterParameter=BaudRate}" />
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="Steps per Minute" Style="{StaticResource SubtleTextBlockStyle}" />
+            <toolkit:IntegerUpDown Value="{Binding StepsPerMinute, Mode=TwoWay}" />
+            <Button Content="Set" Command="{Binding SetSteppingSpeed}" />
+        </StackPanel>
+    </Grid>
+</Window>
