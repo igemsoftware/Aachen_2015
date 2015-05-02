@@ -2,8 +2,35 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:MasterControlProgram"
+        xmlns:tcd="clr-namespace:TCD.Controls;assembly=TCD.Controls"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <local:ViewModel x:Key="ViewModel" />
+        <local:UIConverter x:Key="UIConverter" />
+        <tcd:EnumNameConverter x:Key="EnumNameConverter" />
+        <Style x:Key="SubtleTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Margin" Value="0,5,0,0" />
+        </Style>
+        <Style x:Key="LargeValueTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="32" />
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <Style x:Key="MediumValueTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="28" />
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <Style x:Key="SmallValueTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="0,5,5,5" />
+            <Setter Property="Padding" Value="3" />
+        </Style>
     </Application.Resources>
 </Application>

@@ -5,8 +5,45 @@ using System.Text;
 using System.Threading.Tasks;
 using TCD.Controls;
 
-namespace SerialInterface
+namespace MCP.Protocol
 {
+    public enum ParticipantID
+    {
+        MCP = 0,
+        Master = 1,
+        Reactor_1 = 2,
+        Reactor_2 = 3,
+        Reactor_3 = 4,
+        Reactor_4 = 5,
+        Reactor_5 = 6,
+        Reactor_6 = 7,
+        Reactor_7 = 8,
+        Reactor_8 = 9,
+        Reactor_9 = 10,
+        Reactor_10 = 11,
+        Reactor_11 = 12,
+        Reactor_12 = 13
+    }
+    public enum MessageType
+    {
+        Data = 0,
+        Command = 1,
+        DataFormat = 2,
+        CommandFormat = 3
+    }
+    public static class DimensionSymbol
+    {
+        public static string Dilution_Rate = "D";
+        public static string Agitation_Rate = "n";
+        public static string Aeration_Rate = "q_g";
+        public static string Feed_Rate = "S_fin";
+        public static string Harvest_Rate = "S_fout";
+    }
+    public static class Unit
+    {
+        public static string SPH = "sph";
+        public static string RPM = "rpm";
+    }
     public enum BaudRate
     {
         [DisplayAttribute(Name = "300")]

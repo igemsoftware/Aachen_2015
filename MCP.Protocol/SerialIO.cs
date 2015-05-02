@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using TCD;
 using TCD.Controls;
 
-namespace SerialInterface
+namespace MCP.Protocol
 {
     public class SerialIO : PropertyChangedBase
     {

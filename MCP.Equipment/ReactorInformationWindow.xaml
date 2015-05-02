@@ -1,0 +1,48 @@
+﻿<Window x:Class="MCP.Equipment.ReactorInformationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:toolkit="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+        Height="295.341" Width="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="0">
+            <StackPanel Margin="10">
+                <TextBlock Text="Reactor ID" Style="{StaticResource SubtleTextBlockStyle}" />
+                <ComboBox x:Name="reactorIDbox" Text="{Binding ParticipantID, Mode=TwoWay}" Margin="0,5">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource EnumNameConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Margin="10">
+                <TextBlock Text="Culture Volume V_L [ml]" Style="{StaticResource SubtleTextBlockStyle}" />
+                <toolkit:IntegerUpDown Value="{Binding CultureVolume, Mode=TwoWay}" Margin="0,5" Minimum="1" Maximum="20" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+            <StackPanel Margin="10">
+                <TextBlock Text="Feed pump ID" Style="{StaticResource SubtleTextBlockStyle}" />
+                <ComboBox x:Name="feedID" Margin="0,5" SelectedItem="{Binding FeedPumpID, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Margin="10">
+                <TextBlock Text="Aeration pump ID" Style="{StaticResource SubtleTextBlockStyle}" />
+                <ComboBox x:Name="aerationID" Margin="0,5" SelectedItem="{Binding AerationPumpID, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Margin="10">
+                <TextBlock Text="Harvest pump ID" Style="{StaticResource SubtleTextBlockStyle}" />
+                <ComboBox x:Name="harvestID" Margin="0,5" SelectedItem="{Binding HarvestPumpID, Mode=TwoWay}" />
+            </StackPanel>
+        </StackPanel>
+        <Button Grid.Row="1" Grid.Column="0" Content="Save" Margin="5" Click="Save_Click" IsEnabled="{Binding ParticipantID, Converter={StaticResource UIConverter}, ConverterParameter=IsParticipantIDOfReactor}" />
+        <Button Grid.Row="1" Grid.Column="1" Content="Cancel" Margin="5" Click="Cancel_Click" />
+    </Grid>
+</Window>
