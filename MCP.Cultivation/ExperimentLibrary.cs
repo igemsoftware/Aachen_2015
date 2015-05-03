@@ -32,10 +32,11 @@ namespace MCP.Cultivation
             {
                 Experiment exp = new Experiment();
                 ExperimentInformationWindow eiw = new ExperimentInformationWindow("Create Experimet", true) { DataContext = exp };
-                eiw.Show();
-                await eiw.WaitTask;
+                List<ParticipantID> selectedReactors = await eiw.ShowAsync();
                 if (eiw.Confirmed)
                 {
+                    foreach (ParticipantID selectedReactor in selectedReactors)
+                        Directory.CreateDirectory(Path.Combine(experimentsDirectory, exp.DisplayName, selectedReactor.ToString()));
                     exp.BaseDirectory = Path.Combine(experimentsDirectory, exp.DisplayName);//this authorizes the experiment to be saved or save itself (when a property changes)
                     exp.Save();
                 }
@@ -85,14 +86,12 @@ namespace MCP.Cultivation
                 Experiment exp = Experiment.LoadFromDirectory(dir);
                 exp.EditExperimentCommand = new RelayCommand(async delegate
                 {
-                    Experiment newexp = new Experiment() { Title = exp.Title, Description = exp.Description, Date = exp.Date };
+                    Experiment newexp = new Experiment() { Title = exp.Title, Description = exp.Description, Date = exp.Date, Cultivations = exp.Cultivations };
                     ExperimentInformationWindow eiw = new ExperimentInformationWindow("Edit Experimet", false) { DataContext = newexp };
-                    eiw.Show();
-                    await eiw.WaitTask;
+                    await eiw.ShowAsync();
                     if (eiw.Confirmed)
                     {
                         exp.Description = newexp.Description;
-                        //TODO: save involved reactors
                         exp.Save();
                     }
                 });

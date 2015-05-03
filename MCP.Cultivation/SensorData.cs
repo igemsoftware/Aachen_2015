@@ -1,4 +1,5 @@
 ﻿using Microsoft.Research.DynamicDataDisplay.Common;
+using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace MCP.Cultivation
         private double _Value;
         public double Value { get { return _Value; } set { _Value = value; OnPropertyChanged("Value"); } }
 
-        private double _Time;
+        private double _Time;//TODO: use absolute time values - do the calculation into relative values in the mappings function
         public double Time { get { return _Time; } set { _Time = value; OnPropertyChanged("Time"); } }
 
         private double _StandardDeviation;
@@ -32,16 +33,6 @@ namespace MCP.Cultivation
             this.Value = data.Average(d => d[1]);
             double sumOfSquaresOfDifferences = data.Select(val => (val[1] - this.Value) * (val[1] - this.Value)).Sum();
             this.StandardDeviation = Math.Sqrt(sumOfSquaresOfDifferences / (data.Count - 1));
-        }
-    }
-    public class SensorDataPointCollection : RingArray<SensorData>
-    {
-        //private const int TOTAL_POINTS = ViewModel.SecondsToShow * 1000 / ViewModel.UpdateInterval;
-        private const int TOTAL_POINTS = 1000;
-
-        public SensorDataPointCollection()
-            : base(TOTAL_POINTS) // here i set how much values to show 
-        {
         }
     }
 }

@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using MCP.Equipment;
 using MCP.Protocol;
 using TCD;
+using System.Xml.Serialization;
+using Microsoft.Research.DynamicDataDisplay.DataSources;
+using System.Collections.ObjectModel;
+using System.Windows.Threading;
 
 namespace MCP.Cultivation
 {
@@ -50,6 +54,24 @@ namespace MCP.Cultivation
         }
         #endregion
 
+
+
+        private SensorDataPointCollection _SensorDataCollection = new SensorDataPointCollection();//contains only recent datapoints
+        [XmlIgnore]
+        public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; OnPropertyChanged("SensorDataCollection"); } }
+
+        private ObservableCollection<SensorData> _SensorDataSet = new ObservableCollection<SensorData>();//contains all datapoints
+        [XmlIgnore]
+        public ObservableCollection<SensorData> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; OnPropertyChanged("SensorDataSet"); } }
+
+        private EnumerableDataSource<SensorData> _DataSource;
+        [XmlIgnore]
+        public EnumerableDataSource<SensorData> DataSource { get { return _DataSource; } set { _DataSource = value; OnPropertyChanged("DataSource"); } }
+
+        private DateTime start = DateTime.Now;
+        private static Random rnd = new Random();
+
+
         public Cultivation()
         {
             ChangeParametersCommand = new RelayCommand(async delegate
@@ -73,6 +95,21 @@ namespace MCP.Cultivation
                     //TODO: save changes to cultivation file within the experiment
                 }
             });
+
+
+
+            DataSource = new EnumerableDataSource<SensorData>(SensorDataCollection);
+            DataSource.SetXMapping(x => x.Time);
+            DataSource.SetYMapping(y => y.Value);
+
+            DispatcherTimer dt = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
+            dt.Tick += delegate
+            {
+                SensorData data = new SensorData((DateTime.Now - start).TotalSeconds, rnd.NextDouble());
+                SensorDataSet.Add(data);
+                SensorDataCollection.Add(data);
+            };
+            dt.Start();
         }
 
         private void SendSetpointUpdate()

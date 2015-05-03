@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using MCP.Cultivation;
+using TCD;
+using TCD.Controls;
 
 namespace MasterControlProgram
 {
@@ -31,10 +33,20 @@ namespace MasterControlProgram
 
         private void SelectedCultivation_Changed(object sender, SelectionChangedEventArgs e)
         {
-            if (plotter.Children.Count > 3)
-                plotter.Children[3].Remove();
-            plotter.AddLineGraph((e.AddedItems[0] as Experiment).DataSource, Colors.Blue, 2, "Values");
-
+            for (int i = 0; i < plotter.Children.Count; i++)
+            {
+                if (plotter.Children[i] is LineGraph)
+                {
+                    plotter.Children.RemoveAt(i);
+                    i--;
+                }
+            }
+            plotTitle.Content = string.Empty;
+            foreach (Cultivation cultivation in (sender as ListBox).SelectedItems)
+            {
+                plotTitle.Content += cultivation.Reactor.ParticipantID.GetValueName() + " ";
+                plotter.AddLineGraph(cultivation.DataSource, Colors.Blue, 2, "Values");
+            }
         }
 
     }

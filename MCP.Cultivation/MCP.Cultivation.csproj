@@ -71,7 +71,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes.cs" />
+    <Compile Include="SensorData.cs" />
     <Compile Include="Cultivation.cs" />
     <Compile Include="Experiment.cs" />
     <Compile Include="ExperimentInformationWindow.xaml.cs">
@@ -79,6 +79,7 @@
     </Compile>
     <Compile Include="ExperimentLibrary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SensorDataPointCollection.cs" />
     <Compile Include="SetpointWindow.xaml.cs">
       <DependentUpon>SetpointWindow.xaml</DependentUpon>
     </Compile>

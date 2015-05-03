@@ -36,10 +36,16 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <Button Content="Add" Command="{Binding AddExperimentCommand}" />
-                            <Button Content="Edit" DataContext="{Binding ElementName=experimentsList, Path=SelectedItem}" Command="{Binding EditExperimentCommand}" IsEnabled="{Binding ElementName=experimentsList, Path=SelectedItem, Converter={StaticResource UIConverter}, ConverterParameter=IsNotNull}" />
-                        </StackPanel>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Create" Command="{Binding AddExperimentCommand}" />
+                            <Button Grid.Column="1" Content="Edit" DataContext="{Binding ElementName=experimentsList, Path=SelectedItem}" Command="{Binding EditExperimentCommand}" IsEnabled="{Binding ElementName=experimentsList, Path=SelectedItem, Converter={StaticResource UIConverter}, ConverterParameter=IsNotNull}" />
+                            <Button Grid.Column="2" Content="Delete" DataContext="{Binding ElementName=experimentsList, Path=SelectedItem}" Command="{Binding DeleteExperimentCommand}" IsEnabled="{Binding ElementName=experimentsList, Path=SelectedItem, Converter={StaticResource UIConverter}, ConverterParameter=IsNotNull}" />
+                        </Grid>
                     </Grid>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description" DataContext="{Binding ElementName=experimentsList, Path=SelectedItem}">
@@ -53,11 +59,33 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <ListBox SelectionChanged="SelectedCultivation_Changed">
+                        <ListBox ItemsSource="{Binding Cultivations}" SelectionChanged="SelectedCultivation_Changed" SelectionMode="Extended">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <TextBlock Text="{Binding ParticipantID}" />
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Reactor.ParticipantID}" Grid.Column="0" Style="{StaticResource LargeValueTextBlockStyle}" />
+                                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                            <StackPanel Margin="10">
+                                                <TextBlock Text="V_L [ml]" Style="{StaticResource SubtleTextBlockStyle}" />
+                                                <TextBlock Text="{Binding CultureVolume, FallbackValue=10}" Style="{StaticResource MediumValueTextBlockStyle}" />
+                                            </StackPanel>
+                                            <StackPanel Margin="10">
+                                                <TextBlock Text="D [1/h]" Style="{StaticResource SubtleTextBlockStyle}" />
+                                                <TextBlock Text="{Binding DilutionRateSetpoint, StringFormat=0.00, FallbackValue=0.15}" Style="{StaticResource MediumValueTextBlockStyle}" />
+                                            </StackPanel>
+                                            <StackPanel Margin="10">
+                                                <TextBlock Text="q_g [vvm]" Style="{StaticResource SubtleTextBlockStyle}" />
+                                                <TextBlock Text="{Binding AerationRateSetpoint, StringFormat=0.0, FallbackValue=1.0}" Style="{StaticResource MediumValueTextBlockStyle}" />
+                                            </StackPanel>
+                                            <StackPanel Margin="10">
+                                                <TextBlock Text="n [rpm]" Style="{StaticResource SubtleTextBlockStyle}" />
+                                                <TextBlock Text="{Binding AgitationRateSetpoint, FallbackValue=500}" Style="{StaticResource MediumValueTextBlockStyle}" />
+                                            </StackPanel>
+                                        </StackPanel>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -66,28 +94,11 @@
                             <d3:ChartPlotter.HorizontalAxis>
                                 <d3:HorizontalAxis x:Name="timeAxis" />
                             </d3:ChartPlotter.HorizontalAxis>
-                            <d3:Header Content="Live Data"/>
+                            <d3:Header x:Name="plotTitle" Content="Live Data"/>
                             <d3:HorizontalAxisTitle Content="time   [s]"/>
-                            <d3:VerticalAxisTitle Content="VerticalAxisTitle}" />
+                            <d3:VerticalAxisTitle Content="Vertical Axis Title" />
                         </d3:ChartPlotter>
                     </Grid>
-                    
-                    <!--<StackPanel Margin="10">
-                        <TextBlock Text="V_L [ml]" Style="{StaticResource SubtleTextBlockStyle}" />
-                        <TextBlock Text="{Binding CultureVolume, FallbackValue=10}" Style="{StaticResource SetpointTextBlockStyle}" />
-                    </StackPanel>
-                    <StackPanel Margin="10">
-                        <TextBlock Text="D [1/h]" Style="{StaticResource SubtleTextBlockStyle}" />
-                        <TextBlock Text="{Binding DilutionRateSetpoint, StringFormat=0.00, FallbackValue=0.15}" Style="{StaticResource SetpointTextBlockStyle}" />
-                    </StackPanel>
-                    <StackPanel Margin="10">
-                        <TextBlock Text="q_g [vvm]" Style="{StaticResource SubtleTextBlockStyle}" />
-                        <TextBlock Text="{Binding AerationRateSetpoint, StringFormat=0.0, FallbackValue=1.0}" Style="{StaticResource SetpointTextBlockStyle}" />
-                    </StackPanel>
-                    <StackPanel Margin="10">
-                        <TextBlock Text="n [rpm]" Style="{StaticResource SubtleTextBlockStyle}" />
-                        <TextBlock Text="{Binding AgitationRateSetpoint, FallbackValue=500}" Style="{StaticResource SetpointTextBlockStyle}" />
-                    </StackPanel>-->
                 </TabItem>
                 <TabItem Header="Settings">
                     <local:SettingsPanel DataContext="{Binding}" />

@@ -29,10 +29,10 @@
         <StackPanel Grid.Column="1">
             <StackPanel Margin="10">
                 <TextBlock Text="Involved Reactors" Style="{StaticResource SubtleTextBlockStyle}" />
-                <ItemsControl x:Name="reactorsSelector">
+                <ItemsControl x:Name="reactorsSelector" ItemsSource="{Binding}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <CheckBox Content="{Binding}" Margin="0,5" />
+                            <CheckBox Content="{Binding ReactorID}" IsChecked="{Binding IsAssociated, Mode=TwoWay}" Margin="0,5" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
