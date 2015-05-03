@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TCD;
 
-namespace MasterControlProgram
+namespace MCP.Cultivation
 {
     public class SensorData : PropertyChangedBase
     {

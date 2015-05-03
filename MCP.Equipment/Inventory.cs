@@ -111,22 +111,18 @@ namespace MCP.Equipment
             if (string.IsNullOrWhiteSpace(pumpPath) || string.IsNullOrWhiteSpace(reactorPath))
                 return;
             pumpDirectory = pumpPath;
-            pumpWatcher = new FileSystemWatcher();
-            pumpWatcher.Path = pumpPath;
+            pumpWatcher = new FileSystemWatcher(pumpPath, "*.pump");
             pumpWatcher.Renamed += pumpWatcher_Changed;
             pumpWatcher.Created += pumpWatcher_Changed;
             pumpWatcher.Deleted += pumpWatcher_Changed;
-            pumpWatcher.Filter = "*.pump";
             pumpWatcher.EnableRaisingEvents = true;
             ScanPumpDirectory();
             //
             reactorDirectory = reactorPath;
-            reactorWatcher = new FileSystemWatcher();
-            reactorWatcher.Path = reactorPath;
+            reactorWatcher = new FileSystemWatcher(reactorPath, "*.reactor");
             reactorWatcher.Renamed += reactorWatcher_Changed;
             reactorWatcher.Created += reactorWatcher_Changed;
             reactorWatcher.Deleted += reactorWatcher_Changed;
-            reactorWatcher.Filter = "*.reactor";
             reactorWatcher.EnableRaisingEvents = true;
             ScanReactorDirectory();
         }

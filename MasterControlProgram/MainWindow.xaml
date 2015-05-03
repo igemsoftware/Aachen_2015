@@ -15,7 +15,7 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="150" Width="Auto" />
+                <ColumnDefinition MinWidth="150" Width="200" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid>
@@ -23,21 +23,46 @@
                     <RowDefinition Height="*" />
                     <RowDefinition MinHeight="200" Height="Auto" />
                 </Grid.RowDefinitions>
-                <GroupBox Grid.Row="0" Header="Experiments">
-
-                </GroupBox>
-                <GroupBox Grid.Row="1" Header="Description">
-
-                </GroupBox>
-            </Grid>
-            <TabControl Grid.Column="1">
-                <TabItem Header="Live Charts">
+                <GroupBox Grid.Row="0" Header="Experiments" DataContext="{Binding ExperimentLibrary}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
-                            <RowDefinition MinHeight="100" Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <d3:ChartPlotter x:Name="plotter" Grid.Row="0" LegendVisible="True" Margin="10">
+                        <ListBox x:Name="experimentsList" Grid.Row="0" ItemsSource="{Binding Experiments}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding DisplayName}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <Button Content="Add" Command="{Binding AddExperimentCommand}" />
+                            <Button Content="Edit" DataContext="{Binding ElementName=experimentsList, Path=SelectedItem}" Command="{Binding EditExperimentCommand}" IsEnabled="{Binding ElementName=experimentsList, Path=SelectedItem, Converter={StaticResource UIConverter}, ConverterParameter=IsNotNull}" />
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Description" DataContext="{Binding ElementName=experimentsList, Path=SelectedItem}">
+                    <TextBox Text="{Binding Description, Mode=TwoWay}" />
+                </GroupBox>
+            </Grid>
+            <TabControl Grid.Column="1">
+                <TabItem Header="Selected Experiment" DataContext="{Binding ElementName=experimentsList, Path=SelectedItem}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <ListBox SelectionChanged="SelectedCultivation_Changed">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding ParticipantID}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <d3:ChartPlotter x:Name="plotter" Grid.Row="1" LegendVisible="True" Margin="10">
                             <d3:ChartPlotter.HorizontalAxis>
                                 <d3:HorizontalAxis x:Name="timeAxis" />
                             </d3:ChartPlotter.HorizontalAxis>
@@ -46,8 +71,7 @@
                             <d3:VerticalAxisTitle Content="VerticalAxisTitle}" />
                         </d3:ChartPlotter>
                     </Grid>
-                </TabItem>
-                <TabItem Header="Current Experiment">
+                    
                     <!--<StackPanel Margin="10">
                         <TextBlock Text="V_L [ml]" Style="{StaticResource SubtleTextBlockStyle}" />
                         <TextBlock Text="{Binding CultureVolume, FallbackValue=10}" Style="{StaticResource SetpointTextBlockStyle}" />

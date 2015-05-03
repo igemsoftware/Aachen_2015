@@ -1,0 +1,44 @@
+﻿<Window x:Class="MCP.Cultivation.ExperimentInformationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:toolkit="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+        Height="399" Width="412">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="0">
+            <StackPanel Margin="10">
+                <TextBlock Text="Title" Style="{StaticResource SubtleTextBlockStyle}" />
+                <TextBox x:Name="titleBox" Text="{Binding Title, Mode=TwoWay}" Margin="0,5" />
+            </StackPanel>
+            <StackPanel Margin="10">
+                <TextBlock Text="Date" Style="{StaticResource SubtleTextBlockStyle}" />
+                <toolkit:DateTimePicker x:Name="datePicker" Value="{Binding Date, Mode=TwoWay}" Margin="0,5" Format="ShortDate" TimePickerVisibility="Collapsed" />
+            </StackPanel>
+            <StackPanel Margin="10">
+                <TextBlock Text="Description" Style="{StaticResource SubtleTextBlockStyle}" />
+                <TextBox Text="{Binding Description, Mode=TwoWay}" Margin="0,5" AcceptsReturn="True" Height="150" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+            <StackPanel Margin="10">
+                <TextBlock Text="Involved Reactors" Style="{StaticResource SubtleTextBlockStyle}" />
+                <ItemsControl x:Name="reactorsSelector">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding}" Margin="0,5" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </StackPanel>
+        <Button Grid.Row="1" Grid.Column="0" Content="Save" Margin="5" Click="Save_Click" IsEnabled="{Binding DisplayName, Converter={StaticResource UIConverter}, ConverterParameter=IsValidExperimentDisplayName}" />
+        <Button Grid.Row="1" Grid.Column="1" Content="Cancel" Margin="5" Click="Cancel_Click" />
+    </Grid>
+</Window>

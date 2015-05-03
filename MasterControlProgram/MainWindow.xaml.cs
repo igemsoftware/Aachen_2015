@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
+using MCP.Cultivation;
 
 namespace MasterControlProgram
 {
@@ -26,7 +27,14 @@ namespace MasterControlProgram
         public MainWindow()
         {
             InitializeComponent();
-            plotter.AddLineGraph(App.ViewModel.DataSource, Colors.Blue, 2, "Values");
+        }
+
+        private void SelectedCultivation_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            if (plotter.Children.Count > 3)
+                plotter.Children[3].Remove();
+            plotter.AddLineGraph((e.AddedItems[0] as Experiment).DataSource, Colors.Blue, 2, "Values");
+
         }
 
     }

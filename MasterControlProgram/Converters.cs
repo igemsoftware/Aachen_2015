@@ -9,6 +9,9 @@ namespace MasterControlProgram
 {
     public class UIConverter : IValueConverter
     {
+        private static char[] InvalidPathCharacters = System.IO.Path.GetInvalidPathChars();
+        private static char[] InvalidFileNameCharacters = System.IO.Path.GetInvalidFileNameChars();
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             switch (parameter as string)
@@ -22,12 +25,26 @@ namespace MasterControlProgram
                 case "IsLegalFilenameString":
                     if (string.IsNullOrWhiteSpace(value as string))
                         return false;
-                    char[] invalid = System.IO.Path.GetInvalidFileNameChars();
                     foreach (char c in value as string)
-                        if (invalid.Contains(c))
+                        if (InvalidFileNameCharacters.Contains(c))
+                            return false;
+                    return true;
+                case "IsLegalPathString":
+                    if (string.IsNullOrWhiteSpace(value as string))
+                        return false;
+                    foreach (char c in value as string)
+                        if (InvalidPathCharacters.Contains(c))
+                            return false;
+                    return true;
+                case "IsValidExperimentDisplayName":
+                    if (string.IsNullOrWhiteSpace(value as string) || (value as string).Length < 10)
+                        return false;
+                    foreach (char c in value as string)
+                        if (InvalidPathCharacters.Contains(c))
                             return false;
                     return true;
                 case "IsParticipantIDOfReactor": return ((int)value >= (int)ParticipantID.Reactor_1);
+                case "IsNotNull": return (value != null);
                 default:
                     return null;
             }
