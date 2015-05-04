@@ -121,6 +121,16 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MCP.Equipment\MCP.Equipment.csproj">
+      <Project>{8f7428cb-025e-489c-8197-a6f697050d91}</Project>
+      <Name>MCP.Equipment</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MCP.Protocol\MCP.Protocol.csproj">
+      <Project>{11ecf3b6-e461-4972-abd9-3c35ee064187}</Project>
+      <Name>MCP.Protocol</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

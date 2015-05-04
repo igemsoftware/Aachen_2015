@@ -1,4 +1,4 @@
-﻿using SerialInterface;
+﻿using MCP.Protocol;
 using System;
 using System.Globalization;
 using System.Windows.Data;
