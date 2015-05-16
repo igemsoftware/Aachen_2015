@@ -71,7 +71,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SensorData.cs" />
     <Compile Include="Cultivation.cs" />
     <Compile Include="Experiment.cs" />
     <Compile Include="ExperimentInformationWindow.xaml.cs">
@@ -88,6 +87,10 @@
     <ProjectReference Include="..\MCP.Equipment\MCP.Equipment.csproj">
       <Project>{8f7428cb-025e-489c-8197-a6f697050d91}</Project>
       <Name>MCP.Equipment</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MCP.Measurements\MCP.Measurements.csproj">
+      <Project>{6e6b3b3d-c712-423e-8b65-dd89cbcc405d}</Project>
+      <Name>MCP.Measurements</Name>
     </ProjectReference>
     <ProjectReference Include="..\MCP.Protocol\MCP.Protocol.csproj">
       <Project>{11ecf3b6-e461-4972-abd9-3c35ee064187}</Project>
@@ -106,6 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\reactor schematic.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

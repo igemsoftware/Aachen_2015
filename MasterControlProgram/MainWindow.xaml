@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:MasterControlProgram"
         xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
-        Title="Master Control Program" Width="800" Height="600" DataContext="{StaticResource ViewModel}">
+        Title="Master Control Program" Width="800" Height="600" DataContext="{StaticResource ViewModel}" ResizeMode="CanResizeWithGrip">
 
 
     <Grid>
@@ -62,31 +62,33 @@
                         <ListBox ItemsSource="{Binding Cultivations}" SelectionChanged="SelectedCultivation_Changed" SelectionMode="Extended">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding Reactor.ParticipantID}" Grid.Column="0" Style="{StaticResource LargeValueTextBlockStyle}" />
-                                        <StackPanel Orientation="Horizontal" Grid.Column="1">
-                                            <StackPanel Margin="10">
-                                                <TextBlock Text="V_L [ml]" Style="{StaticResource SubtleTextBlockStyle}" />
-                                                <TextBlock Text="{Binding CultureVolume, FallbackValue=10}" Style="{StaticResource MediumValueTextBlockStyle}" />
+                                    <Button DataContext="{Binding}" Command="{Binding ChangeParametersCommand}" Padding="0" Margin="5">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Reactor.ParticipantID}" Grid.Column="0" Style="{StaticResource LargeValueTextBlockStyle}" />
+                                            <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                                <StackPanel Margin="10">
+                                                    <TextBlock Text="V_L [ml]" Style="{StaticResource SubtleTextBlockStyle}" />
+                                                    <TextBlock Text="{Binding CultureVolume, FallbackValue=10}" Style="{StaticResource MediumValueTextBlockStyle}" />
+                                                </StackPanel>
+                                                <StackPanel Margin="10">
+                                                    <TextBlock Text="D [1/h]" Style="{StaticResource SubtleTextBlockStyle}" />
+                                                    <TextBlock Text="{Binding DilutionRateSetpoint, StringFormat=0.00, FallbackValue=0.15}" Style="{StaticResource MediumValueTextBlockStyle}" />
+                                                </StackPanel>
+                                                <StackPanel Margin="10">
+                                                    <TextBlock Text="q_g [vvm]" Style="{StaticResource SubtleTextBlockStyle}" />
+                                                    <TextBlock Text="{Binding AerationRateSetpoint, StringFormat=0.0, FallbackValue=1.0}" Style="{StaticResource MediumValueTextBlockStyle}" />
+                                                </StackPanel>
+                                                <StackPanel Margin="10">
+                                                    <TextBlock Text="n [rpm]" Style="{StaticResource SubtleTextBlockStyle}" />
+                                                    <TextBlock Text="{Binding AgitationRateSetpoint, FallbackValue=500}" Style="{StaticResource MediumValueTextBlockStyle}" />
+                                                </StackPanel>
                                             </StackPanel>
-                                            <StackPanel Margin="10">
-                                                <TextBlock Text="D [1/h]" Style="{StaticResource SubtleTextBlockStyle}" />
-                                                <TextBlock Text="{Binding DilutionRateSetpoint, StringFormat=0.00, FallbackValue=0.15}" Style="{StaticResource MediumValueTextBlockStyle}" />
-                                            </StackPanel>
-                                            <StackPanel Margin="10">
-                                                <TextBlock Text="q_g [vvm]" Style="{StaticResource SubtleTextBlockStyle}" />
-                                                <TextBlock Text="{Binding AerationRateSetpoint, StringFormat=0.0, FallbackValue=1.0}" Style="{StaticResource MediumValueTextBlockStyle}" />
-                                            </StackPanel>
-                                            <StackPanel Margin="10">
-                                                <TextBlock Text="n [rpm]" Style="{StaticResource SubtleTextBlockStyle}" />
-                                                <TextBlock Text="{Binding AgitationRateSetpoint, FallbackValue=500}" Style="{StaticResource MediumValueTextBlockStyle}" />
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Grid>
+                                        </Grid>
+                                    </Button>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>

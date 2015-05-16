@@ -13,9 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCP.Equipment", "MCP.Equipm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCP.Protocol", "MCP.Protocol\MCP.Protocol.csproj", "{11ECF3B6-E461-4972-ABD9-3C35EE064187}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCP.Measurements", "MCP.Measurements\MCP.Measurements.csproj", "{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
+		SccNumberOfProjects = 7
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://igemaachen.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -34,6 +36,9 @@ Global
 		SccProjectUniqueName5 = MCP.Protocol\\MCP.Protocol.csproj
 		SccProjectName5 = MCP.Protocol
 		SccLocalPath5 = MCP.Protocol
+		SccProjectUniqueName6 = MCP.Measurements\\MCP.Measurements.csproj
+		SccProjectName6 = MCP.Measurements
+		SccLocalPath6 = MCP.Measurements
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +99,16 @@ Global
 		{11ECF3B6-E461-4972-ABD9-3C35EE064187}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{11ECF3B6-E461-4972-ABD9-3C35EE064187}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{11ECF3B6-E461-4972-ABD9-3C35EE064187}.Release|Win32.ActiveCfg = Release|Any CPU
+		{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6E6B3B3D-C712-423E-8B65-DD89CBCC405D}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

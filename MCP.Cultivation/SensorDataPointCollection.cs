@@ -1,4 +1,5 @@
-﻿using Microsoft.Research.DynamicDataDisplay.Common;
+﻿using MCP.Measurements;
+using Microsoft.Research.DynamicDataDisplay.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MCP.Cultivation
 {
-    public class SensorDataPointCollection : RingArray<SensorData>
+    public class SensorDataPointCollection : RingArray<DataPoint>
     {
         //private const int TOTAL_POINTS = ViewModel.SecondsToShow * 1000 / ViewModel.UpdateInterval;
         private const int TOTAL_POINTS = 1000;

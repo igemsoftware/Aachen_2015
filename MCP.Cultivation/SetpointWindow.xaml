@@ -2,8 +2,40 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:toolkit="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
-        Title="{Binding ReactorID, Converter={StaticResource UIConverter},ConverterParameter=ReactorID}" Height="350" Width="300">
+        Title="{Binding Reactor.ParticipantID, Converter={StaticResource EnumNameConverter}}" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Image Source="/MCP.Cultivation;Component/Assets/reactor schematic.png" Width="400" Height="275" Margin="0,50,0,20" />
+        <!--Feed-->
+        <TextBlock Text="D [1/h]" Style="{StaticResource SubtleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="1.324,0.4" Margin="28,5,0,0" />
+        <toolkit:DoubleUpDown HorizontalAlignment="Left" VerticalAlignment="Top" Value="{Binding DilutionRateSetpoint, Mode=TwoWay}" Margin="28,25,0,0" Width="80" Minimum="0" Maximum="1" Increment="0.01" FormatString="0.00" />
+        <!--Air-->
+        <TextBlock Text="q_g [vvm]" Style="{StaticResource SubtleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,155,0,0" />
+        <toolkit:DoubleUpDown HorizontalAlignment="Left" VerticalAlignment="Top" Value="{Binding AerationRateSetpoint, Mode=TwoWay}" Margin="28,175,0,0" Minimum="0" Maximum="2" Increment="0.1" FormatString="0.0" Width="80" />
+        <!--Agitation-->
+        <TextBlock Text="n [rpm]" Style="{StaticResource SubtleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,285,0,0" />
+        <toolkit:IntegerUpDown HorizontalAlignment="Left" VerticalAlignment="Top" Value="{Binding AgitationRateSetpoint, Mode=TwoWay}" Margin="28,305,0,0" Minimum="0" Maximum="1000" Increment="10" Width="80" />
+        <!--Strain-->
+        <TextBlock Text="Culture Description" Style="{StaticResource SubtleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="258,288,0,0" />
+        <TextBox Text="{Binding CultureDescription, Mode=TwoWay}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="258,308,0,0" Width="132" />
+        <!--Culture Volume-->
+        <TextBlock Text="V_L [ml]" Style="{StaticResource SubtleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="258,181,0,0" />
+        <toolkit:DoubleUpDown HorizontalAlignment="Left" VerticalAlignment="Top" Value="{Binding CultureVolume, Mode=TwoWay}" Margin="258,201,0,0" Minimum="1" Maximum="20" Increment="0.1" Width="80" />
+        <!--Save Buttons-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Apply" Margin="5" Click="Apply_Click" />
+            <Button Grid.Column="1" Content="Cancel" Margin="5" Click="Cancel_Click" />
+        </Grid>
+    </Grid>
+    <!--<Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
@@ -26,9 +58,11 @@
                 <toolkit:IntegerUpDown Value="{Binding AgitationRateSetpoint, Mode=TwoWay}" Margin="0,5" Minimum="0" Maximum="1000" Increment="10" />
             </StackPanel>
         </StackPanel>
-        <!--<StackPanel Grid.Column="1">
+        -->
+    <!--<StackPanel Grid.Column="1">
         </StackPanel>-->
+    <!--
         <Button Grid.Row="1" Grid.Column="0" Content="Apply" Margin="5" Click="Apply_Click" />
         <Button Grid.Row="1" Grid.Column="1" Content="Cancel" Margin="5" Click="Cancel_Click" />
-    </Grid>
+    </Grid>-->
 </Window>

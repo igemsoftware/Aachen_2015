@@ -143,6 +143,10 @@
       <Project>{8f7428cb-025e-489c-8197-a6f697050d91}</Project>
       <Name>MCP.Equipment</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MCP.Measurements\MCP.Measurements.csproj">
+      <Project>{6e6b3b3d-c712-423e-8b65-dd89cbcc405d}</Project>
+      <Name>MCP.Measurements</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MCP.Protocol\MCP.Protocol.csproj">
       <Project>{11ecf3b6-e461-4972-abd9-3c35ee064187}</Project>
       <Name>MCP.Protocol</Name>

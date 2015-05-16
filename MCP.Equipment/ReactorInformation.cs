@@ -24,31 +24,25 @@ namespace MCP.Equipment
         [XmlElement]
         public ParticipantID ParticipantID { get { return _ParticipantID; } set { _ParticipantID = value; OnPropertyChanged(); } }
 
-        private int _CultureVolume = 10;
-        /// <summary>
-        /// culture volume [ml]
-        /// </summary>
-        [XmlElement]
-        public int CultureVolume { get { return _CultureVolume; } set { _CultureVolume = value; OnPropertyChanged(); } }
-
+        
         #region Pumps
         private string _FeedPumpID = string.Empty;
         [XmlElement]
         public string FeedPumpID { get { return _FeedPumpID; } set { _FeedPumpID = value; OnPropertyChanged(); } }
         [XmlIgnore]
-        public PumpInformation FeedPump { get { return Inventory.Current.Pumps[_FeedPumpID]; } }
+        public PumpInformation FeedPump { get { return (Inventory.Current.Pumps.ContainsKey(_FeedPumpID) ? Inventory.Current.Pumps[_FeedPumpID] : null); } }
 
         private string _AerationPumpID = string.Empty;
         [XmlElement]
         public string AerationPumpID { get { return _AerationPumpID; } set { _AerationPumpID = value; OnPropertyChanged(); } }
         [XmlIgnore]
-        public PumpInformation AerationPump { get { return Inventory.Current.Pumps[_AerationPumpID]; } }
+        public PumpInformation AerationPump { get { return (Inventory.Current.Pumps.ContainsKey(_AerationPumpID) ? Inventory.Current.Pumps[_AerationPumpID] : null); } }
 
         private string _HarvestPumpID = string.Empty;
         [XmlElement]
         public string HarvestPumpID { get { return _HarvestPumpID; } set { _HarvestPumpID = value; OnPropertyChanged(); } }
         [XmlIgnore]
-        public PumpInformation HarvestPump { get { return Inventory.Current.Pumps[_HarvestPumpID]; } }
+        public PumpInformation HarvestPump { get { return (Inventory.Current.Pumps.ContainsKey(_HarvestPumpID) ? Inventory.Current.Pumps[_HarvestPumpID] : null); } }
         #endregion
 
         #region Commands

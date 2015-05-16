@@ -10,20 +10,37 @@ using System.Xml.Serialization;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
+using System.IO;
+using TCD.Controls;
+using MCP.Measurements;
+
 
 namespace MCP.Cultivation
 {
     public class Cultivation : PropertyChangedBase
     {
+        #region Ignored Properties
         private ReactorInformation _Reactor;
+        [XmlIgnore]
         public ReactorInformation Reactor { get { return _Reactor; } set { _Reactor = value; OnPropertyChanged(); } }
+
+        private CultivationLog _CultivationLog;
+        [XmlIgnore]
+        public CultivationLog CultivationLog { get { return _CultivationLog; } set { _CultivationLog = value; OnPropertyChanged(); } }
+
+        private string _BaseDirectory;
+        [XmlIgnore]
+        public string BaseDirectory { get { return _BaseDirectory; } set { _BaseDirectory = value; OnPropertyChanged(); } }
+        
+        #endregion
 
         #region Commands
         private RelayCommand _ChangeParametersCommand;
+        [XmlIgnore]
         public RelayCommand ChangeParametersCommand { get { return _ChangeParametersCommand; } set { _ChangeParametersCommand = value; OnPropertyChanged(); } }
         #endregion
 
-        #region Control Parameters
+        #region Serialized Properties (Control Parameters)
         private int _AgitationRateSetpoint = 500;
         /// <summary>
         /// desired agitation rate [rpm]
@@ -41,13 +58,34 @@ namespace MCP.Cultivation
         /// desired dilution rate [culture volumes per hour]
         /// </summary>
         public double DilutionRateSetpoint { get { return _DilutionRateSetpoint; } set { _DilutionRateSetpoint = value; OnPropertyChanged(); } }
+
+        private double _CultureVolume = 10;
+        /// <summary>
+        /// culture volume [ml]
+        /// </summary>
+        [XmlElement]
+        public double CultureVolume { get { return _CultureVolume; } set { _CultureVolume = value; OnPropertyChanged(); } }
+
+        private string _CultureDescription;
+        /// <summary>
+        /// Describes the strain or sample in the cultivation.
+        /// </summary>
+        public string CultureDescription { get { return _CultureDescription; } set { _CultureDescription = value; OnPropertyChanged(); } }
+
+        private DateTime _StartTime;
+        /// <summary>
+        /// When was the experiment started?
+        /// </summary>
+        public DateTime StartTime { get { return _StartTime; } set { _StartTime = value; OnPropertyChanged(); } }
+        
+			
         #endregion
 
         #region Events
         //OnNewMessageToSend
         public delegate void AddOnNewMessageToSendDelegate(object sender, Message message);
         public event AddOnNewMessageToSendDelegate NewMessageToSend;
-        private void OnNewMessageToSendEvent(object sender, Message message)
+        public void OnNewMessageToSendEvent(object sender, Message message)
         {
             if (NewMessageToSend != null)
                 NewMessageToSend(sender, message);
@@ -55,61 +93,45 @@ namespace MCP.Cultivation
         #endregion
 
 
-
         private SensorDataPointCollection _SensorDataCollection = new SensorDataPointCollection();//contains only recent datapoints
         [XmlIgnore]
         public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; OnPropertyChanged("SensorDataCollection"); } }
 
-        private ObservableCollection<SensorData> _SensorDataSet = new ObservableCollection<SensorData>();//contains all datapoints
+        private ObservableCollection<DataPoint> _SensorDataSet = new ObservableCollection<DataPoint>();//contains all datapoints
         [XmlIgnore]
-        public ObservableCollection<SensorData> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; OnPropertyChanged("SensorDataSet"); } }
+        public ObservableCollection<DataPoint> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; OnPropertyChanged("SensorDataSet"); } }
 
-        private EnumerableDataSource<SensorData> _DataSource;
+        private EnumerableDataSource<DataPoint> _DataSource;
         [XmlIgnore]
-        public EnumerableDataSource<SensorData> DataSource { get { return _DataSource; } set { _DataSource = value; OnPropertyChanged("DataSource"); } }
+        public EnumerableDataSource<DataPoint> DataSource { get { return _DataSource; } set { _DataSource = value; OnPropertyChanged("DataSource"); } }
 
-        private DateTime start = DateTime.Now;
         private static Random rnd = new Random();
 
 
         public Cultivation()
         {
-            ChangeParametersCommand = new RelayCommand(async delegate
-            {
-                Cultivation newCultivation = new Cultivation()
-                {
-                    DilutionRateSetpoint = this.DilutionRateSetpoint,
-                    AgitationRateSetpoint = this.AgitationRateSetpoint,
-                    AerationRateSetpoint = this.AerationRateSetpoint
-                };
-                SetpointWindow sw = new SetpointWindow() { DataContext = newCultivation };
-                sw.Show();
-                await sw.WaitTask;
-                if (sw.Confirmed)
-                {
-                    DilutionRateSetpoint = newCultivation.DilutionRateSetpoint;
-                    AgitationRateSetpoint = newCultivation.AgitationRateSetpoint;
-                    AerationRateSetpoint = newCultivation.AerationRateSetpoint;
-                    //
-                    SendSetpointUpdate();
-                    //TODO: save changes to cultivation file within the experiment
-                }
-            });
-
-
-
-            DataSource = new EnumerableDataSource<SensorData>(SensorDataCollection);
-            DataSource.SetXMapping(x => x.Time);
+            //TODO: implement all the graphs
+            DataSource = new EnumerableDataSource<DataPoint>(SensorDataCollection);
+            DataSource.SetXMapping(x => (x.Time - StartTime).TotalSeconds);
             DataSource.SetYMapping(y => y.Value);
 
             DispatcherTimer dt = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
             dt.Tick += delegate
             {
-                SensorData data = new SensorData((DateTime.Now - start).TotalSeconds, rnd.NextDouble());
+                DataPoint data = new DataPoint(DateTime.Now, rnd.NextDouble());
                 SensorDataSet.Add(data);
                 SensorDataCollection.Add(data);
+                if (CultivationLog != null)
+                    CultivationLog.LogData(DimensionSymbol.Agitation_Rate, new RawData(rnd.NextDouble(), DateTime.Now));
             };
             dt.Start();
+        }
+
+
+        public void Initialize(string baseDirectory)
+        {
+            BaseDirectory = baseDirectory;
+            CultivationLog = new CultivationLog(baseDirectory);
         }
 
         private void SendSetpointUpdate()
@@ -125,15 +147,50 @@ namespace MCP.Cultivation
 
         private double CalculateFeedPumpSPH()
         {
-            return DilutionRateSetpoint * Reactor.CultureVolume * Reactor.FeedPump.SpecificPumpingRate;
+            return DilutionRateSetpoint * CultureVolume * Reactor.FeedPump.SpecificPumpingRate;
         }
         private double CalculateAerationPumpSPH()
         {
-            return AerationRateSetpoint * 60 * Reactor.CultureVolume * Reactor.AerationPump.SpecificPumpingRate;
+            return AerationRateSetpoint * 60 * CultureVolume * Reactor.AerationPump.SpecificPumpingRate;
         }
         private double CalculateHarvestPumpSPH()
         {
-            return DilutionRateSetpoint * Reactor.CultureVolume * Reactor.HarvestPump.SpecificPumpingRate * 1.15;
+            return DilutionRateSetpoint * CultureVolume * Reactor.HarvestPump.SpecificPumpingRate * 1.15;
         }
+
+        public void Save()
+        {
+            try
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(Cultivation));
+                TextWriter textWriter = new StreamWriter(Path.Combine(BaseDirectory, Reactor.ParticipantID.ToString() + ".cultivation"));
+                serializer.Serialize(textWriter, this);
+                textWriter.Close();
+                textWriter.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Task mb = CustomMessageBox.ShowAsync("Can't save", "There was an error:\r\n\r\n" + ex.Message, System.Windows.MessageBoxImage.Error, 0, "Ok");
+            }
+        }
+        public static Cultivation LoadFromFile(string file)
+        {
+            try
+            {
+                XmlSerializer deserializer = new XmlSerializer(typeof(Cultivation));
+                TextReader textReader = new StreamReader(file);
+                Cultivation cultureInfo = (Cultivation)deserializer.Deserialize(textReader);
+                textReader.Close();
+                textReader.Dispose();
+                cultureInfo.Initialize(new FileInfo(file).Directory.FullName);
+                return cultureInfo;
+            }
+            catch (Exception ex)
+            {
+                Task mb = CustomMessageBox.ShowAsync("Can't load", "There was an error:\r\n\r\n" + ex.Message, System.Windows.MessageBoxImage.Error, 0, "Ok");
+            }
+            return null;
+        }
+
     }
 }

@@ -17,7 +17,7 @@ namespace MCP.Cultivation
 {
     public class Experiment : PropertyChangedBase
     {
-        #region Ignored Properties and Commands
+        #region Ignored Properties
         private string _BaseDirectory;
         [XmlIgnore]
         public string BaseDirectory { get { return _BaseDirectory; } set { _BaseDirectory = value; OnPropertyChanged(); LoadCultivations(); } }
@@ -28,8 +28,9 @@ namespace MCP.Cultivation
         private ObservableCollection<Cultivation> _Cultivations = new ObservableCollection<Cultivation>();
         [XmlIgnore]
         public ObservableCollection<Cultivation> Cultivations { get { return _Cultivations; } set { _Cultivations = value; OnPropertyChanged(); } }
-        
+        #endregion
 
+        #region Commands
         private RelayCommand _EditExperimentCommand;
         [XmlIgnore]
         public RelayCommand EditExperimentCommand { get { return _EditExperimentCommand; } set { _EditExperimentCommand = value; OnPropertyChanged(); } }
@@ -37,7 +38,6 @@ namespace MCP.Cultivation
         private RelayCommand _DeleteExperimentCommand;
         [XmlIgnore]
         public RelayCommand DeleteExperimentCommand { get { return _DeleteExperimentCommand; } set { _DeleteExperimentCommand = value; OnPropertyChanged(); } }
-        
         #endregion
 
         #region Serialized Properties
@@ -133,14 +133,55 @@ namespace MCP.Cultivation
                 foreach (string dir in Directory.GetDirectories(BaseDirectory, "Reactor_*"))
                 {
                     DirectoryInfo di = new DirectoryInfo(dir);
-                    Cultivation c = new Cultivation();
+                    Cultivation c = null;
+                    if (File.Exists(Path.Combine(dir, di.Name + ".cultivation")))
+                        c = Cultivation.LoadFromFile(Path.Combine(dir, di.Name + ".cultivation"));
+                    else
+                        c = new Cultivation();
                     c.Reactor = Inventory.Current.Reactors[(ParticipantID)Enum.Parse(typeof(ParticipantID), di.Name)];
+                    c.ChangeParametersCommand = new RelayCommand(async delegate
+                    {
+                        Cultivation newCultivation = new Cultivation()
+                        {
+                            Reactor = c.Reactor,
+                            DilutionRateSetpoint = c.DilutionRateSetpoint,
+                            AgitationRateSetpoint = c.AgitationRateSetpoint,
+                            AerationRateSetpoint = c.AerationRateSetpoint,
+                            CultureVolume = c.CultureVolume,
+                            CultureDescription = c.CultureDescription
+                        };
+                        SetpointWindow sw = new SetpointWindow() { DataContext = newCultivation };
+                        sw.Show();
+                        await sw.WaitTask;
+                        if (sw.Confirmed)
+                        {
+                            c.DilutionRateSetpoint = newCultivation.DilutionRateSetpoint;
+                            c.AgitationRateSetpoint = newCultivation.AgitationRateSetpoint;
+                            c.AerationRateSetpoint = newCultivation.AerationRateSetpoint;
+                            c.CultureVolume = newCultivation.CultureVolume;
+                            c.CultureDescription = newCultivation.CultureDescription;
+                            c.Save();
+                        }
+                    });
+                    c.PropertyChanged += c_PropertyChanged;
                     Cultivations.Add(c);
                 }
             }
             catch (Exception ex)
             {
                 Task mb = CustomMessageBox.ShowAsync("Can't load", "There was an error:\r\n\r\n" + ex.Message, System.Windows.MessageBoxImage.Error, 0, "Ok");
+            }
+        }
+
+        private void c_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            //TODO: attach the Message Send Events properly
+            Cultivation cultiv = sender as Cultivation;
+            switch (e.PropertyName)
+            {
+                case "AgitationRateSetpoint":
+                    cultiv.OnNewMessageToSendEvent(this, new Message(ParticipantID.MCP, cultiv.Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Agitation_Rate, cultiv.AgitationRateSetpoint.ToString(), Unit.RPM));
+                    break;
             }
         }
     }

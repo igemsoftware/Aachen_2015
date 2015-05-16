@@ -38,11 +38,20 @@ namespace MCP.Protocol
         public static string Aeration_Rate = "q_g";
         public static string Feed_Rate = "S_fin";
         public static string Harvest_Rate = "S_fout";
+        public static string Temperature = "T";
+        public static string Biomass_Concentration = "X";
+        public static string O2_Saturation = "O2";
+        public static string CO2_Saturation = "CO2";
+        public static string CHx_Saturation = "CHx";
     }
     public static class Unit
     {
         public static string SPH = "sph";
         public static string RPM = "rpm";
+        public static string VVM = "vvm";
+        public static string Celsius = "°C";
+        public static string PerHour = "1/h";
+        public static string Percent = "%";
     }
     public enum BaudRate
     {
