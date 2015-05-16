@@ -23,10 +23,6 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
-            <StackPanel Margin="10">
-                <TextBlock Text="Culture Volume V_L [ml]" Style="{StaticResource SubtleTextBlockStyle}" />
-                <toolkit:IntegerUpDown Value="{Binding CultureVolume, Mode=TwoWay}" Margin="0,5" Minimum="1" Maximum="20" />
-            </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="1">
             <StackPanel Margin="10">

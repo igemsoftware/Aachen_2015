@@ -18,7 +18,7 @@ namespace MCP.Measurements
         }
         public override string ToString()
         {
-            return string.Format("{0}\t{1}", Time, Value);
+            return string.Format("{0}\t{1}", Time, Value);//TODO: make Time.ToString or something that is okay with Excel
         }
     }
 }

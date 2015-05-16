@@ -108,7 +108,7 @@ namespace MCP.Equipment
         }
         public void Initialize(string pumpPath, string reactorPath)
         {
-            if (string.IsNullOrWhiteSpace(pumpPath) || string.IsNullOrWhiteSpace(reactorPath))
+            if (!Directory.Exists(pumpPath) || !Directory.Exists(reactorPath))
                 return;
             pumpDirectory = pumpPath;
             pumpWatcher = new FileSystemWatcher(pumpPath, "*.pump");

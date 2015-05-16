@@ -22,6 +22,19 @@ namespace MCP.Cultivation
         private ObservableCollection<Experiment> _Experiments = new ObservableCollection<Experiment>();
         public ObservableCollection<Experiment> Experiments { get { return _Experiments; } set { _Experiments = value; OnPropertyChanged(); } }
 
+        private Experiment _ActiveExperiment = null;
+        public Experiment ActiveExperiment { get { return _ActiveExperiment; } set { _ActiveExperiment = value; OnPropertyChanged(); } }
+        //TODO: remove the ActiveExperiment property and give each Cultivation its own IsRunning property.
+        //TODO: before a Cultivation can be marked as active, check if another Cultivation is using a same reactor
+        //TODO: make a Dictionary<ParticipantID, Cultivation> to keep track which reactor is in use and also to forward incoming messages
+        //TODO: save the IsRunning property to the Cultivation file
+        //TODO: when loading the Experiments, check if there's a collision between reactors that are in use. If so show a CustomMessageBox to decide which cultivation to stop
+        //      Advantages: this way multiple experiments can run at the same time, independent from each other
+        //TODO: when a Cultivation is started for the first time, save the start time
+        //TODO: when a Cultivation is started but there's already data, ask the user what to do (Delete/Keep)
+
+			
+
         private RelayCommand _AddExperimentCommand;
         public RelayCommand AddExperimentCommand { get { return _AddExperimentCommand; } set { _AddExperimentCommand = value; OnPropertyChanged(); } }
 
@@ -50,7 +63,7 @@ namespace MCP.Cultivation
 
         public void Initialize(string experimentsPath)
         {
-            if (string.IsNullOrWhiteSpace(experimentsPath))
+            if (!Directory.Exists(experimentsPath))
                 return;
             experimentsDirectory = experimentsPath;
             experimentWatcher = new FileSystemWatcher(experimentsPath, "*");
@@ -76,6 +89,8 @@ namespace MCP.Cultivation
                 }
                 else//unload/remove experiments where the folder does not exist anymore
                 {
+                    if (ActiveExperiment == Experiments[i])
+                        ActiveExperiment = null;
                     Experiments.RemoveAt(i);
                     i--;
                 }
@@ -84,19 +99,21 @@ namespace MCP.Cultivation
             foreach (string dir in dirs)
             {
                 Experiment exp = Experiment.LoadFromDirectory(dir);
-                exp.EditExperimentCommand = new RelayCommand(async delegate
-                {
-                    Experiment newexp = new Experiment() { Title = exp.Title, Description = exp.Description, Date = exp.Date, Cultivations = exp.Cultivations };
-                    ExperimentInformationWindow eiw = new ExperimentInformationWindow("Edit Experimet", false) { DataContext = newexp };
-                    await eiw.ShowAsync();
-                    if (eiw.Confirmed)
-                    {
-                        exp.Description = newexp.Description;
-                        exp.Save();
-                    }
-                });
                 if (exp != null)
+                {
+                    exp.EditExperimentCommand = new RelayCommand(async delegate
+                    {
+                        Experiment newexp = new Experiment() { Title = exp.Title, Description = exp.Description, Date = exp.Date, Cultivations = exp.Cultivations };
+                        ExperimentInformationWindow eiw = new ExperimentInformationWindow("Edit Experimet", false) { DataContext = newexp };
+                        await eiw.ShowAsync();
+                        if (eiw.Confirmed)
+                        {
+                            exp.Description = newexp.Description;
+                            exp.Save();
+                        }
+                    });
                     Experiments.Add(exp);
+                }
             }
         }
 

@@ -4,6 +4,11 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Windows.Data;
 using MCP.Protocol;
+using MCP.Cultivation;
+using System.Collections.ObjectModel;
+using System.Windows.Documents;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace MasterControlProgram
 {
@@ -45,6 +50,13 @@ namespace MasterControlProgram
                     return true;
                 case "IsParticipantIDOfReactor": return ((int)value >= (int)ParticipantID.Reactor_1);
                 case "IsNotNull": return (value != null);
+                case "InsertNullToExperimentsCollection":
+                    ObservableCollection<Experiment> experiments = (ObservableCollection<Experiment>)value;
+                    List<object> exp = new List<object>();
+                    exp.Add("None");
+                    exp.AddRange(experiments);
+                    return exp;
+                case "BoolToVisibility": return ((bool)value == true) ? Visibility.Visible : Visibility.Collapsed;
                 default:
                     return null;
             }

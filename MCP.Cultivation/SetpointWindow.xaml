@@ -24,7 +24,7 @@
         <TextBox Text="{Binding CultureDescription, Mode=TwoWay}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="258,308,0,0" Width="132" />
         <!--Culture Volume-->
         <TextBlock Text="V_L [ml]" Style="{StaticResource SubtleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="258,181,0,0" />
-        <toolkit:DoubleUpDown HorizontalAlignment="Left" VerticalAlignment="Top" Value="{Binding CultureVolume, Mode=TwoWay}" Margin="258,201,0,0" Minimum="1" Maximum="20" Increment="0.1" Width="80" />
+        <toolkit:DoubleUpDown HorizontalAlignment="Left" VerticalAlignment="Top" Value="{Binding CultureVolume, Mode=TwoWay}" Margin="258,201,0,0" Minimum="1" Maximum="20" Increment="0.1" Width="80" FormatString="0.0" />
         <!--Save Buttons-->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

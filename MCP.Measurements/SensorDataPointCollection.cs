@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MCP.Cultivation
+namespace MCP.Measurements
 {
-    public class SensorDataPointCollection : RingArray<DataPoint>
+    public class SensorDataPointCollection : RingArray<RawData>
     {
         //private const int TOTAL_POINTS = ViewModel.SecondsToShow * 1000 / ViewModel.UpdateInterval;
         private const int TOTAL_POINTS = 1000;

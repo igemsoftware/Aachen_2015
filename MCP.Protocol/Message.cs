@@ -42,7 +42,7 @@ namespace MCP.Protocol
 
         public override string ToString()
         {
-            return this.Raw;
+            return string.Format("{0} from {1} to {2}: {3}", MessageType, Sender, Receiver, string.Join("\t", Contents));
         }
     }
 }

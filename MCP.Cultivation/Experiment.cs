@@ -59,6 +59,16 @@ namespace MCP.Cultivation
         private DispatcherTimer saveTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
         #endregion
 
+        #region Events
+        //OnNewMessageToSend
+        public delegate void AddOnNewMessageToSendDelegate(object sender, Message message);
+        public event AddOnNewMessageToSendDelegate NewMessageToSend;
+        private void OnNewMessageToSendEvent(object sender, Message message)
+        {
+            if (NewMessageToSend != null)
+                NewMessageToSend(sender, message);
+        }
+        #endregion
 
         public Experiment()
         {
@@ -128,6 +138,8 @@ namespace MCP.Cultivation
         }
         private void LoadCultivations()
         {
+            if (!Directory.Exists(BaseDirectory))
+                return;
             try
             {
                 foreach (string dir in Directory.GetDirectories(BaseDirectory, "Reactor_*"))
@@ -137,7 +149,7 @@ namespace MCP.Cultivation
                     if (File.Exists(Path.Combine(dir, di.Name + ".cultivation")))
                         c = Cultivation.LoadFromFile(Path.Combine(dir, di.Name + ".cultivation"));
                     else
-                        c = new Cultivation();
+                        c = new Cultivation() { BaseDirectory = dir };
                     c.Reactor = Inventory.Current.Reactors[(ParticipantID)Enum.Parse(typeof(ParticipantID), di.Name)];
                     c.ChangeParametersCommand = new RelayCommand(async delegate
                     {
@@ -161,9 +173,9 @@ namespace MCP.Cultivation
                             c.CultureVolume = newCultivation.CultureVolume;
                             c.CultureDescription = newCultivation.CultureDescription;
                             c.Save();
+                            c.SendSetpointUpdate();
                         }
                     });
-                    c.PropertyChanged += c_PropertyChanged;
                     Cultivations.Add(c);
                 }
             }
@@ -173,16 +185,6 @@ namespace MCP.Cultivation
             }
         }
 
-        private void c_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            //TODO: attach the Message Send Events properly
-            Cultivation cultiv = sender as Cultivation;
-            switch (e.PropertyName)
-            {
-                case "AgitationRateSetpoint":
-                    cultiv.OnNewMessageToSendEvent(this, new Message(ParticipantID.MCP, cultiv.Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Agitation_Rate, cultiv.AgitationRateSetpoint.ToString(), Unit.RPM));
-                    break;
-            }
-        }
+        
     }
 }

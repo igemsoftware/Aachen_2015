@@ -41,7 +41,7 @@ namespace MCP.Measurements
             TryToAccumulate();
         }
 
-        private async void TryToAccumulate()
+        private void TryToAccumulate()
         {
             if (RawDataCache.Count < _MinimumSamples)
                 return;
@@ -58,7 +58,7 @@ namespace MCP.Measurements
             // if the analysis was successful, we should now have a DataPoint
             if (point != null)
             {
-                await _Writer.WriteLineAsync(point.ToString());
+                WriteLine(point.ToString());
                 RawDataCache.Clear();
             }
         }

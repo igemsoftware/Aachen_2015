@@ -61,6 +61,8 @@ namespace MasterControlProgram
         }
         private void InitializeHomeDirectory()
         {
+            if (string.IsNullOrWhiteSpace(HomeDirectoryPath))
+                return;
             if (!Directory.Exists(HomeDirectoryPath))
                 Directory.CreateDirectory(HomeDirectoryPath);
             if (!Directory.Exists(PumpDirectoryPath))

@@ -18,12 +18,10 @@ using Microsoft.Research.DynamicDataDisplay.DataSources;
 using MCP.Cultivation;
 using TCD;
 using TCD.Controls;
+using MCP.Measurements;
 
 namespace MasterControlProgram
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -33,6 +31,8 @@ namespace MasterControlProgram
 
         private void SelectedCultivation_Changed(object sender, SelectionChangedEventArgs e)
         {
+            //TODO: split the Chart into two: Control Parameters vs. Measurements
+            //TODO: somehow implement correct axis labels
             for (int i = 0; i < plotter.Children.Count; i++)
             {
                 if (plotter.Children[i] is LineGraph)
@@ -45,7 +45,10 @@ namespace MasterControlProgram
             foreach (Cultivation cultivation in (sender as ListBox).SelectedItems)
             {
                 plotTitle.Content += cultivation.Reactor.ParticipantID.GetValueName() + " ";
-                plotter.AddLineGraph(cultivation.DataSource, Colors.Blue, 2, "Values");
+                foreach (KeyValuePair<string, DataLogBase> log in cultivation.CultivationLog.Logs)
+                {
+                    plotter.AddLineGraph(log.Value.DataSource, Colors.Blue, 2, log.Key);                    
+                }
             }
         }
 

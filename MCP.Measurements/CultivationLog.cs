@@ -37,10 +37,27 @@ namespace MCP.Measurements
             Logs.Add(DimensionSymbol.Temperature, new DataLiveLog(Path.Combine(_BaseDirectory, "Temperature.log"), DimensionSymbol.Temperature, Unit.Celsius));
         }
 
-        public void LogData(string dimension, RawData raw)
+        public void ReceiveMessage(Message msg)
         {
-            if (Logs.ContainsKey(dimension))
-                Logs[dimension].AddRawData(raw);
+            switch (msg.MessageType)
+            {
+                case MessageType.Data:
+                    LogData(msg.Contents);
+                    break;
+                case MessageType.Command:
+                    break;
+                case MessageType.DataFormat:
+                    break;
+                case MessageType.CommandFormat:
+                    break;
+                default:
+                    break;
+            }
+        }
+        public void LogData(string[] data)
+        {
+            if (Logs.ContainsKey(data[0]))//TODO: check for the right unit
+                Logs[data[0]].AddRawData(new RawData(Convert.ToDouble(data[1]), DateTime.Now));
         }
     }
 }

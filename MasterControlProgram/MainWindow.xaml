@@ -22,21 +22,27 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition MinHeight="200" Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <GroupBox Grid.Row="0" Header="Experiments" DataContext="{Binding ExperimentLibrary}">
                     <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <ListBox x:Name="experimentsList" Grid.Row="0" ItemsSource="{Binding Experiments}">
+                        <StackPanel>
+                            <TextBlock Text="Active Experiment" Style="{StaticResource SubtleTextBlockStyle}" />
+                            <ComboBox ItemsSource="{Binding Experiments, Converter={StaticResource UIConverter}, ConverterParameter=InsertNullToExperimentsCollection}" SelectedItem="{Binding ActiveExperiment, Mode=TwoWay}" Margin="0,5" />
+                        </StackPanel>
+                        <ListBox x:Name="experimentsList" Grid.Row="1" ItemsSource="{Binding Experiments}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding DisplayName}" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                        <Grid Grid.Row="1">
+                        <Grid Grid.Row="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
@@ -50,6 +56,11 @@
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description" DataContext="{Binding ElementName=experimentsList, Path=SelectedItem}">
                     <TextBox Text="{Binding Description, Mode=TwoWay}" />
+                </GroupBox>
+                <GroupBox Grid.Row="2" Header="Debug" DataContext="{Binding}" Visibility="{Binding IsDebugMode, Converter={StaticResource UIConverter}, ConverterParameter=BoolToVisibility}">
+                    <StackPanel>
+                        <CheckBox Content="Generate Random Data" Margin="0,5" IsChecked="{Binding IsRandomizerEnabled}" />
+                    </StackPanel>
                 </GroupBox>
             </Grid>
             <TabControl Grid.Column="1">
