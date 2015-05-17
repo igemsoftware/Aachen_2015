@@ -1,12 +1,15 @@
 ﻿using MCP.Protocol;
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Data;
 
 namespace PumpCalibrator
 {
     public class UIConverter : IValueConverter
     {
+        private static char[] InvalidFileNameCharacters = System.IO.Path.GetInvalidFileNameChars();
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             switch (parameter as string)
@@ -16,6 +19,13 @@ namespace PumpCalibrator
                         return (BaudRate)value;
                     else
                         return (int)value;
+                case "IsLegalFilenameString":
+                    if (string.IsNullOrWhiteSpace(value as string))
+                        return false;
+                    foreach (char c in value as string)
+                        if (InvalidFileNameCharacters.Contains(c))
+                            return false;
+                    return true;
                 default:
                     return null;
             }

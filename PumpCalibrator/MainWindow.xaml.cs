@@ -12,6 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Research.DynamicDataDisplay;
+using TCD.Controls;
+
+using Microsoft.Research.DynamicDataDisplay.DataSources;
 
 namespace PumpCalibrator
 {
@@ -23,6 +27,8 @@ namespace PumpCalibrator
         public MainWindow()
         {
             InitializeComponent();
+            speedBox.SetUpItems(PumpingSpeed.Medium);
+            plotter.AddLineGraph(ViewModel.Current.Calibrator.DataSource, Colors.Blue, 2, "weight");    
         }
     }
 }
