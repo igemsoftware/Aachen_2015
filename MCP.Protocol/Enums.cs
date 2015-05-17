@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using TCD.Controls;
 
 namespace MCP.Protocol
@@ -11,17 +12,29 @@ namespace MCP.Protocol
     {
         MCP = 0,
         Master = 1,
+        [Display(Name = "Reactor 1")]
         Reactor_1 = 2,
+        [Display(Name = "Reactor 2")]
         Reactor_2 = 3,
+        [Display(Name = "Reactor 3")]
         Reactor_3 = 4,
+        [Display(Name = "Reactor 4")]
         Reactor_4 = 5,
+        [Display(Name = "Reactor 5")]
         Reactor_5 = 6,
+        [Display(Name = "Reactor 6")]
         Reactor_6 = 7,
+        [Display(Name = "Reactor 7")]
         Reactor_7 = 8,
+        [Display(Name = "Reactor 8")]
         Reactor_8 = 9,
+        [Display(Name = "Reactor 9")]
         Reactor_9 = 10,
+        [Display(Name = "Reactor 10")]
         Reactor_10 = 11,
+        [Display(Name = "Reactor 11")]
         Reactor_11 = 12,
+        [Display(Name = "Reactor 12")]
         Reactor_12 = 13
     }
     public enum MessageType
@@ -43,6 +56,24 @@ namespace MCP.Protocol
         public static string O2_Saturation = "O2";
         public static string CO2_Saturation = "CO2";
         public static string CHx_Saturation = "CHx";
+
+        public static string[] ControlParameters = new string[] { Dilution_Rate, Agitation_Rate, Temperature, Aeration_Rate };
+        public static string[] MeasuredParameters = new string[] { Biomass_Concentration, O2_Saturation, CO2_Saturation, CHx_Saturation };
+        public static Dictionary<string, Color> ParameterColors { get; set; }
+
+        static DimensionSymbol()
+        {
+            ParameterColors = new Dictionary<string, Color>();
+            ParameterColors.Add(Dilution_Rate, DesignColors.Blue);
+            ParameterColors.Add(Agitation_Rate, DesignColors.DarkGrey);
+            ParameterColors.Add(Temperature, DesignColors.Red);
+            ParameterColors.Add(Aeration_Rate, DesignColors.LightGrey);
+            //
+            ParameterColors.Add(Biomass_Concentration, DesignColors.Yellow);
+            ParameterColors.Add(O2_Saturation, DesignColors.Blue);
+            ParameterColors.Add(CO2_Saturation, DesignColors.DarkGrey);
+            ParameterColors.Add(CHx_Saturation, DesignColors.Red);
+        }
     }
     public static class Unit
     {

@@ -19,6 +19,8 @@ using MCP.Cultivation;
 using TCD;
 using TCD.Controls;
 using MCP.Measurements;
+using MCP.Protocol;
+using System.Collections;
 
 namespace MasterControlProgram
 {
@@ -27,12 +29,29 @@ namespace MasterControlProgram
         public MainWindow()
         {
             InitializeComponent();
+
+            graphsFilterLeft.ItemsSource = DimensionSymbol.ControlParameters;
+            graphsFilterRight.ItemsSource = DimensionSymbol.MeasuredParameters;
+            graphsFilterLeft.SelectAll();
+            graphsFilterRight.SelectAll();
         }
 
         private void SelectedCultivation_Changed(object sender, SelectionChangedEventArgs e)
         {
-            //TODO: split the Chart into two: Control Parameters vs. Measurements
-            //TODO: somehow implement correct axis labels
+            Redraw(graphsFilterLeft, plotterLeft);
+            Redraw(graphsFilterRight, plotterRight);
+        }
+        private void FilterLeft_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            Redraw(graphsFilterLeft, plotterLeft);
+        }
+        private void FilterRight_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            Redraw(graphsFilterRight, plotterRight);
+        }
+        private void Redraw(ListBox graphsFilter, ChartPlotter plotter)
+        {
+            //remove old graphs
             for (int i = 0; i < plotter.Children.Count; i++)
             {
                 if (plotter.Children[i] is LineGraph)
@@ -41,14 +60,12 @@ namespace MasterControlProgram
                     i--;
                 }
             }
-            plotTitle.Content = string.Empty;
-            foreach (Cultivation cultivation in (sender as ListBox).SelectedItems)
+            //draw new graphs
+            foreach (Cultivation cultivation in cultivationsSelectionBox.SelectedItems)
             {
-                plotTitle.Content += cultivation.Reactor.ParticipantID.GetValueName() + " ";
-                foreach (KeyValuePair<string, DataLogBase> log in cultivation.CultivationLog.Logs)
-                {
-                    plotter.AddLineGraph(log.Value.DataSource, Colors.Blue, 2, log.Key);                    
-                }
+                foreach (string param in graphsFilter.SelectedItems)
+                    if (cultivation.CultivationLog.Logs.ContainsKey(param))
+                        plotter.AddLineGraph(cultivation.CultivationLog.Logs[param].DataSource, DimensionSymbol.ParameterColors[param], 2, param);
             }
         }
 

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:MasterControlProgram"
         xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
-        Title="Master Control Program" Width="800" Height="600" DataContext="{StaticResource ViewModel}" ResizeMode="CanResizeWithGrip">
+        Title="Master Control Program" Width="1280" Height="720" DataContext="{StaticResource ViewModel}" ResizeMode="CanResizeWithGrip">
 
 
     <Grid>
@@ -27,22 +27,17 @@
                 <GroupBox Grid.Row="0" Header="Experiments" DataContext="{Binding ExperimentLibrary}">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <StackPanel>
-                            <TextBlock Text="Active Experiment" Style="{StaticResource SubtleTextBlockStyle}" />
-                            <ComboBox ItemsSource="{Binding Experiments, Converter={StaticResource UIConverter}, ConverterParameter=InsertNullToExperimentsCollection}" SelectedItem="{Binding ActiveExperiment, Mode=TwoWay}" Margin="0,5" />
-                        </StackPanel>
-                        <ListBox x:Name="experimentsList" Grid.Row="1" ItemsSource="{Binding Experiments}">
+                        <ListBox x:Name="experimentsList" Grid.Row="0" ItemsSource="{Binding Experiments}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding DisplayName}" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                        <Grid Grid.Row="2">
+                        <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
@@ -70,47 +65,94 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <ListBox ItemsSource="{Binding Cultivations}" SelectionChanged="SelectedCultivation_Changed" SelectionMode="Extended">
+                        <ListBox x:Name="cultivationsSelectionBox" ItemsSource="{Binding Cultivations}" SelectionChanged="SelectedCultivation_Changed" SelectionMode="Extended" HorizontalContentAlignment="Stretch">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Button DataContext="{Binding}" Command="{Binding ChangeParametersCommand}" Padding="0" Margin="5">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{Binding Reactor.ParticipantID}" Grid.Column="0" Style="{StaticResource LargeValueTextBlockStyle}" />
-                                            <StackPanel Orientation="Horizontal" Grid.Column="1">
-                                                <StackPanel Margin="10">
+                                    <CheckBox IsChecked="{Binding Path=IsSelected, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" VerticalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center">
+                                        <Button DataContext="{Binding}" Command="{Binding ChangeParametersCommand}" Padding="0" Margin="5" HorizontalContentAlignment="Stretch">
+                                            <Grid Margin="5,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Reactor.ParticipantID, Converter={StaticResource EnumNameConverter}}" VerticalAlignment="Center" Grid.Column="0" Style="{StaticResource LargeValueTextBlockStyle}" />
+                                                <StackPanel Grid.Column="1" Margin="10">
                                                     <TextBlock Text="V_L [ml]" Style="{StaticResource SubtleTextBlockStyle}" />
                                                     <TextBlock Text="{Binding CultureVolume, FallbackValue=10}" Style="{StaticResource MediumValueTextBlockStyle}" />
                                                 </StackPanel>
-                                                <StackPanel Margin="10">
+                                                <StackPanel Grid.Column="2" Margin="10">
                                                     <TextBlock Text="D [1/h]" Style="{StaticResource SubtleTextBlockStyle}" />
                                                     <TextBlock Text="{Binding DilutionRateSetpoint, StringFormat=0.00, FallbackValue=0.15}" Style="{StaticResource MediumValueTextBlockStyle}" />
                                                 </StackPanel>
-                                                <StackPanel Margin="10">
+                                                <StackPanel Grid.Column="3" Margin="10">
                                                     <TextBlock Text="q_g [vvm]" Style="{StaticResource SubtleTextBlockStyle}" />
                                                     <TextBlock Text="{Binding AerationRateSetpoint, StringFormat=0.0, FallbackValue=1.0}" Style="{StaticResource MediumValueTextBlockStyle}" />
                                                 </StackPanel>
-                                                <StackPanel Margin="10">
+                                                <StackPanel Grid.Column="4" Margin="10">
                                                     <TextBlock Text="n [rpm]" Style="{StaticResource SubtleTextBlockStyle}" />
                                                     <TextBlock Text="{Binding AgitationRateSetpoint, FallbackValue=500}" Style="{StaticResource MediumValueTextBlockStyle}" />
                                                 </StackPanel>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Button>
+                                                <StackPanel Grid.Column="5" Orientation="Vertical">
+                                                    <Button Content="Start" Command="{Binding StartCultivationCommand}" IsEnabled="{Binding IsRunning, Converter={StaticResource UIConverter}, ConverterParameter=InvertBool}" />
+                                                    <Button Content="Stop" Command="{Binding StopCultivationCommand}" IsEnabled="{Binding IsRunning}" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </Button>
+                                    </CheckBox>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                        <d3:ChartPlotter x:Name="plotter" Grid.Row="1" LegendVisible="True" Margin="10">
-                            <d3:ChartPlotter.HorizontalAxis>
-                                <d3:HorizontalAxis x:Name="timeAxis" />
-                            </d3:ChartPlotter.HorizontalAxis>
-                            <d3:Header x:Name="plotTitle" Content="Live Data"/>
-                            <d3:HorizontalAxisTitle Content="time   [s]"/>
-                            <d3:VerticalAxisTitle Content="Vertical Axis Title" />
-                        </d3:ChartPlotter>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <d3:ChartPlotter x:Name="plotterLeft" Grid.Column="0" LegendVisible="True" Margin="10">
+                                <d3:ChartPlotter.HorizontalAxis>
+                                    <d3:HorizontalAxis />
+                                </d3:ChartPlotter.HorizontalAxis>
+                                <d3:Header Content="Control Parameters"/>
+                                <d3:HorizontalAxisTitle Content="time   [h]"/>
+                                <!--<d3:VerticalAxisTitle Content="Vertical Axis Title" />-->
+                            </d3:ChartPlotter>
+                            <Grid Grid.Column="1" MinWidth="100">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <GroupBox Grid.Row="0" Header="Control Parameters (left)">
+                                    <ListBox x:Name="graphsFilterLeft" SelectionChanged="FilterLeft_Changed" SelectionMode="Extended">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Content="{Binding}" IsChecked="{Binding Path=IsSelected, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </GroupBox>
+                                <GroupBox Grid.Row="1" Header="Measured Parameters (right)">
+                                    <ListBox x:Name="graphsFilterRight" SelectionChanged="FilterRight_Changed" SelectionMode="Extended">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <CheckBox Content="{Binding}" IsChecked="{Binding Path=IsSelected, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </GroupBox>  
+                            </Grid>                          
+                            <d3:ChartPlotter x:Name="plotterRight" Grid.Column="2" LegendVisible="True" Margin="10">
+                                <d3:ChartPlotter.HorizontalAxis>
+                                    <d3:HorizontalAxis />
+                                </d3:ChartPlotter.HorizontalAxis>
+                                <d3:Header Content="Measurements"/>
+                                <d3:HorizontalAxisTitle Content="time   [h]"/>
+                                <!--<d3:VerticalAxisTitle Content="Vertical Axis Title" />-->
+                            </d3:ChartPlotter>
+                        </Grid>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Settings">
@@ -125,22 +167,28 @@
                         <ItemsControl Grid.Row="0" ItemsSource="{Binding Reactors}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button DataContext="{Binding Value}" Command="{Binding EditReactorCommand}" Padding="0" Margin="5" HorizontalContentAlignment="Left">
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding ParticipantID}" Style="{StaticResource LargeValueTextBlockStyle}" />
-                                            <StackPanel Margin="10">
+                                    <Button DataContext="{Binding Value}" Command="{Binding EditReactorCommand}" Padding="0" Margin="5" HorizontalContentAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Stretch" Margin="5,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding ParticipantID, Converter={StaticResource EnumNameConverter}}" Style="{StaticResource LargeValueTextBlockStyle}" />
+                                            <StackPanel Grid.Column="1" Margin="10">
                                                 <TextBlock Text="Feed Pump ID" Style="{StaticResource SubtleTextBlockStyle}" />
                                                 <TextBlock Text="{Binding FeedPumpID, FallbackValue=not available}" Style="{StaticResource SmallValueTextBlockStyle}" />
                                             </StackPanel>
-                                            <StackPanel Margin="10">
+                                            <StackPanel Grid.Column="2" Margin="10">
                                                 <TextBlock Text="Aeration Pump ID" Style="{StaticResource SubtleTextBlockStyle}" />
                                                 <TextBlock Text="{Binding AerationPumpID, FallbackValue=not available}" Style="{StaticResource SmallValueTextBlockStyle}" />
                                             </StackPanel>
-                                            <StackPanel Margin="10">
+                                            <StackPanel Grid.Column="3" Margin="10">
                                                 <TextBlock Text="Harvest Pump ID" Style="{StaticResource SubtleTextBlockStyle}" />
                                                 <TextBlock Text="{Binding HarvestPumpID, FallbackValue=not available}" Style="{StaticResource SmallValueTextBlockStyle}" />
                                             </StackPanel>
-                                        </StackPanel>
+                                        </Grid>
                                     </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -160,11 +208,11 @@
                         <ItemsControl Grid.Row="0" ItemsSource="{Binding Pumps}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button DataContext="{Binding Value}" Command="{Binding EditPumpCommand}" Padding="0" Margin="5" HorizontalContentAlignment="Left">
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding PumpID}" Style="{StaticResource LargeValueTextBlockStyle}" />
-                                            <TextBlock Text="{Binding SpecificPumpingRate}" Style="{StaticResource MediumValueTextBlockStyle}" />
-                                        </StackPanel>
+                                    <Button DataContext="{Binding Value}" Command="{Binding EditPumpCommand}" Padding="0" Margin="5" HorizontalContentAlignment="Stretch">
+                                        <Grid Margin="5,0">
+                                            <TextBlock Text="{Binding PumpID}" Style="{StaticResource LargeValueTextBlockStyle}" HorizontalAlignment="Left" />
+                                            <TextBlock Text="{Binding SpecificPumpingRate}" Style="{StaticResource MediumValueTextBlockStyle}" HorizontalAlignment="Right" />
+                                        </Grid>
                                     </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

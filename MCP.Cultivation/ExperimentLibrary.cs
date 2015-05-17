@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using TCD;
+using TCD.Controls;
 
 namespace MCP.Cultivation
 {
@@ -21,20 +22,8 @@ namespace MCP.Cultivation
 
         private ObservableCollection<Experiment> _Experiments = new ObservableCollection<Experiment>();
         public ObservableCollection<Experiment> Experiments { get { return _Experiments; } set { _Experiments = value; OnPropertyChanged(); } }
-
-        private Experiment _ActiveExperiment = null;
-        public Experiment ActiveExperiment { get { return _ActiveExperiment; } set { _ActiveExperiment = value; OnPropertyChanged(); } }
-        //TODO: remove the ActiveExperiment property and give each Cultivation its own IsRunning property.
-        //TODO: before a Cultivation can be marked as active, check if another Cultivation is using a same reactor
-        //TODO: make a Dictionary<ParticipantID, Cultivation> to keep track which reactor is in use and also to forward incoming messages
-        //TODO: save the IsRunning property to the Cultivation file
-        //TODO: when loading the Experiments, check if there's a collision between reactors that are in use. If so show a CustomMessageBox to decide which cultivation to stop
-        //      Advantages: this way multiple experiments can run at the same time, independent from each other
-        //TODO: when a Cultivation is started for the first time, save the start time
-        //TODO: when a Cultivation is started but there's already data, ask the user what to do (Delete/Keep)
-
-			
-
+        			
+        
         private RelayCommand _AddExperimentCommand;
         public RelayCommand AddExperimentCommand { get { return _AddExperimentCommand; } set { _AddExperimentCommand = value; OnPropertyChanged(); } }
 
@@ -75,7 +64,7 @@ namespace MCP.Cultivation
         }
 
 
-        private void ScanExperimentsDirectory()
+        private async void ScanExperimentsDirectory()
         {
             //in order to preserve the ObservableCollection we only want to add new experiments, or remove experiments where the folder was deleted
             //first get all subdirectories in the experiments directory
@@ -89,8 +78,6 @@ namespace MCP.Cultivation
                 }
                 else//unload/remove experiments where the folder does not exist anymore
                 {
-                    if (ActiveExperiment == Experiments[i])
-                        ActiveExperiment = null;
                     Experiments.RemoveAt(i);
                     i--;
                 }
@@ -112,13 +99,99 @@ namespace MCP.Cultivation
                             exp.Save();
                         }
                     });
+                    await LookForConflictsAsync(exp);
+                    foreach (Cultivation c in exp.Cultivations)
+                    {
+                        ParticipantID reactorInQuestion = c.Reactor.ParticipantID;
+                        c.StartCultivationCommand = new RelayCommand(async delegate
+                        {
+                            Experiment conflictingExperiment;
+                            Cultivation conflicting = FindRunningCultivation(c.Reactor.ParticipantID, out conflictingExperiment);
+                            if (conflicting == null)
+                            {
+                                c.IsRunning = true;
+                            }
+                            else//ask the user to stop the other cultivation
+                            {
+                                int result = await CustomMessageBox.ShowAsync(
+                                    "Conflict - Reactor already in use",
+                                    string.Format("{0} is already in use by {1}\r\n\r\nDo you want to stop the other cultivation?", reactorInQuestion.GetValueName(), conflictingExperiment.ToString()),
+                                    System.Windows.MessageBoxImage.Warning,
+                                    1,
+                                    string.Format("Stop {0}", conflictingExperiment.ToString()),
+                                    "Cancel");
+                                if (result == 0)//if he wants to proceed and stop the other experiment
+                                {
+                                    conflicting.IsRunning = false;
+                                    conflicting.Save();
+                                    c.IsRunning = true;
+                                }
+                            }
+                            if (c.IsRunning)//everything is GO - start the culture and save the time
+                                c.StartTime = DateTime.Now;
+                            c.Save();
+                        }); 
+                        c.StopCultivationCommand = new RelayCommand(delegate
+                        {
+                            c.IsRunning = false;
+                            c.Save();
+                        });
+                    }
                     Experiments.Add(exp);
                 }
             }
         }
+        private async Task LookForConflictsAsync(Experiment exp)
+        {
+            foreach (Cultivation c in exp.Cultivations)
+            {
+                ParticipantID reactorInQuestion = c.Reactor.ParticipantID;
+                if (c.IsRunning)//the loaded experiment is running -> make sure that there's no conflict
+                {
+                    Experiment conflictingExperiment;
+                    Cultivation conflicting = FindRunningCultivation(reactorInQuestion, out conflictingExperiment);
+                    if (conflicting != null)//if we don't know of any other experiment that is using the same reactor
+                    {
+                        //ask the user to choose
+                        int result = await CustomMessageBox.ShowAsync(
+                            "Conflict - Reactor already in use",
+                            string.Format("{0} is already in use by {1}\r\n\r\nPlease select the experiment that you want to prioritize.", reactorInQuestion.GetValueName(), conflictingExperiment),
+                            System.Windows.MessageBoxImage.Warning,
+                            0,
+                            conflictingExperiment.ToString(),
+                            exp.ToString());
+                        if (result == 0)//if he wants to keep the already loaded experiment running
+                        {
+                            c.IsRunning = false;//stop the new one
+                            c.Save();
+                        }
+                        else//stop the other cultivation and overwrite the reservation
+                        {
+                            conflicting.IsRunning = false;
+                            conflicting.Save();
+                        }
+                    }
 
+                }
+            }
+        }
 
-
+        public Cultivation FindRunningCultivation(ParticipantID reactor, out Experiment conflictingExperiment)
+        {
+            foreach (Experiment exp in Experiments)
+            {
+                foreach (Cultivation culti in exp.Cultivations)
+                {
+                    if (culti.IsRunning && culti.Reactor.ParticipantID == reactor)
+                    {
+                        conflictingExperiment = exp;
+                        return culti;
+                    }
+                }
+            }
+            conflictingExperiment = null;
+            return null;
+        }
 
     }
 }

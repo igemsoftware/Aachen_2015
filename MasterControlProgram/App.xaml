@@ -21,16 +21,24 @@
         <Style x:Key="MediumValueTextBlockStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="FontSize" Value="28" />
-            <Setter Property="Margin" Value="5" />
+            <Setter Property="Margin" Value="0,5,5,5" />
         </Style>
         <Style x:Key="SmallValueTextBlockStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="FontSize" Value="22" />
-            <Setter Property="Margin" Value="5" />
+            <Setter Property="Margin" Value="0,5,5,5" />
         </Style>
         <Style TargetType="Button">
             <Setter Property="Margin" Value="0,5,5,5" />
             <Setter Property="Padding" Value="3" />
         </Style>
+        <SolidColorBrush x:Key="DarkGrey" Color="#333333" />
+        <SolidColorBrush x:Key="LightGrey" Color="#AAAAAA" />
+        <SolidColorBrush x:Key="Red" Color="#bf1521" />
+        <SolidColorBrush x:Key="Blue" Color="#2850ad" />
+        <SolidColorBrush x:Key="Pink" Color="#b933ad" />
+        <SolidColorBrush x:Key="Green" Color="#00993d" />
+        <SolidColorBrush x:Key="Orange" Color="#ff6313" />
+        <SolidColorBrush x:Key="Yellow" Color="#fccc0a" />
     </Application.Resources>
 </Application>

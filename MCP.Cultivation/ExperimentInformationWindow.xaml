@@ -32,7 +32,7 @@
                 <ItemsControl x:Name="reactorsSelector" ItemsSource="{Binding}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <CheckBox Content="{Binding ReactorID}" IsChecked="{Binding IsAssociated, Mode=TwoWay}" Margin="0,5" />
+                            <CheckBox Content="{Binding ReactorID, Converter={StaticResource EnumNameConverter}}" IsChecked="{Binding IsAssociated, Mode=TwoWay}" Margin="0,5" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

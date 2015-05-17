@@ -57,6 +57,7 @@ namespace MasterControlProgram
                     exp.AddRange(experiments);
                     return exp;
                 case "BoolToVisibility": return ((bool)value == true) ? Visibility.Visible : Visibility.Collapsed;
+                case "InvertBool": return ((bool)value == false);
                 default:
                     return null;
             }

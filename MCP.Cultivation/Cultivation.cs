@@ -57,7 +57,10 @@ namespace MCP.Cultivation
         /// </summary>
         public DateTime StartTime { get { return _StartTime; } set { _StartTime = value; OnPropertyChanged(); } }
 
-
+        private bool _IsRunning;
+        public bool IsRunning { get { return _IsRunning; } set { _IsRunning = value; OnPropertyChanged(); } }
+        
+			
         #endregion
 
         #region Calculated Properties (Ignored)
@@ -99,7 +102,16 @@ namespace MCP.Cultivation
         private string _BaseDirectory;
         [XmlIgnore]
         public string BaseDirectory { get { return _BaseDirectory; } set { _BaseDirectory = value; OnPropertyChanged(); CultivationLog = new CultivationLog(value); } }
-        
+
+        private RelayCommand _StartCultivationCommand;
+        [XmlIgnore]
+        public RelayCommand StartCultivationCommand { get { return _StartCultivationCommand; } set { _StartCultivationCommand = value; OnPropertyChanged(); } }
+
+        private RelayCommand _StopCultivationCommand;
+        [XmlIgnore]
+        public RelayCommand StopCultivationCommand { get { return _StopCultivationCommand; } set { _StopCultivationCommand = value; OnPropertyChanged(); } }
+
+        	
         #endregion
 
         #region Commands

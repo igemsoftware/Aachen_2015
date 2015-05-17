@@ -54,13 +54,11 @@ namespace MasterControlProgram
 
         private void PrimarySerial_NewMessageReceived(object sender, Message message)
         {
-            if (ExperimentLibrary.ActiveExperiment == null)
+            Experiment receivingExperiment;
+            Cultivation receiver = ExperimentLibrary.FindRunningCultivation(message.Sender, out receivingExperiment);
+            if (receiver == null)
                 return;
-            foreach (Cultivation c in ExperimentLibrary.ActiveExperiment.Cultivations)
-            {
-                if (c.Reactor.ParticipantID == message.Sender)
-                    c.CultivationLog.ReceiveMessage(message);
-            }
+            receiver.CultivationLog.ReceiveMessage(message);
         }
 
         private void MCPSettings_HomeDirectoryChanged(object sender, EventArgs e)
