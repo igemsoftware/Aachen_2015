@@ -51,9 +51,14 @@ namespace PumpCalibrator
             DataSource.SetXMapping(x => (x.Time - StartTime).TotalSeconds);
             DataSource.SetYMapping(y => y.Value - StartWeight);
             //
-            StartCalibrationCommand = new RelayCommand(delegate { Start(); });
+            StartCalibrationCommand = new RelayCommand(delegate
+                {
+                    SpeechIO.Speak(string.Format("Starting calibration at {0} speed.", CurrentSpeed));
+                    Start();
+                });
             FinishCalibrationCommand = new RelayCommand(async delegate
                 {
+                    SpeechIO.Speak("Calibration finished.");
                     RawData start = SensorDataSet.First();
                     RawData end = SensorDataSet.Last();
                     double pumpedVolume = (end.Value - start.Value);
@@ -75,7 +80,22 @@ namespace PumpCalibrator
                         }
                     }
                 });
+            //Speech
+            SpeechIO.Recognizer.SpeechRecognized += Recognizer_SpeechRecognized;
         }
+        private void Recognizer_SpeechRecognized(object sender, System.Speech.Recognition.SpeechRecognizedEventArgs e)
+        {
+            switch(e.Result.Text.ToLower())
+            {
+                case "start calibration":
+                    StartCalibrationCommand.Execute(null);
+                    break;
+                case "finish calibration":
+                    FinishCalibrationCommand.Execute(null);
+                    break;
+            }
+        }
+
         public void Start()
         {
             SensorDataCollection.Clear();
