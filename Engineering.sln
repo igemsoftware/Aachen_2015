@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PumpController", "PumpController\PumpController.csproj", "{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterControlProgram", "MasterControlProgram\MasterControlProgram.csproj", "{5FCC7ED5-869C-4A1A-8EBE-6C31D2ADBC75}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCP.Cultivation", "MCP.Cultivation\MCP.Cultivation.csproj", "{19BC6B68-F267-4295-B5A3-52ABD5FDBC2F}"
@@ -19,31 +17,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PumpCalibrator", "PumpCalib
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
+		SccNumberOfProjects = 7
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://igemaachen.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = PumpController\\PumpController.csproj
-		SccProjectName1 = PumpController
-		SccLocalPath1 = PumpController
-		SccProjectUniqueName2 = MasterControlProgram\\MasterControlProgram.csproj
-		SccProjectName2 = MasterControlProgram
-		SccLocalPath2 = MasterControlProgram
-		SccProjectUniqueName3 = MCP.Cultivation\\MCP.Cultivation.csproj
-		SccProjectName3 = MCP.Cultivation
-		SccLocalPath3 = MCP.Cultivation
-		SccProjectUniqueName4 = MCP.Equipment\\MCP.Equipment.csproj
-		SccProjectName4 = MCP.Equipment
-		SccLocalPath4 = MCP.Equipment
-		SccProjectUniqueName5 = MCP.Protocol\\MCP.Protocol.csproj
-		SccProjectName5 = MCP.Protocol
-		SccLocalPath5 = MCP.Protocol
-		SccProjectUniqueName6 = MCP.Measurements\\MCP.Measurements.csproj
-		SccProjectName6 = MCP.Measurements
-		SccLocalPath6 = MCP.Measurements
-		SccProjectUniqueName7 = PumpCalibrator\\PumpCalibrator.csproj
-		SccProjectName7 = PumpCalibrator
-		SccLocalPath7 = PumpCalibrator
+		SccProjectUniqueName1 = MasterControlProgram\\MasterControlProgram.csproj
+		SccProjectName1 = MasterControlProgram
+		SccLocalPath1 = MasterControlProgram
+		SccProjectUniqueName2 = MCP.Cultivation\\MCP.Cultivation.csproj
+		SccProjectName2 = MCP.Cultivation
+		SccLocalPath2 = MCP.Cultivation
+		SccProjectUniqueName3 = MCP.Equipment\\MCP.Equipment.csproj
+		SccProjectName3 = MCP.Equipment
+		SccLocalPath3 = MCP.Equipment
+		SccProjectUniqueName4 = MCP.Protocol\\MCP.Protocol.csproj
+		SccProjectName4 = MCP.Protocol
+		SccLocalPath4 = MCP.Protocol
+		SccProjectUniqueName5 = MCP.Measurements\\MCP.Measurements.csproj
+		SccProjectName5 = MCP.Measurements
+		SccLocalPath5 = MCP.Measurements
+		SccProjectUniqueName6 = PumpCalibrator\\PumpCalibrator.csproj
+		SccProjectName6 = PumpCalibrator
+		SccLocalPath6 = PumpCalibrator
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,16 +49,6 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{F2F7B847-92FF-4B16-90F1-66BEFBA51F24}.Release|Win32.ActiveCfg = Release|Any CPU
 		{5FCC7ED5-869C-4A1A-8EBE-6C31D2ADBC75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5FCC7ED5-869C-4A1A-8EBE-6C31D2ADBC75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FCC7ED5-869C-4A1A-8EBE-6C31D2ADBC75}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
