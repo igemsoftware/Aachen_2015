@@ -100,7 +100,7 @@ namespace PumpCalibrator
         {
             SensorDataCollection.Clear();
             StartTime = DateTime.Now;
-            ViewModel.Current.PrimarySerial.SendMessage(new Message(ParticipantID.MCP, ParticipantID.Reactor_1, MessageType.Command, string.Format("100000")));
+            ViewModel.Current.PrimarySerial.SendMessage(new Message(ParticipantID.MCP, ParticipantID.Reactor_1, MessageType.Command, "pump1", ((int)CurrentSpeed).ToString(), "sph"));
         }
         public void AddPoint(RawData data)
         {
@@ -110,8 +110,8 @@ namespace PumpCalibrator
     }
     public enum PumpingSpeed
     {
-        Slow = 300000,
-        Medium = 200000,
-        Fast = 100000
+        Slow = 20000,
+        Medium = 30000,
+        Fast = 40000
     }
 }

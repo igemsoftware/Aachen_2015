@@ -40,7 +40,6 @@ namespace PumpCalibrator
         {
             Current = this;
             PrimarySerial.NewMessageReceived += PrimarySerial_NewMessageReceived;
-            PrimarySerial.ScaleSerialMode = true;
             if (IsDebugMode)
             {
                 DispatcherTimer dt = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(1) };
@@ -64,8 +63,11 @@ namespace PumpCalibrator
                 switch (message.MessageType)
                 {
                     case MessageType.Data:
-                        double val = Convert.ToDouble(message.Contents[0]);
-                        Calibrator.AddPoint(new RawData(val, DateTime.Now));
+                        if (message.Contents[0] == "scale")
+                        {
+                            double val = Convert.ToDouble(message.Contents[1].Substring(0,9));
+                            Calibrator.AddPoint(new RawData(val, DateTime.Now));
+                        }
                         break;
                     case MessageType.Command:
                         break;

@@ -1,49 +1,148 @@
-// Serial Connection Stuff
+//=========================================Pin assignments (except step pins)
+#define Dir  12
+#define Scale_TX 2
+#define Scale_RX 3
+//=========================================Includes & Serial Connection
 #include "SoftwareSerial.h"
-#define Dir  12  
-#define Step  13  
-int sens =   1;
+SoftwareSerial scaleSerial(Scale_TX, Scale_RX);
+//=========================================Direction and Pump Setup
+int sens = 1;
 #define numberofpumps 1
-int motorPins = 13 ;
-long lastUp;
-int periods = 85;
-boolean isLow = true;
-SoftwareSerial scaleSerial(2, 3);
+int motorPins[numberofpumps] = { 13 } ;
+long lastUp[numberofpumps];
+float periods[numberofpumps];
+boolean isLow[numberofpumps];
+//=========================================Protocol definitions
+typedef enum
+{
+  Data = 0,
+  Command = 1,
+  DataFormat = 2,
+  CommandFormat = 3
+} MessageType;
 
-void setup() {
-  // put your setup code here, to run once:
-  pinMode( Step  , OUTPUT ); 
-  pinMode( Dir   , OUTPUT ); 
+typedef enum
+{
+  MCP = 0,
+  Master = 1
+} ParticipantID;
+//=========================================Setup
+void setup()
+{
+  //set the pumping direction
+  pinMode(Dir, OUTPUT);
+  digitalWrite(Dir, sens);
+  //initialize all step pins
+  for (int i = 0; i < numberofpumps; i++)
+  {
+    pinMode(motorPins[i], OUTPUT);
+    isLow[i] = true;
+    periods[i] = -1;// -1 indicates OFF
+  }
+  //initialize the serial connections
   Serial.begin(9600, SERIAL_8N2);
   scaleSerial.begin(9600);
-  // put your main code here, to run repeatedly:
-  digitalWrite( Dir   , sens); 
+}
+//=========================================Loop
+void loop()
+{
+  ReadIncoming();
+  ReadScale();
+  MakeSteps();
 }
 
-void loop() {   
+void ReadScale()
+{
   if (scaleSerial.available())
   {
-      Serial.write(scaleSerial.read());
+    String message = Serial.readStringUntil('\n');
+    //this is for testing: String message = "+0002.157 G S";
+    String package[] = { "scale", message, "scalepackage" };
+    SendMessage(Master, MCP, Data, package);
+    //Serial.write(scaleSerial.read());
   }
-  pump_run();    
 }
 
-void pump_run(){
-   //adjust outputs
-   long now1 = millis();
-   //turn the motors
-//   for (int m=0; m<3; m++)
-//   {
-     if (now1 - lastUp > periods)
-     {
-       digitalWrite(motorPins, HIGH);
-       lastUp = now1;
-       isLow = false;
-     }
-     else if (!isLow && now1 - lastUp > 10)
-     {
-       digitalWrite(motorPins, LOW);
-       isLow = true;
-     }
-//  } 
+void ReadIncoming()
+{
+  if (Serial.available())//there's something incoming
+  {
+    String message = Serial.readStringUntil('\n');//read the whole message
+    int sender = message[0];
+    int receiver = message[1];
+    MessageType type = (MessageType)message[2];
+    String content = message.substring(3);
+    switch (type)
+    {
+      case Command:
+        if (getValue(content, '\t', 0) == "pump1")
+          if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
+            UpdatePumpSetpoint(0, "pump1", getValue(content, '\t', 1).toFloat()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
+        break;
+    }
+  }
 }
+void UpdatePumpSetpoint(int pump, String pname, float stepsPerHour)
+{
+  periods[pump] = 3600000 / stepsPerHour;//calculate the period
+  String answer[] = { pname, String(periods[pump]), "ms/step" };//report back
+  SendMessage(Master, MCP, Data, answer);
+}
+
+void SendMessage(int sender, int receiver, int type, String contents[])
+{
+  Serial.write(sender);
+  Serial.write(receiver);
+  Serial.write(type);
+  for (int c = 0; c < sizeof(contents) + 1; c++)//print each string
+  {
+    if (c < sizeof(contents))       //tab separated
+      Serial.print(contents[c] + '\t');
+    else
+    {
+      Serial.print(contents[c]);    //the last one does not have a tab
+      Serial.println();             //but finishes
+    }
+  }
+}
+
+String getValue(String data, char separator, int index)
+{
+  //taken from http://stackoverflow.com/questions/9072320/split-string-into-string-array
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length() - 1;
+
+  for (int i = 0; i <= maxIndex && found <= index; i++)
+  {
+    if (data.charAt(i) == separator || i == maxIndex)
+    {
+      found++;
+      strIndex[0] = strIndex[1] + 1;
+      strIndex[1] = (i == maxIndex) ? i + 1 : i;
+    }
+  }
+  return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
+void MakeSteps()
+{
+  //adjust outputs
+  long now1 = millis();
+  //turn the motors
+  for (int m = 0; m < numberofpumps; m++)
+  {
+    if (now1 - lastUp[m] > periods[m] && periods[m] > 0)//if the period is over, but not -1 (turned off)
+    {
+      digitalWrite(motorPins[m], HIGH);          //turn the pin on
+      lastUp[m] = now1;
+      isLow[m] = false;
+    }
+    else if (!isLow[m] && now1 - lastUp[m] > 10)//the period is not yet over, but the pin was HIGH for > 10 ms
+    {
+      digitalWrite(motorPins[m], LOW);          //turn the pin off
+      isLow[m] = true;
+    }
+  }
+}
+

@@ -39,7 +39,6 @@ namespace MCP.Protocol
         public SerialPort ActivePort { get { return _ActivePort; } set { _ActivePort = value; OnPropertyChanged("ActivePort"); } }
         public static SerialIO Current { get; private set; }
 
-        public bool ScaleSerialMode { get; set; }
 
         public SerialIO()
         {
@@ -78,8 +77,6 @@ namespace MCP.Protocol
             try
             {
                 string raw = ActivePort.ReadLine();
-                if (ScaleSerialMode)
-                    InterpretMessage(new Message(ParticipantID.Master, ParticipantID.MCP, MessageType.Data, raw.Substring(1,8)).Raw);
                 InterpretMessage(raw);                
             }
             catch { }
@@ -92,13 +89,6 @@ namespace MCP.Protocol
             {
                 OnNewMessageReceivedEvent(this, msg);
             }));
-
-            
-            //Dispatcher.CurrentDispatcher.BeginInvoke(new Action(
-            //    delegate
-            //    {
-            //        OnNewMessageReceivedEvent(this, msg);
-            //    }), DispatcherPriority.Normal);
         }
 
         public bool SendMessage(Message msg)
