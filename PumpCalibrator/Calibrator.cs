@@ -81,7 +81,7 @@ namespace PumpCalibrator
                     }
                 });
             //Speech
-            SpeechIO.Recognizer.SpeechRecognized += Recognizer_SpeechRecognized;
+            //SpeechIO.Recognizer.SpeechRecognized += Recognizer_SpeechRecognized;
         }
         private void Recognizer_SpeechRecognized(object sender, System.Speech.Recognition.SpeechRecognizedEventArgs e)
         {

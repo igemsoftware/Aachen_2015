@@ -16,6 +16,7 @@ using Microsoft.Research.DynamicDataDisplay;
 using TCD.Controls;
 
 using Microsoft.Research.DynamicDataDisplay.DataSources;
+using MCP.Protocol;
 
 namespace PumpCalibrator
 {
@@ -28,6 +29,7 @@ namespace PumpCalibrator
         {
             InitializeComponent();
             speedBox.SetUpItems(PumpingSpeed.Medium);
+            baudrateBox.SetUpItems(BaudRate._9600);
             plotter.AddLineGraph(ViewModel.Current.Calibrator.DataSource, Colors.Blue, 2, "weight");    
         }
     }

@@ -23,8 +23,11 @@ namespace PumpCalibrator
 
 
         #region Debug Properties
-        public bool IsDebugMode { get { return System.Diagnostics.Debugger.IsAttached; } }
-
+#if DEBUG
+        public bool IsDebugMode { get { return true; } }
+#else
+        public bool IsDebugMode { get { return false; } }
+#endif
         private bool _IsRandomizerEnabled;
         public bool IsRandomizerEnabled { get { return _IsRandomizerEnabled; } set { _IsRandomizerEnabled = value; OnPropertyChanged(); } }
 
@@ -37,7 +40,7 @@ namespace PumpCalibrator
         {
             Current = this;
             PrimarySerial.NewMessageReceived += PrimarySerial_NewMessageReceived;
-
+            PrimarySerial.ScaleSerialMode = true;
             if (IsDebugMode)
             {
                 DispatcherTimer dt = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(1) };
@@ -56,21 +59,29 @@ namespace PumpCalibrator
 
         private void PrimarySerial_NewMessageReceived(object sender, Message message)
         {
-            switch (message.MessageType)
+            try
             {
-                case MessageType.Data:
-                    double val = Convert.ToDouble(message.Contents);
-                    Calibrator.AddPoint(new RawData(val, DateTime.Now));
-                    break;
-                case MessageType.Command:
-                    break;
-                case MessageType.DataFormat:
-                    break;
-                case MessageType.CommandFormat:
-                    break;
-                default:
-                    break;
+                switch (message.MessageType)
+                {
+                    case MessageType.Data:
+                        double val = Convert.ToDouble(message.Contents[0]);
+                        Calibrator.AddPoint(new RawData(val, DateTime.Now));
+                        break;
+                    case MessageType.Command:
+                        break;
+                    case MessageType.DataFormat:
+                        break;
+                    case MessageType.CommandFormat:
+                        break;
+                    default:
+                        break;
+                }
             }
+            catch
+            {
+
+            }
+            
         }
     }
 }

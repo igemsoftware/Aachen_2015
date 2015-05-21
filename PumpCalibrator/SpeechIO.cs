@@ -11,15 +11,15 @@ namespace PumpCalibrator
     public static class SpeechIO
     {
         private static SpeechSynthesizer Synthesizer = new SpeechSynthesizer();
-        private static SpeechRecognizer _Recognizer = new SpeechRecognizer();
-        public static SpeechRecognizer Recognizer { get { return _Recognizer; } set { _Recognizer = value; } }
+        //private static SpeechRecognizer _Recognizer = new SpeechRecognizer();
+        //public static SpeechRecognizer Recognizer { get { return _Recognizer; } set { _Recognizer = value; } }
 
 			
         private static Choices Commands = new Choices("Start calibration", "Finish calibration");
 
         static SpeechIO()
         {
-            InitializeSpeechRecogonition();
+          //  InitializeSpeechRecogonition();
         }
         private static void InitializeSpeechRecogonition()
         {
@@ -29,9 +29,9 @@ namespace PumpCalibrator
         {
             //Load up the Choices object with the contents of the Color list, populate the GrammarBuilder, 
             //create a Grammar with the Grammar builder helper and load it up into the SpeechRecognizer 
-            GrammarBuilder grammarBuilder = new GrammarBuilder(Commands);
-            Grammar testGrammar = new Grammar(grammarBuilder);
-            Recognizer.LoadGrammar(testGrammar);
+            //GrammarBuilder grammarBuilder = new GrammarBuilder(Commands);
+            //Grammar testGrammar = new Grammar(grammarBuilder);
+            //Recognizer.LoadGrammar(testGrammar);
         }
 
         public static void Speak(string text)

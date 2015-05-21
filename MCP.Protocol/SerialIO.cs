@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 using TCD;
 using TCD.Controls;
@@ -37,6 +38,8 @@ namespace MCP.Protocol
         private SerialPort _ActivePort;
         public SerialPort ActivePort { get { return _ActivePort; } set { _ActivePort = value; OnPropertyChanged("ActivePort"); } }
         public static SerialIO Current { get; private set; }
+
+        public bool ScaleSerialMode { get; set; }
 
         public SerialIO()
         {
@@ -74,11 +77,10 @@ namespace MCP.Protocol
         {
             try
             {
-                Dispatcher.CurrentDispatcher.BeginInvoke(new Action(delegate
-                {
-                    string raw = ActivePort.ReadLine();
-                    InterpretMessage(raw);
-                }), DispatcherPriority.Normal);               
+                string raw = ActivePort.ReadLine();
+                if (ScaleSerialMode)
+                    InterpretMessage(new Message(ParticipantID.Master, ParticipantID.MCP, MessageType.Data, raw.Substring(1,8)).Raw);
+                InterpretMessage(raw);                
             }
             catch { }
         }
@@ -86,7 +88,17 @@ namespace MCP.Protocol
         {
             Message msg = new Message(raw);
             System.Diagnostics.Debug.WriteLine(msg.ToString());
-            OnNewMessageReceivedEvent(this, msg);
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                OnNewMessageReceivedEvent(this, msg);
+            }));
+
+            
+            //Dispatcher.CurrentDispatcher.BeginInvoke(new Action(
+            //    delegate
+            //    {
+            //        OnNewMessageReceivedEvent(this, msg);
+            //    }), DispatcherPriority.Normal);
         }
 
         public bool SendMessage(Message msg)
@@ -105,8 +117,8 @@ namespace MCP.Protocol
             }
             catch 
             {
-                if (Debugger.IsAttached)
-                    throw;
+                //if (Debugger.IsAttached)
+                //    throw;
                 return false;
             }
         }

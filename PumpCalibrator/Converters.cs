@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 
 namespace PumpCalibrator
@@ -26,6 +27,7 @@ namespace PumpCalibrator
                         if (InvalidFileNameCharacters.Contains(c))
                             return false;
                     return true;
+                case "BoolToVisibility": return ((bool)value == true) ? Visibility.Visible : Visibility.Collapsed;
                 default:
                     return null;
             }
