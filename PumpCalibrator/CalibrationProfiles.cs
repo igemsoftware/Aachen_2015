@@ -17,8 +17,8 @@ namespace PumpCalibrator
             Profiles.Add(CalibrationTarget.Pump, new Dictionary<CalibrationMode, List<int[]>>());
             Profiles.Add(CalibrationTarget.Stirrer, new Dictionary<CalibrationMode, List<int[]>>());
             Symbols.Add(CalibrationTarget.Pump, "pump1");
-            Symbols.Add(CalibrationTarget.Stirrer, "sph");
-            Units.Add(CalibrationTarget.Pump, "n");
+            Symbols.Add(CalibrationTarget.Stirrer, "n");
+            Units.Add(CalibrationTarget.Pump, "sph");
             Units.Add(CalibrationTarget.Stirrer, "rpm");
             AddPumpProfiles();
             AddStirrerProfiles();

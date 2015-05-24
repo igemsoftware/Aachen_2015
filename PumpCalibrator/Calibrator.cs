@@ -134,7 +134,7 @@ namespace PumpCalibrator
                 case CalibrationTarget.Pump:
                     PumpInformation newPump = new PumpInformation();
                     foreach (Subcalibration sub in Subcalibrations)
-                        newPump.ResponseCurve.Add(new ResponseData() { Setpoint = sub.Setpoint, Response = sub.Setpoint / sub.ChangePerHour });
+                        newPump.ResponseCurve.Add(new ResponseData() { Setpoint = sub.Setpoint, Response = sub.ChangePerHour });
                     PumpInformationWindow piw = new PumpInformationWindow("Save Pump Calibration", true, newPump);
                     piw.Show();
                     await piw.WaitTask;
