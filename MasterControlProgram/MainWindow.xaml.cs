@@ -29,7 +29,6 @@ namespace MasterControlProgram
         public MainWindow()
         {
             InitializeComponent();
-
             graphsFilterLeft.ItemsSource = DimensionSymbol.ControlParameters;
             graphsFilterRight.ItemsSource = DimensionSymbol.MeasuredParameters;
             graphsFilterLeft.SelectAll();

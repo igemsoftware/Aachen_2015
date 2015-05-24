@@ -28,6 +28,32 @@ namespace PumpCalibrator
                             return false;
                     return true;
                 case "BoolToVisibility": return ((bool)value == true) ? Visibility.Visible : Visibility.Collapsed;
+                case "TargetToAppTitle": return string.Format("{0} Calibrator", value);
+                case "TargetToChartTitle": return string.Format("{0} Calibration Profile", value);
+                case "TargetToYAxis":
+                    if (value == null)
+                        return null;
+                    switch ((CalibrationTarget)value)
+                    {
+                        case CalibrationTarget.Pump:
+                            return "pumped volume   [ml]";
+                        case CalibrationTarget.Stirrer:
+                            return "rotations   [-]";
+                        default:
+                            return null;
+                    }
+                case "TimeSpanToString":
+                    string result = string.Empty;
+                    TimeSpan val = (TimeSpan)value;
+                    if (val.Hours > 0)
+                        result += string.Format("{0} hours ", val.Hours);
+                    if (val.Minutes > 0)
+                        result += string.Format("{0} minutes and ", val.Minutes);
+                    if (val.Seconds > 0)
+                        result += string.Format("{0} seconds", val.Seconds);
+                        return result;
+                case "IsNotNull": return (value != null);
+                case "IsNull": return (value == null);
                 default:
                     return null;
             }

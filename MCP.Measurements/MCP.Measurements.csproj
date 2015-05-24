@@ -55,13 +55,15 @@
     <Compile Include="DataPostprocessingLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataPoint.cs" />
-    <Compile Include="RawData.cs" />
-    <Compile Include="SensorDataPointCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MCP.Curves\MCP.Curves.csproj">
+      <Project>{5710fb56-0f1a-45ed-8e44-a99fc6102c12}</Project>
+      <Name>MCP.Curves</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MCP.Protocol\MCP.Protocol.csproj">
       <Project>{11ecf3b6-e461-4972-abd9-3c35ee064187}</Project>
       <Name>MCP.Protocol</Name>

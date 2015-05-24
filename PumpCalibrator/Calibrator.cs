@@ -1,5 +1,6 @@
 ﻿using MCP.Equipment;
 using MCP.Measurements;
+using MCP.Curves;
 using MCP.Protocol;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using Microsoft.Win32;
@@ -10,64 +11,131 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using TCD;
+using TCD.Controls;
 
 namespace PumpCalibrator
 {
     public class Calibrator : PropertyChangedBase
     {
+        #region Commands
         private RelayCommand _StartCalibrationCommand;
         public RelayCommand StartCalibrationCommand { get { return _StartCalibrationCommand; } set { _StartCalibrationCommand = value; OnPropertyChanged(); } }
-
-        private RelayCommand _FinishCalibrationCommand;
-        public RelayCommand FinishCalibrationCommand { get { return _FinishCalibrationCommand; } set { _FinishCalibrationCommand = value; OnPropertyChanged(); } }
         
 			
-
-        private SensorDataPointCollection _SensorDataCollection = new SensorDataPointCollection();//contains only recent datapoints
-        public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; } }
-
-        private ObservableCollection<RawData> _SensorDataSet = new ObservableCollection<RawData>();//contains all datapoints
-        public ObservableCollection<RawData> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; } }
-
-
-        public DateTime StartTime { get; set; }
-        public double StartWeight { get; set; }
-
-        //private Dictionary<PumpingSpeed,double> _SpecificPumpingRates;
-        //public Dictionary<PumpingSpeed,double> SpecificPumpingRates { get { return _SpecificPumpingRates; } set { _SpecificPumpingRates = value; OnPropertyChanged(); } }
-
-        private PumpingSpeed _CurrentSpeed;
-        public PumpingSpeed CurrentSpeed { get { return _CurrentSpeed; } set { _CurrentSpeed = value; OnPropertyChanged(); } }
+        private RelayCommand _AbortCalibrationCommand;
+        public RelayCommand AbortCalibrationCommand { get { return _AbortCalibrationCommand; } set { _AbortCalibrationCommand = value; OnPropertyChanged(); } }
         
 			
-			
-        public EnumerableDataSource<RawData> DataSource { get; set; }
+        #endregion
+
+        private ObservableCollection<Subcalibration> _Subcalibrations = new ObservableCollection<Subcalibration>();
+        public ObservableCollection<Subcalibration> Subcalibrations { get { return _Subcalibrations; } set { _Subcalibrations = value; OnPropertyChanged(); } }
+
+        private CalibrationTarget _CalibrationTarget = CalibrationTarget.Pump;
+        public CalibrationTarget CalibrationTarget { get { return _CalibrationTarget; } set { _CalibrationTarget = value; OnPropertyChanged(); } }
+        
+        private CalibrationMode _CalibrationMode = CalibrationMode.Standard;
+        public CalibrationMode CalibrationMode { get { return _CalibrationMode; } set { _CalibrationMode = value; OnPropertyChanged(); } }
+
+        
+        private Subcalibration _ActiveCalibrationSub;
+        public Subcalibration ActiveCalibrationSub
+        {
+            get { return _ActiveCalibrationSub; }
+            set
+            {
+                _ActiveCalibrationSub = value;
+                OnPropertyChanged();
+                StartCalibrationCommand.RaiseCanExecuteChanged();
+                AbortCalibrationCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+
+        public double ProgressPercent
+        {
+            get
+            {
+                if (ActiveCalibrationSub == null)
+                    return 0;
+                int totalSeconds = 0;
+                double completedSeconds = 0;
+                foreach (Subcalibration sub in Subcalibrations)
+                {
+                    totalSeconds += sub.Duration;
+                    completedSeconds += sub.Duration * sub.ProgressPercent / 100;
+                }
+                if (totalSeconds == 0)
+                    return 0;
+                return completedSeconds / totalSeconds * 100;
+            }
+        }
+
+        public TimeSpan RemainingCalibrationTime
+        {
+            get
+            {
+                if (ActiveCalibrationSub == null)
+                    return TimeSpan.FromSeconds(0);
+                int totalSeconds = 0;
+                double completedSeconds = 0;
+                foreach (Subcalibration sub in Subcalibrations)
+                {
+                    totalSeconds += sub.Duration;
+                    completedSeconds += sub.Duration * sub.ProgressPercent / 100;
+                }
+                return TimeSpan.FromSeconds(totalSeconds - completedSeconds);
+            }
+        }
+
+        private DispatcherTimer progressTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(100) };
 			
 
         public Calibrator()
         {
-            DataSource = new EnumerableDataSource<RawData>(SensorDataCollection);
-            DataSource.SetXMapping(x => (x.Time - StartTime).TotalSeconds);
-            DataSource.SetYMapping(y => y.Value - StartWeight);
-            //
-            StartCalibrationCommand = new RelayCommand(delegate
+            StartCalibrationCommand = new RelayCommand(async delegate
                 {
-                    SpeechIO.Speak(string.Format("Starting calibration at {0} speed.", CurrentSpeed));
-                    Start();
-                });
-            FinishCalibrationCommand = new RelayCommand(async delegate
-                {
+                    SpeechIO.Speak(string.Format("Starting {0} calibration.", CalibrationMode));
+                    Subcalibrations.Clear();
+                    foreach (int[] pair in CalibrationProfiles.Profiles[CalibrationTarget][CalibrationMode])
+                        Subcalibrations.Add(new Subcalibration(pair[0], pair[1], CalibrationProfiles.Symbols[CalibrationTarget], CalibrationProfiles.Units[CalibrationTarget]));
+                    foreach (Subcalibration sub in Subcalibrations)
+                    {
+                        ActiveCalibrationSub = sub;
+                        if (!await sub.RunAsync())
+                        {
+                            SpeechIO.Speak("Calibration cancelled.");
+                            ActiveCalibrationSub = null;
+                            return;
+                        }    
+                    }
+                    ActiveCalibrationSub = null;
                     SpeechIO.Speak("Calibration finished.");
-                    RawData start = SensorDataSet.First();
-                    RawData end = SensorDataSet.Last();
-                    double pumpedVolume = (end.Value - start.Value);
-                    if (pumpedVolume <= 0)
-                        return;
-                    double specificPumpingRate = (int)CurrentSpeed * (end.Time - start.Time).TotalHours / pumpedVolume;
-                    //SpecificPumpingRates.Add(CurrentSpeed, specificPumpingRate);
-                    PumpInformation newPump = new PumpInformation() { SpecificPumpingRate = specificPumpingRate };
-                    PumpInformationWindow piw = new PumpInformationWindow("Save Pump Calibration", true) { DataContext = newPump };
+                    PrepareResults();
+                }, () => ActiveCalibrationSub == null);
+            AbortCalibrationCommand = new RelayCommand(delegate
+                {
+                    foreach (Subcalibration sub in Subcalibrations)
+                        sub.Abort();
+                }, () => ActiveCalibrationSub != null);
+            progressTimer.Tick += delegate
+            {
+                OnPropertyChanged("ProgressPercent");
+                OnPropertyChanged("RemainingCalibrationTime");
+            };
+            progressTimer.Start();
+        }
+        private async void PrepareResults()
+        {
+            switch (CalibrationTarget)
+            {
+                case CalibrationTarget.Pump:
+                    PumpInformation newPump = new PumpInformation();
+                    foreach (Subcalibration sub in Subcalibrations)
+                        newPump.ResponseCurve.Add(new ResponseData() { Setpoint = sub.Setpoint, Response = sub.Setpoint / sub.ChangePerHour });
+                    PumpInformationWindow piw = new PumpInformationWindow("Save Pump Calibration", true, newPump);
                     piw.Show();
                     await piw.WaitTask;
                     if (piw.Confirmed)
@@ -79,39 +147,33 @@ namespace PumpCalibrator
                             newPump.SaveTo(fbd.SelectedPath);
                         }
                     }
-                });
-            //Speech
-            //SpeechIO.Recognizer.SpeechRecognized += Recognizer_SpeechRecognized;
-        }
-        private void Recognizer_SpeechRecognized(object sender, System.Speech.Recognition.SpeechRecognizedEventArgs e)
-        {
-            switch(e.Result.Text.ToLower())
-            {
-                case "start calibration":
-                    StartCalibrationCommand.Execute(null);
                     break;
-                case "finish calibration":
-                    FinishCalibrationCommand.Execute(null);
+                case CalibrationTarget.Stirrer:
+                    System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+                    sfd.AddExtension = true;
+                    sfd.Filter = "log files (*.log)|*.log";
+                    sfd.ShowDialog();
+                    if (!string.IsNullOrWhiteSpace(sfd.FileName))
+                    {
+                        try
+                        {
+                            var writer = File.CreateText(sfd.FileName);
+                            writer.WriteLine("Setpoint   [n]\tResponse   [rpm]");
+                            foreach (Subcalibration sub in Subcalibrations)
+                                writer.WriteLine(string.Format("{0}\t{1}", sub.Setpoint, sub.ChangePerMinute));
+                            writer.Flush();
+                            writer.Dispose();
+                        }
+                        catch
+                        {
+
+                        }
+                    }
                     break;
             }
         }
 
-        public void Start()
-        {
-            SensorDataCollection.Clear();
-            StartTime = DateTime.Now;
-            ViewModel.Current.PrimarySerial.SendMessage(new Message(ParticipantID.MCP, ParticipantID.Reactor_1, MessageType.Command, "pump1", ((int)CurrentSpeed).ToString(), "sph"));
-        }
-        public void AddPoint(RawData data)
-        {
-            SensorDataSet.Add(data);
-            SensorDataCollection.Add(data);
-        }
-    }
-    public enum PumpingSpeed
-    {
-        Slow = 20000,
-        Medium = 30000,
-        Fast = 40000
+        
+        
     }
 }

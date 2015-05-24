@@ -1,4 +1,5 @@
-﻿using MCP.Measurements;
+﻿using MCP.Curves;
+using MCP.Measurements;
 using MCP.Protocol;
 using System;
 using System.Collections.Generic;
@@ -45,11 +46,12 @@ namespace PumpCalibrator
                 DispatcherTimer dt = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(1) };
                 dt.Tick += delegate
                 {
-                    if (!IsRandomizerEnabled)
+                    if (!IsRandomizerEnabled || Calibrator.ActiveCalibrationSub == null)
                         return;
-                    weight = weight + rnd.NextDouble();
+                    weight = weight + rnd.NextDouble() * (double)Calibrator.ActiveCalibrationSub.Setpoint / 500000;
                     Debug.WriteLine(weight);
-                    Calibrator.AddPoint(new RawData(weight, DateTime.Now));
+                    if (Calibrator.ActiveCalibrationSub != null)
+                        Calibrator.ActiveCalibrationSub.AddPoint(new RawData(weight, DateTime.Now));
                 };
                 dt.Start();
             }
@@ -66,7 +68,14 @@ namespace PumpCalibrator
                         if (message.Contents[0] == "scale")
                         {
                             double val = Convert.ToDouble(message.Contents[1].Substring(0,9));
-                            Calibrator.AddPoint(new RawData(val, DateTime.Now));
+                            if (Calibrator.ActiveCalibrationSub != null)
+                                Calibrator.ActiveCalibrationSub.AddPoint(new RawData(val, DateTime.Now));
+                        }
+                        else if (message.Contents[0] == "signals")
+                        {
+                            int val = Convert.ToInt32(message.Contents[1]);
+                            if (Calibrator.ActiveCalibrationSub != null)
+                                Calibrator.ActiveCalibrationSub.AddPoint(new RawData(val, DateTime.Now));
                         }
                         break;
                     case MessageType.Command:

@@ -7,6 +7,7 @@ using TCD;
 using TCD.Controls;
 using MCP.Protocol;
 using System.IO;
+using MCP.Curves;
 
 namespace MCP.Measurements
 {

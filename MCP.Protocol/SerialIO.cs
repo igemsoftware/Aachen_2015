@@ -102,7 +102,8 @@ namespace MCP.Protocol
                 return false;
             try
             {
-                ActivePort.WriteLine(text);
+                if (ActivePort.IsOpen)
+                    ActivePort.WriteLine(text);
                 return true;
             }
             catch 

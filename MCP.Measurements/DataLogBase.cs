@@ -1,4 +1,5 @@
-﻿using Microsoft.Research.DynamicDataDisplay.DataSources;
+﻿using MCP.Curves;
+using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

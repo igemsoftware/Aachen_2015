@@ -139,6 +139,10 @@
       <Project>{19bc6b68-f267-4295-b5a3-52abd5fdbc2f}</Project>
       <Name>MCP.Cultivation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MCP.Curves\MCP.Curves.csproj">
+      <Project>{5710fb56-0f1a-45ed-8e44-a99fc6102c12}</Project>
+      <Name>MCP.Curves</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MCP.Equipment\MCP.Equipment.csproj">
       <Project>{8f7428cb-025e-489c-8197-a6f697050d91}</Project>
       <Name>MCP.Equipment</Name>

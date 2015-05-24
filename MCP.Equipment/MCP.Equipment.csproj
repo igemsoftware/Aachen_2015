@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DynamicDataDisplay">
+      <HintPath>..\packages\DynamicDataDisplay.0.3.0.1\lib\net45\DynamicDataDisplay.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -94,6 +97,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MCP.Curves\MCP.Curves.csproj">
+      <Project>{5710fb56-0f1a-45ed-8e44-a99fc6102c12}</Project>
+      <Name>MCP.Curves</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MCP.Protocol\MCP.Protocol.csproj">
       <Project>{11ecf3b6-e461-4972-abd9-3c35ee064187}</Project>
       <Name>MCP.Protocol</Name>

@@ -52,7 +52,7 @@ namespace MCP.Equipment
             AddPumpCommand = new RelayCommand(async delegate
             {
                 PumpInformation newPump = new PumpInformation();
-                PumpInformationWindow piw = new PumpInformationWindow("Add New Pump", true) { DataContext = newPump };
+                PumpInformationWindow piw = new PumpInformationWindow("Add New Pump", true, newPump);
                 piw.Show();
                 await piw.WaitTask;
                 if (piw.Confirmed)
@@ -145,14 +145,13 @@ namespace MCP.Equipment
                         PumpInformation newPump = new PumpInformation()
                         {
                             PumpID = pump.PumpID,
-                            SpecificPumpingRate = pump.SpecificPumpingRate
+                            ResponseCurve = pump.ResponseCurve
                         };
-                        PumpInformationWindow piw = new PumpInformationWindow("Edit Pump", false) { DataContext = newPump };
+                        PumpInformationWindow piw = new PumpInformationWindow("Edit Pump", false, newPump);
                         piw.Show();
                         await piw.WaitTask;
                         if (piw.Confirmed)
                         {
-                            pump.SpecificPumpingRate = newPump.SpecificPumpingRate;
                             pump.SaveTo(pumpDirectory);
                         }
                     });

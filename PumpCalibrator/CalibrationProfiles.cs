@@ -1,0 +1,122 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PumpCalibrator
+{
+    public static class CalibrationProfiles
+    {
+        public static Dictionary<CalibrationTarget, Dictionary<CalibrationMode, List<int[]>>> Profiles = new Dictionary<CalibrationTarget, Dictionary<CalibrationMode, List<int[]>>>();
+        public static Dictionary<CalibrationTarget, string> Symbols = new Dictionary<CalibrationTarget, string>();
+        public static Dictionary<CalibrationTarget, string> Units = new Dictionary<CalibrationTarget, string>();
+
+        static CalibrationProfiles()
+        {
+            Profiles.Add(CalibrationTarget.Pump, new Dictionary<CalibrationMode, List<int[]>>());
+            Profiles.Add(CalibrationTarget.Stirrer, new Dictionary<CalibrationMode, List<int[]>>());
+            Symbols.Add(CalibrationTarget.Pump, "pump1");
+            Symbols.Add(CalibrationTarget.Stirrer, "sph");
+            Units.Add(CalibrationTarget.Pump, "n");
+            Units.Add(CalibrationTarget.Stirrer, "rpm");
+            AddPumpProfiles();
+            AddStirrerProfiles();
+        }
+        private static void AddPumpProfiles()
+        {
+            foreach (CalibrationMode mode in Enum.GetValues(typeof(CalibrationMode)))
+            {
+                List<int[]> subcals = new List<int[]>();
+                switch (mode)
+                {
+                    case CalibrationMode.Debug:
+                        subcals.Add(new int[] { 5000, 30 });
+                        subcals.Add(new int[] { 10000, 20 });
+                        subcals.Add(new int[] { 20000, 15 });
+                        subcals.Add(new int[] { 40000, 10 });
+                        break;
+                    case CalibrationMode.Quick:
+                        subcals.Add(new int[] { 5000, 240 });
+                        subcals.Add(new int[] { 10000, 120 });
+                        subcals.Add(new int[] { 20000, 60 });
+                        subcals.Add(new int[] { 40000, 30 });
+                        break;
+                    case CalibrationMode.Standard:
+                        subcals.Add(new int[] { 1000, 1200 });
+                        subcals.Add(new int[] { 5000, 340 });
+                        subcals.Add(new int[] { 7500, 240 });
+                        subcals.Add(new int[] { 10000, 180 });
+                        subcals.Add(new int[] { 15000, 120 });
+                        subcals.Add(new int[] { 20000, 90 });
+                        subcals.Add(new int[] { 30000, 60 });
+                        subcals.Add(new int[] { 40000, 45 });
+                        break;
+                    case CalibrationMode.Precise:
+                        subcals.Add(new int[] { 1000, 1200 });
+                        subcals.Add(new int[] { 1500, 960 });
+                        subcals.Add(new int[] { 3000, 480 });
+                        subcals.Add(new int[] { 5000, 340 });
+                        subcals.Add(new int[] { 7500, 240 });
+                        subcals.Add(new int[] { 10000, 180 });
+                        subcals.Add(new int[] { 15000, 120 });
+                        subcals.Add(new int[] { 20000, 90 });
+                        subcals.Add(new int[] { 30000, 60 });
+                        subcals.Add(new int[] { 40000, 45 });
+                        break;
+                }
+                Profiles[CalibrationTarget.Pump].Add(mode, subcals);
+            }
+        }
+        private static void AddStirrerProfiles()
+        {
+            foreach (CalibrationMode mode in Enum.GetValues(typeof(CalibrationMode)))
+            {
+                List<int[]> subcals = new List<int[]>();
+                switch (mode)
+                {
+                    case CalibrationMode.Debug:
+                        subcals.Add(new int[] { 100, 20 });
+                        subcals.Add(new int[] { 200, 10 });
+                        subcals.Add(new int[] { 400, 10 });
+                        subcals.Add(new int[] { 800, 10 });
+                        break;
+                    case CalibrationMode.Quick:
+                        subcals.Add(new int[] { 100, 30 });
+                        subcals.Add(new int[] { 200, 20 });
+                        subcals.Add(new int[] { 400, 15 });
+                        subcals.Add(new int[] { 800, 10 });
+                        break;
+                    case CalibrationMode.Standard:
+                        subcals.Add(new int[] { 50, 60 });
+                        subcals.Add(new int[] { 100, 50 });
+                        subcals.Add(new int[] { 200, 20 });
+                        subcals.Add(new int[] { 300, 15 });
+                        subcals.Add(new int[] { 400, 15 });
+                        subcals.Add(new int[] { 500, 10 });
+                        subcals.Add(new int[] { 650, 10 });
+                        subcals.Add(new int[] { 800, 10 });
+                        subcals.Add(new int[] { 1000, 10 });
+                        subcals.Add(new int[] { 1200, 10 });
+                        break;
+                    case CalibrationMode.Precise:
+                        subcals.Add(new int[] { 50, 60 });
+                        subcals.Add(new int[] { 100, 50 });
+                        subcals.Add(new int[] { 200, 20 });
+                        subcals.Add(new int[] { 300, 15 });
+                        subcals.Add(new int[] { 400, 15 });
+                        subcals.Add(new int[] { 500, 10 });
+                        subcals.Add(new int[] { 600, 10 });
+                        subcals.Add(new int[] { 700, 10 });
+                        subcals.Add(new int[] { 800, 10 });
+                        subcals.Add(new int[] { 900, 10 });
+                        subcals.Add(new int[] { 1000, 10 });
+                        subcals.Add(new int[] { 1100, 10 });
+                        subcals.Add(new int[] { 1200, 10 });
+                        break;
+                }
+                Profiles[CalibrationTarget.Stirrer].Add(mode, subcals);
+            }
+        }
+    }
+}

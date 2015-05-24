@@ -63,7 +63,7 @@ namespace MCP.Equipment
             try
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(ReactorInformation));
-                TextWriter textWriter = new StreamWriter(Path.Combine(folder, ParticipantID.GetValueName() + ".reactor"));
+                TextWriter textWriter = new StreamWriter(Path.Combine(folder, ParticipantID.ToString() + ".reactor"));
                 serializer.Serialize(textWriter, this);
                 textWriter.Close();
                 textWriter.Dispose();

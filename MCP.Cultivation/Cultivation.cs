@@ -69,7 +69,7 @@ namespace MCP.Cultivation
         {
             get
             {
-                return DilutionRateSetpoint * CultureVolume * Reactor.FeedPump.SpecificPumpingRate;
+                return Reactor.FeedPump.CalculateSetpoint(DilutionRateSetpoint * CultureVolume);
             }
         }
         [XmlIgnore]
@@ -77,7 +77,7 @@ namespace MCP.Cultivation
         {
             get
             {
-                return AerationRateSetpoint * 60 * CultureVolume * Reactor.AerationPump.SpecificPumpingRate;
+                return Reactor.AerationPump.CalculateSetpoint(AerationRateSetpoint * 60 * CultureVolume);
             }
         }
         [XmlIgnore]
@@ -85,7 +85,7 @@ namespace MCP.Cultivation
         {
             get
             {
-                return DilutionRateSetpoint * CultureVolume * Reactor.HarvestPump.SpecificPumpingRate * 1.15;
+                return Reactor.HarvestPump.CalculateSetpoint(DilutionRateSetpoint * CultureVolume * 1.15);
             }
         }
         #endregion

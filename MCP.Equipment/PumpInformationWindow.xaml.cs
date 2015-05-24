@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Research.DynamicDataDisplay;
+using Microsoft.Research.DynamicDataDisplay.DataSources;
 
 namespace MCP.Equipment
 {
@@ -22,11 +24,14 @@ namespace MCP.Equipment
         public Task WaitTask = new Task(async delegate { await Task.Delay(1); });
         public bool Confirmed = false;
 
-        public PumpInformationWindow(string title, bool canEditID)
+        public PumpInformationWindow(string title, bool canEditID, PumpInformation context)
         {
             InitializeComponent();
             this.Title = title;
             pumpIDbox.IsEnabled = canEditID;
+            this.DataContext = context;
+            plotter.AddLineGraph(context.DataSource, Colors.Blue, 2, "Response Curve");
+            context.LoadResponseCurve();
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

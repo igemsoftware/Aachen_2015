@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Research.DynamicDataDisplay;
 using TCD.Controls;
-
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using MCP.Protocol;
 
@@ -28,9 +27,34 @@ namespace PumpCalibrator
         public MainWindow()
         {
             InitializeComponent();
-            speedBox.SetUpItems(PumpingSpeed.Medium);
+            targetBox.SetUpItems(CalibrationTarget.Pump);
+            modeBox.SetUpItems(CalibrationMode.Standard);
             baudrateBox.SetUpItems(BaudRate._9600);
-            plotter.AddLineGraph(ViewModel.Current.Calibrator.DataSource, Colors.Blue, 2, "weight");    
+            ViewModel.Current.Calibrator.Subcalibrations.CollectionChanged += Subcalibrations_CollectionChanged;
+        }
+
+        private void Subcalibrations_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //remove old graphs
+            for (int i = 0; i < plotter.Children.Count; i++)
+            {
+                if (plotter.Children[i] is LineGraph)
+                {
+                    plotter.Children.RemoveAt(i);
+                    i--;
+                }
+            }
+            //add new graphs
+            foreach (Subcalibration sub in ViewModel.Current.Calibrator.Subcalibrations)
+            {
+                plotter.AddLineGraph(sub.DataSource, GetRandomColor(), 2, sub.Setpoint.ToString());    
+            }
+        }
+
+        private Random rnd = new Random();
+        private Color GetRandomColor()
+        {
+            return Color.FromArgb((byte)255, (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255), (byte)rnd.Next(0, 255));
         }
     }
 }

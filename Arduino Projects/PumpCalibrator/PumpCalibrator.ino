@@ -8,7 +8,8 @@ SoftwareSerial scaleSerial(Scale_TX, Scale_RX);
 //=========================================Direction and Pump Setup
 int sens = 1;
 #define numberofpumps 1
-int motorPins[numberofpumps] = { 13 } ;
+int stepPins[numberofpumps] = { 13 } ;
+int enablePins[numberofpumps] = { 10 } ;
 long lastUp[numberofpumps];
 float periods[numberofpumps];
 boolean isLow[numberofpumps];
@@ -35,8 +36,10 @@ void setup()
   //initialize all step pins
   for (int i = 0; i < numberofpumps; i++)
   {
-    pinMode(motorPins[i], OUTPUT);
-    isLow[i] = true;
+    pinMode(stepPins[i], OUTPUT);
+    pinMode(enablePins[i], OUTPUT);
+    digitalWrite(enablePins[i], HIGH);
+    isLow[i] = false;
     periods[i] = -1;// -1 indicates OFF
   }
   //initialize the serial connections
@@ -55,7 +58,7 @@ void ReadScale()
 {
   if (scaleSerial.available())
   {
-    String message = Serial.readStringUntil('\n');
+    String message = scaleSerial.readStringUntil('\n');
     //this is for testing: String message = "+0002.157 G S";
     String package[] = { "scale", message, "scalepackage" };
     SendMessage(Master, MCP, Data, package);
@@ -84,7 +87,10 @@ void ReadIncoming()
 }
 void UpdatePumpSetpoint(int pump, String pname, float stepsPerHour)
 {
-  periods[pump] = 3600000 / stepsPerHour;//calculate the period
+  if (stepsPerHour <= 0)
+    periods[pump] = -1;
+  else
+    periods[pump] = 3600000 / stepsPerHour;//calculate the period
   String answer[] = { pname, String(periods[pump]), "ms/step" };//report back
   SendMessage(Master, MCP, Data, answer);
 }
@@ -134,13 +140,15 @@ void MakeSteps()
   {
     if (now1 - lastUp[m] > periods[m] && periods[m] > 0)//if the period is over, but not -1 (turned off)
     {
-      digitalWrite(motorPins[m], HIGH);          //turn the pin on
+      digitalWrite(enablePins[m], LOW);
+      digitalWrite(stepPins[m], HIGH);          //turn the pin on
       lastUp[m] = now1;
       isLow[m] = false;
     }
     else if (!isLow[m] && now1 - lastUp[m] > 10)//the period is not yet over, but the pin was HIGH for > 10 ms
     {
-      digitalWrite(motorPins[m], LOW);          //turn the pin off
+      digitalWrite(stepPins[m], LOW);          //turn the pin off
+      digitalWrite(enablePins[m], HIGH);
       isLow[m] = true;
     }
   }

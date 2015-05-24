@@ -83,9 +83,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CalibrationProfiles.cs" />
     <Compile Include="Calibrator.cs" />
     <Compile Include="Converters.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="SpeechIO.cs" />
+    <Compile Include="Subcalibration.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -129,6 +132,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MCP.Curves\MCP.Curves.csproj">
+      <Project>{5710fb56-0f1a-45ed-8e44-a99fc6102c12}</Project>
+      <Name>MCP.Curves</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MCP.Equipment\MCP.Equipment.csproj">
       <Project>{8f7428cb-025e-489c-8197-a6f697050d91}</Project>
       <Name>MCP.Equipment</Name>

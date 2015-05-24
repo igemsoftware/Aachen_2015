@@ -40,9 +40,11 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Arduino Projects", "http://
 		SlnRelativePath = "Arduino Projects\"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCP.Curves", "MCP.Curves\MCP.Curves.csproj", "{5710FB56-0F1A-45ED-8E44-A99FC6102C12}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
+		SccNumberOfProjects = 9
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://igemaachen.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -69,6 +71,9 @@ Global
 		SccProjectName7 = Arduino\u0020Projects
 		SccLocalPath7 = Arduino\u0020Projects
 		SccProjectEnlistmentChoice7 = 2
+		SccProjectUniqueName8 = MCP.Curves\\MCP.Curves.csproj
+		SccProjectName8 = MCP.Curves
+		SccLocalPath8 = MCP.Curves
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -149,6 +154,16 @@ Global
 		{69C2BBC8-A76D-41CE-A8AF-7824041D0E14}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{69C2BBC8-A76D-41CE-A8AF-7824041D0E14}.Release|Mixed Platforms.Build.0 = Debug|Any CPU
 		{69C2BBC8-A76D-41CE-A8AF-7824041D0E14}.Release|Win32.ActiveCfg = Debug|Any CPU
+		{5710FB56-0F1A-45ED-8E44-A99FC6102C12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5710FB56-0F1A-45ED-8E44-A99FC6102C12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5710FB56-0F1A-45ED-8E44-A99FC6102C12}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5710FB56-0F1A-45ED-8E44-A99FC6102C12}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5710FB56-0F1A-45ED-8E44-A99FC6102C12}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{5710FB56-0F1A-45ED-8E44-A99FC6102C12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5710FB56-0F1A-45ED-8E44-A99FC6102C12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5710FB56-0F1A-45ED-8E44-A99FC6102C12}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5710FB56-0F1A-45ED-8E44-A99FC6102C12}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5710FB56-0F1A-45ED-8E44-A99FC6102C12}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -211,7 +211,6 @@
                                     <Button DataContext="{Binding Value}" Command="{Binding EditPumpCommand}" Padding="0" Margin="5" HorizontalContentAlignment="Stretch">
                                         <Grid Margin="5,0">
                                             <TextBlock Text="{Binding PumpID}" Style="{StaticResource LargeValueTextBlockStyle}" HorizontalAlignment="Left" />
-                                            <TextBlock Text="{Binding SpecificPumpingRate}" Style="{StaticResource MediumValueTextBlockStyle}" HorizontalAlignment="Right" />
                                         </Grid>
                                     </Button>
                                 </DataTemplate>

@@ -1,13 +1,11 @@
-﻿using MCP.Measurements;
-using Microsoft.Research.DynamicDataDisplay.Common;
+﻿using Microsoft.Research.DynamicDataDisplay.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MCP.Measurements;
 
-namespace MCP.Measurements
+namespace MCP.Curves
 {
     public class SensorDataPointCollection : RingArray<RawData>
     {

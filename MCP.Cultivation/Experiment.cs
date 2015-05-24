@@ -136,7 +136,7 @@ namespace MCP.Cultivation
             }
             return null;
         }
-        private void LoadCultivations()
+        private async void LoadCultivations()
         {
             if (!Directory.Exists(BaseDirectory))
                 return;
@@ -150,33 +150,41 @@ namespace MCP.Cultivation
                         c = Cultivation.LoadFromFile(Path.Combine(dir, di.Name + ".cultivation"));
                     else
                         c = new Cultivation() { BaseDirectory = dir };
-                    c.Reactor = Inventory.Current.Reactors[(ParticipantID)Enum.Parse(typeof(ParticipantID), di.Name)];
-                    c.ChangeParametersCommand = new RelayCommand(async delegate
+                    ParticipantID reactor = (ParticipantID)Enum.Parse(typeof(ParticipantID), di.Name);
+                    if (!Inventory.Current.Reactors.ContainsKey(reactor))
                     {
-                        Cultivation newCultivation = new Cultivation()
+                        await CustomMessageBox.ShowAsync("Reactor Missing", string.Format("A cultivation can't be loaded because {0} was not found.\r\nPlease import or create the reactor and then restart the app.", reactor.GetValueName()), System.Windows.MessageBoxImage.Error, 0, "Understood");
+                    }
+                    else
+                    {
+                        c.Reactor = Inventory.Current.Reactors[reactor];
+                        c.ChangeParametersCommand = new RelayCommand(async delegate
                         {
-                            Reactor = c.Reactor,
-                            DilutionRateSetpoint = c.DilutionRateSetpoint,
-                            AgitationRateSetpoint = c.AgitationRateSetpoint,
-                            AerationRateSetpoint = c.AerationRateSetpoint,
-                            CultureVolume = c.CultureVolume,
-                            CultureDescription = c.CultureDescription
-                        };
-                        SetpointWindow sw = new SetpointWindow() { DataContext = newCultivation };
-                        sw.Show();
-                        await sw.WaitTask;
-                        if (sw.Confirmed)
-                        {
-                            c.DilutionRateSetpoint = newCultivation.DilutionRateSetpoint;
-                            c.AgitationRateSetpoint = newCultivation.AgitationRateSetpoint;
-                            c.AerationRateSetpoint = newCultivation.AerationRateSetpoint;
-                            c.CultureVolume = newCultivation.CultureVolume;
-                            c.CultureDescription = newCultivation.CultureDescription;
-                            c.Save();
-                            c.SendSetpointUpdate();
-                        }
-                    });
-                    Cultivations.Add(c);
+                            Cultivation newCultivation = new Cultivation()
+                            {
+                                Reactor = c.Reactor,
+                                DilutionRateSetpoint = c.DilutionRateSetpoint,
+                                AgitationRateSetpoint = c.AgitationRateSetpoint,
+                                AerationRateSetpoint = c.AerationRateSetpoint,
+                                CultureVolume = c.CultureVolume,
+                                CultureDescription = c.CultureDescription
+                            };
+                            SetpointWindow sw = new SetpointWindow() { DataContext = newCultivation };
+                            sw.Show();
+                            await sw.WaitTask;
+                            if (sw.Confirmed)
+                            {
+                                c.DilutionRateSetpoint = newCultivation.DilutionRateSetpoint;
+                                c.AgitationRateSetpoint = newCultivation.AgitationRateSetpoint;
+                                c.AerationRateSetpoint = newCultivation.AerationRateSetpoint;
+                                c.CultureVolume = newCultivation.CultureVolume;
+                                c.CultureDescription = newCultivation.CultureDescription;
+                                c.Save();
+                                c.SendSetpointUpdate();
+                            }
+                        });
+                        Cultivations.Add(c);
+                    }
                 }
             }
             catch (Exception ex)
