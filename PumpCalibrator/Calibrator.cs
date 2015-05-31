@@ -137,7 +137,7 @@ namespace PumpCalibrator
                 case CalibrationTarget.Pump:
                     PumpInformation newPump = new PumpInformation();
                     foreach (Subcalibration sub in Subcalibrations)
-                        newPump.ResponseCurve.Add(new ResponseData() { Setpoint = sub.Setpoint, Response = sub.ChangePerHour });
+                        newPump.ResponseCurve.Add(new ResponseData() { Setpoint = sub.Setpoint, Response = sub.AbsoluteChangePerHour });
                     PumpInformationWindow piw = new PumpInformationWindow("Save Pump Calibration", true, newPump);
                     piw.Show();
                     await piw.WaitTask;
@@ -163,7 +163,7 @@ namespace PumpCalibrator
                             var writer = File.CreateText(sfd.FileName);
                             writer.WriteLine("Setpoint   [n]\tResponse   [rpm]");
                             foreach (Subcalibration sub in Subcalibrations)
-                                writer.WriteLine(string.Format("{0}\t{1}", sub.Setpoint, sub.ChangePerMinute));
+                                writer.WriteLine(string.Format("{0}\t{1}", sub.Setpoint, sub.IncrementalChangePerMinute));
                             writer.Flush();
                             writer.Dispose();
                         }

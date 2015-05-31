@@ -48,10 +48,19 @@ namespace PumpCalibrator
                 {
                     if (!IsRandomizerEnabled || Calibrator.ActiveCalibrationSub == null)
                         return;
-                    weight = weight + rnd.NextDouble() * (double)Calibrator.ActiveCalibrationSub.Setpoint / 500000;
-                    Debug.WriteLine(weight);
+                    double val = 0;
+                    switch (Calibrator.CalibrationTarget)
+                    {
+                        case CalibrationTarget.Pump:
+                            weight = weight + rnd.NextDouble() * (double)Calibrator.ActiveCalibrationSub.Setpoint / 500000;
+                            val = weight;
+                            break;
+                        case CalibrationTarget.Stirrer:
+                            val = (0.7 * rnd.NextDouble() + 0.3) * (double)Calibrator.ActiveCalibrationSub.Setpoint / 60;
+                            break;
+                    }
                     if (Calibrator.ActiveCalibrationSub != null)
-                        Calibrator.ActiveCalibrationSub.AddPoint(new RawData(weight, DateTime.Now));
+                        Calibrator.ActiveCalibrationSub.AddPoint(new RawData(val, DateTime.Now));
                 };
                 dt.Start();
             }

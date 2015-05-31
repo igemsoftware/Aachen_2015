@@ -22,7 +22,10 @@ namespace PumpCalibrator
         public ObservableCollection<RawData> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; } }
         public EnumerableDataSource<RawData> DataSource { get; set; }
 
-        public double ChangePerHour
+        /// <summary>
+        /// Returns the difference between the last and the first divided by the time difference.
+        /// </summary>
+        public double AbsoluteChangePerHour
         {
             get
             {
@@ -33,15 +36,20 @@ namespace PumpCalibrator
                 return (end.Value - start.Value) / (end.Time - start.Time).TotalHours;
             }
         }
-        public double ChangePerMinute
+
+        /// <summary>
+        /// Returns this sum of all collected data points divided by the time difference.
+        /// </summary>
+        public double IncrementalChangePerMinute
         {
             get
             {
                 RawData start = SensorDataSet.FirstOrDefault();
                 RawData end = SensorDataSet.LastOrDefault();
+                double sum = SensorDataSet.Sum(d => d.Value);//calculate the sum of all data points
                 if (start == null || (end.Time - start.Time).TotalMinutes == 0)
                     return double.NaN;
-                return (end.Value - start.Value) / (end.Time - start.Time).TotalMinutes;
+                return sum / (end.Time - start.Time).TotalMinutes;
             }
         }
         #endregion
@@ -100,7 +108,7 @@ namespace PumpCalibrator
             await waitTask;//wait for the interval to finish
             //calculate the result
             ViewModel.Current.PrimarySerial.SendMessage(new Message(ParticipantID.MCP, ParticipantID.Reactor_1, MessageType.Command, Symbol, "0", Unit));
-            if (double.IsNaN(ChangePerHour) || ChangePerHour == 0)//without a response you can't calibrate
+            if (double.IsNaN(AbsoluteChangePerHour) || AbsoluteChangePerHour == 0)//without a response you can't calibrate
                 return false;
             RanToCompletion = true;
             return true;
@@ -124,7 +132,12 @@ namespace PumpCalibrator
             if (!initialDelay.IsCompleted)
                 return;
             SensorDataSet.Add(data);
-            SensorDataCollection.Add(data);
+            RawData prev = SensorDataCollection.LastOrDefault();
+            double preval = 0;
+            if (prev != null)
+                preval = prev.Value;
+            RawData data2 = new RawData(preval + data.Value, data.Time);
+            SensorDataCollection.Add(data2);
         }
     }
 }
