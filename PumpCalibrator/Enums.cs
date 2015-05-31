@@ -23,4 +23,9 @@ namespace PumpCalibrator
         Pump,
         Stirrer
     }
+    public enum CalibrationFluid
+    {
+        [Display(Name="Water (22 °C)")]
+        Water = 997800 // [µg/ml]
+    }
 }

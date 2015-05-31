@@ -27,6 +27,7 @@ namespace PumpCalibrator
         public MainWindow()
         {
             InitializeComponent();
+            fluidBox.SetUpItems(CalibrationFluid.Water);
             targetBox.SetUpItems(CalibrationTarget.Pump);
             modeBox.SetUpItems(CalibrationMode.Standard);
             baudrateBox.SetUpItems(BaudRate._9600);

@@ -33,6 +33,9 @@ namespace PumpCalibrator
         private ObservableCollection<Subcalibration> _Subcalibrations = new ObservableCollection<Subcalibration>();
         public ObservableCollection<Subcalibration> Subcalibrations { get { return _Subcalibrations; } set { _Subcalibrations = value; OnPropertyChanged(); } }
 
+        private CalibrationFluid _CalibrationFluid = CalibrationFluid.Water;//TODO: actually implement this
+        public CalibrationFluid CalibrationFluid { get { return _CalibrationFluid; } set { _CalibrationFluid = value; OnPropertyChanged(); } }
+        
         private CalibrationTarget _CalibrationTarget = CalibrationTarget.Pump;
         public CalibrationTarget CalibrationTarget { get { return _CalibrationTarget; } set { _CalibrationTarget = value; OnPropertyChanged(); } }
         

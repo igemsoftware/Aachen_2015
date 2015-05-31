@@ -26,6 +26,8 @@
             </GroupBox>
             <GroupBox Header="Settings" DataContext="{Binding Calibrator}" IsEnabled="{Binding ActiveCalibrationSub, Converter={StaticResource UIConverter}, ConverterParameter=IsNull}">
                 <StackPanel Margin="5,0">
+                    <TextBlock Text="Fluid" Style="{StaticResource SubtleTextBlockStyle}" />
+                    <ComboBox x:Name="fluidBox" SelectedItem="{Binding CalibrationFluid, Mode=TwoWay}" />
                     <TextBlock Text="Target" Style="{StaticResource SubtleTextBlockStyle}" />
                     <ComboBox x:Name="targetBox" SelectedItem="{Binding CalibrationTarget, Mode=TwoWay}" />
                     <TextBlock Text="Mode" Style="{StaticResource SubtleTextBlockStyle}" />
