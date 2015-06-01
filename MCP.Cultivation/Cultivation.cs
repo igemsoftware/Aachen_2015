@@ -103,6 +103,11 @@ namespace MCP.Cultivation
         [XmlIgnore]
         public string BaseDirectory { get { return _BaseDirectory; } set { _BaseDirectory = value; OnPropertyChanged(); CultivationLog = new CultivationLog(value); } }
 
+       
+        	
+        #endregion
+
+        #region Commands
         private RelayCommand _StartCultivationCommand;
         [XmlIgnore]
         public RelayCommand StartCultivationCommand { get { return _StartCultivationCommand; } set { _StartCultivationCommand = value; OnPropertyChanged(); } }
@@ -111,10 +116,6 @@ namespace MCP.Cultivation
         [XmlIgnore]
         public RelayCommand StopCultivationCommand { get { return _StopCultivationCommand; } set { _StopCultivationCommand = value; OnPropertyChanged(); } }
 
-        	
-        #endregion
-
-        #region Commands
         private RelayCommand _ChangeParametersCommand;
         [XmlIgnore]
         public RelayCommand ChangeParametersCommand { get { return _ChangeParametersCommand; } set { _ChangeParametersCommand = value; OnPropertyChanged(); } }

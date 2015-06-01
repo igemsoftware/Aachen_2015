@@ -59,16 +59,6 @@ namespace MCP.Cultivation
         private DispatcherTimer saveTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
         #endregion
 
-        #region Events
-        //OnNewMessageToSend
-        public delegate void AddOnNewMessageToSendDelegate(object sender, Message message);
-        public event AddOnNewMessageToSendDelegate NewMessageToSend;
-        private void OnNewMessageToSendEvent(object sender, Message message)
-        {
-            if (NewMessageToSend != null)
-                NewMessageToSend(sender, message);
-        }
-        #endregion
 
         public Experiment()
         {

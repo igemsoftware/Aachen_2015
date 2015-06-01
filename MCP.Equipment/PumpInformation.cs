@@ -29,12 +29,6 @@ namespace MCP.Equipment
         public List<ResponseData> ResponseCurve { get { return _ResponseCurve; } set { _ResponseCurve = value; OnPropertyChanged(); } }
         
 
-        private double _SpecificPumpingRate;
-        /// <summary>
-        /// specific pumping rate [steps/ml]
-        /// </summary>
-        public double SpecificPumpingRate { get { return _SpecificPumpingRate; } set { _SpecificPumpingRate = value; OnPropertyChanged(); } }
-
         private RelayCommand _EditPumpCommand;
         [XmlIgnore]
         public RelayCommand EditPumpCommand { get { return _EditPumpCommand; } set { _EditPumpCommand = value; OnPropertyChanged(); } }
