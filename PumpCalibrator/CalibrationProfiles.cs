@@ -77,42 +77,44 @@ namespace PumpCalibrator
                 {
                     case CalibrationMode.Debug:
                         subcals.Add(new int[] { 100, 20 });
-                        subcals.Add(new int[] { 200, 10 });
                         subcals.Add(new int[] { 400, 10 });
                         subcals.Add(new int[] { 800, 10 });
+                        subcals.Add(new int[] { 1900, 10 });
                         break;
                     case CalibrationMode.Quick:
                         subcals.Add(new int[] { 100, 30 });
-                        subcals.Add(new int[] { 200, 20 });
-                        subcals.Add(new int[] { 400, 15 });
-                        subcals.Add(new int[] { 800, 10 });
+                        subcals.Add(new int[] { 400, 20 });
+                        subcals.Add(new int[] { 800, 15 });
+                        subcals.Add(new int[] { 1900, 10 });
                         break;
                     case CalibrationMode.Standard:
-                        subcals.Add(new int[] { 50, 60 });
-                        subcals.Add(new int[] { 100, 50 });
-                        subcals.Add(new int[] { 200, 20 });
-                        subcals.Add(new int[] { 300, 15 });
+                        subcals.Add(new int[] { 100, 40 });
+                        subcals.Add(new int[] { 200, 25 });
+                        subcals.Add(new int[] { 300, 20 });
                         subcals.Add(new int[] { 400, 15 });
-                        subcals.Add(new int[] { 500, 10 });
-                        subcals.Add(new int[] { 650, 10 });
-                        subcals.Add(new int[] { 800, 10 });
-                        subcals.Add(new int[] { 1000, 10 });
-                        subcals.Add(new int[] { 1200, 10 });
+                        subcals.Add(new int[] { 550, 15 });
+                        subcals.Add(new int[] { 700, 10 });
+                        subcals.Add(new int[] { 900, 10 });
+                        subcals.Add(new int[] { 1100, 10 });
+                        subcals.Add(new int[] { 1500, 10 });
+                        subcals.Add(new int[] { 1900, 10 });
                         break;
                     case CalibrationMode.Precise:
-                        subcals.Add(new int[] { 50, 60 });
-                        subcals.Add(new int[] { 100, 50 });
+                        subcals.Add(new int[] { 100, 45 });
+                        subcals.Add(new int[] { 150, 30 });
                         subcals.Add(new int[] { 200, 20 });
+                        subcals.Add(new int[] { 250, 20 });
                         subcals.Add(new int[] { 300, 15 });
-                        subcals.Add(new int[] { 400, 15 });
+                        subcals.Add(new int[] { 400, 10 });
                         subcals.Add(new int[] { 500, 10 });
                         subcals.Add(new int[] { 600, 10 });
                         subcals.Add(new int[] { 700, 10 });
                         subcals.Add(new int[] { 800, 10 });
                         subcals.Add(new int[] { 900, 10 });
                         subcals.Add(new int[] { 1000, 10 });
-                        subcals.Add(new int[] { 1100, 10 });
-                        subcals.Add(new int[] { 1200, 10 });
+                        subcals.Add(new int[] { 1300, 10 });
+                        subcals.Add(new int[] { 1600, 10 });
+                        subcals.Add(new int[] { 1900, 10 });
                         break;
                 }
                 Profiles[CalibrationTarget.Stirrer].Add(mode, subcals);

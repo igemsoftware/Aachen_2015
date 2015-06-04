@@ -33,7 +33,7 @@ namespace MCP.Measurements
                     break;
             }
             string title = string.Format("{0} [{1}]", symbol, unit);
-            InitializeAsync("Time", title, "s_" + title);
+            Initialize("Time", title, "s_" + title);
         }
 
         public override void AddRawData(RawData data)

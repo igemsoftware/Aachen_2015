@@ -40,14 +40,14 @@ namespace MCP.Measurements
             DataSource.SetYMapping(y => y.Value);
         }
 
-        internal async void InitializeAsync(params string[] headers)
+        internal void Initialize(params string[] headers)
         {
             bool existed = File.Exists(_FilePath);
             if (!existed)
             {
                 StreamWriter writer = File.CreateText(_FilePath);
-                await writer.WriteLineAsync(string.Join("\t", headers));
-                await writer.FlushAsync();
+                writer.WriteLine(string.Join("\t", headers));
+                writer.Flush();
                 writer.Dispose();
             }
         }
@@ -58,11 +58,11 @@ namespace MCP.Measurements
             SensorDataSet.Add(data);
             SensorDataCollection.Add(data);
         }
-        internal async void WriteLine(string text)
+        internal void WriteLine(string text)
         {
             StreamWriter writer = File.AppendText(_FilePath);
-            await writer.WriteLineAsync(text);
-            await writer.FlushAsync();
+            writer.WriteLine(text);
+            writer.Flush();
             writer.Dispose();
         }
     }

@@ -13,7 +13,7 @@ namespace MCP.Measurements
         {
             this._FilePath = path;
             string title = string.Format("{0} [{1}]", symbol, unit);
-            InitializeAsync("Time", title, "s_" + title);
+            Initialize("Time", title, "s_" + title);
         }
     }
 }

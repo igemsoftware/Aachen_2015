@@ -108,8 +108,8 @@ namespace PumpCalibrator
             await waitTask;//wait for the interval to finish
             //calculate the result
             ViewModel.Current.PrimarySerial.SendMessage(new Message(ParticipantID.MCP, ParticipantID.Reactor_1, MessageType.Command, Symbol, "0", Unit));
-            if (double.IsNaN(AbsoluteChangePerHour) || AbsoluteChangePerHour == 0)//without a response you can't calibrate
-                return false;
+            //if (double.IsNaN(AbsoluteChangePerHour) || AbsoluteChangePerHour == 0)//without a response you can't calibrate
+            //    return false;
             RanToCompletion = true;
             return true;
         }

@@ -1,13 +1,13 @@
 //=========================================Pin assignments (except step pins)
 int pin_ldr = A0;
-int pin_stirrer = 3;
+int pin_stirrer = 6;
 //=========================================Includes & Serial Connection
 
 //=========================================Direction and Pump Setup
 long lastTime = 0;
 int steps = 0;
 int upper = 100;
-int lower =60;
+int lower = 60;
 boolean isUp = false;
 //
 int setpoint_n = 0;
@@ -47,7 +47,8 @@ void CountInterrupts()
   long now = millis();
   if (now - lastTime > 1000)//every 1 s send how many rotations were detected
   {
-    Serial.println(steps);
+    String answer[] = { "signals", String(steps), "steps" };//report back
+    SendMessage(Master, MCP, Data, answer);
     lastTime = now;
     steps = 0; 
   }
@@ -80,10 +81,10 @@ void ReadIncoming()
     }
   }
 }
-void UpdateStirrerSetpoint(int setpoint_rpm)
+void UpdateStirrerSetpoint(float setpoint_rpm)
 {
   //TODO: calculate the analog value for the output
-  int setpoint_n = 1024 * setpoint_rpm / 1250;
+  setpoint_n = min(255, 255 * setpoint_rpm / 1200);//max rpm is 1900
   String answer[] = { "n", String(setpoint_n), "analog out" };//report back
   SendMessage(Master, MCP, Data, answer);
 }
@@ -126,6 +127,6 @@ String getValue(String data, char separator, int index)
 
 void SetStirrer()
 {
-  digitalWrite(pin_stirrer, setpoint_n);
+  analogWrite(pin_stirrer, setpoint_n);
 }
 
