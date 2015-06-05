@@ -11,7 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using MCP.Protocol;
 using System.Windows.Shapes;
+using TCD.Controls;
 
 namespace MasterControlProgram
 {
@@ -23,6 +25,7 @@ namespace MasterControlProgram
         public SettingsPanel()
         {
             InitializeComponent();
+            baudrateBox.SetUpItems(BaudRate._9600);
         }
     }
 }
