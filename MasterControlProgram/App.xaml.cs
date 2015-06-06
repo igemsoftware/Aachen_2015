@@ -19,7 +19,10 @@ namespace MasterControlProgram
         //TODO: system.windows.forms.datavisualization
 
         public static ViewModel ViewModel { get { return App.Current.Resources["ViewModel"] as ViewModel; } }
-        
-			
+
+        public App()
+        {
+            System.Diagnostics.PresentationTraceSources.DataBindingSource.Switch.Level = System.Diagnostics.SourceLevels.Critical;//supress annoying warning messages in the debug window
+        }
     }
 }

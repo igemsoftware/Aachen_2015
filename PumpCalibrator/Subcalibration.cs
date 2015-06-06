@@ -78,6 +78,10 @@ namespace PumpCalibrator
         public int Duration { get; private set; }
         private string Symbol;
         private string Unit;
+        private CalibrationTarget _Target;
+        public CalibrationTarget Target { get { return _Target; } set { _Target = value; OnPropertyChanged(); } }
+        
+			
         #endregion
 
         public Subcalibration(int setpoint, int duration, string symbol, string unit)
@@ -132,12 +136,17 @@ namespace PumpCalibrator
             if (!initialDelay.IsCompleted)
                 return;
             SensorDataSet.Add(data);
-            RawData prev = SensorDataCollection.LastOrDefault();
-            double preval = 0;
-            if (prev != null)
-                preval = prev.Value;
-            RawData data2 = new RawData(preval + data.Value, data.Time);
-            SensorDataCollection.Add(data2);
+            if (Target == CalibrationTarget.Stirrer)
+            {
+                RawData prev = SensorDataCollection.LastOrDefault();
+                double preval = 0;
+                if (prev != null)
+                    preval = prev.Value;
+                RawData data2 = new RawData(preval + data.Value, data.Time);
+                SensorDataCollection.Add(data2);
+            }
+            else
+                SensorDataCollection.Add(data);
         }
     }
 }

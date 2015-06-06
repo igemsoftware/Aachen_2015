@@ -4,6 +4,7 @@ using MCP.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,7 +77,7 @@ namespace PumpCalibrator
                     case MessageType.Data:
                         if (message.Contents[0] == "scale")
                         {
-                            double val = Convert.ToDouble(message.Contents[1].Substring(0,9));
+                            double val = Convert.ToDouble(message.Contents[1].Substring(0,9), CultureInfo.InvariantCulture);
                             if (Calibrator.ActiveCalibrationSub != null)
                                 Calibrator.ActiveCalibrationSub.AddPoint(new RawData(val, DateTime.Now));
                         }

@@ -103,7 +103,7 @@ namespace PumpCalibrator
                     SpeechIO.Speak(string.Format("Starting {0} calibration.", CalibrationMode));
                     Subcalibrations.Clear();
                     foreach (int[] pair in CalibrationProfiles.Profiles[CalibrationTarget][CalibrationMode])
-                        Subcalibrations.Add(new Subcalibration(pair[0], pair[1], CalibrationProfiles.Symbols[CalibrationTarget], CalibrationProfiles.Units[CalibrationTarget]));
+                        Subcalibrations.Add(new Subcalibration(pair[0], pair[1], CalibrationProfiles.Symbols[CalibrationTarget], CalibrationProfiles.Units[CalibrationTarget]) { Target = CalibrationTarget });
                     foreach (Subcalibration sub in Subcalibrations)
                     {
                         ActiveCalibrationSub = sub;

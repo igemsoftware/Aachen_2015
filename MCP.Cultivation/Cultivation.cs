@@ -129,10 +129,16 @@ namespace MCP.Cultivation
         }
 
 
-        public void SendSetpointUpdate()
+        public async void SendSetpointUpdate()
         {
             if (Reactor == null)
                 return;
+            if (!IsRunning)
+            {
+                int sel = await CustomMessageBox.ShowAsync("Not Running", "The experiment is not running at the moment.\r\n\r\nPlease select \"Start\" to send the setpoints again.", System.Windows.MessageBoxImage.Information, 1, "Start now", "Okay");
+                if (sel == 0)
+                    StartCultivationCommand.Execute(null);
+            }
             if (Reactor.FeedPump != null)
                 SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Feed_Rate, FeedPumpSPH.ToString("0"), Unit.SPH));
             if (Reactor.AerationPump != null)

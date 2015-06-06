@@ -217,7 +217,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                         <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <Button Content="Create New Pump" Command="{Binding AddPumpCommand}" />
+                            <Button Content="Create New Pump" Command="{Binding AddPumpCommand}" IsEnabled="False" />
                             <Button Content="Import Pump" Command="{Binding ImportPumpCommand}" />
                         </StackPanel>
                         
