@@ -139,13 +139,16 @@ namespace MCP.Cultivation
                 if (sel == 0)
                     StartCultivationCommand.Execute(null);
             }
-            if (Reactor.FeedPump != null)
-                SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Feed_Rate, FeedPumpSPH.ToString("0"), Unit.SPH));
-            if (Reactor.AerationPump != null)
-                SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Aeration_Rate, AerationPumpSPH.ToString("0"), Unit.SPH));
-            if (Reactor.HarvestPump != null)
-                SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Harvest_Rate, HarvestPumpSPH.ToString("0"), Unit.SPH));
-            SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Agitation_Rate, AgitationRateSetpoint.ToString(), Unit.RPM));
+            if (IsRunning)
+            {
+                if (Reactor.FeedPump != null)
+                    SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Feed_Rate, FeedPumpSPH.ToString("0"), Unit.SPH));
+                if (Reactor.AerationPump != null)
+                    SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Aeration_Rate, AerationPumpSPH.ToString("0"), Unit.SPH));
+                if (Reactor.HarvestPump != null)
+                    SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Harvest_Rate, HarvestPumpSPH.ToString("0"), Unit.SPH));
+                SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Agitation_Rate, AgitationRateSetpoint.ToString(), Unit.RPM));
+            }
         }
 
         
