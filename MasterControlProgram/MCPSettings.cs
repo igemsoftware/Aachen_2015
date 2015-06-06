@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using TCD;
 using System.Windows.Forms;
 using System.IO;
+using TCD.Controls;
+using System.Windows.Threading;
 
 namespace MasterControlProgram
 {
@@ -22,7 +24,18 @@ namespace MasterControlProgram
         }
         #endregion
 
-        public string HomeDirectoryPath { get { return Properties.Settings.Default.HomeDirectoryPath; } set { Properties.Settings.Default.HomeDirectoryPath = value; OnPropertyChanged(); SaveSettings(); } }
+        public string HomeDirectoryPath
+        {
+            get { return Properties.Settings.Default.HomeDirectoryPath; }
+            set
+            {
+                Properties.Settings.Default.HomeDirectoryPath = value;
+                OnPropertyChanged();
+                SaveSettings();
+                InitializeHomeDirectory();
+                OnHomeDirectoryChangedEvent(this, new EventArgs());
+            }
+        }
         public string PumpDirectoryPath { get { return Path.Combine(HomeDirectoryPath, "Pumps"); } }
         public string ReactorDirectoryPath { get { return Path.Combine(HomeDirectoryPath, "Reactors"); } }
         public string ExperimentsDirectoryPath { get { return Path.Combine(HomeDirectoryPath, "Experiments"); } }
@@ -39,22 +52,46 @@ namespace MasterControlProgram
         {
             ChangeHomeDirectoryCommand = new RelayCommand(delegate
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
-                if (!string.IsNullOrWhiteSpace(HomeDirectoryPath))
-                    fbd.SelectedPath = HomeDirectoryPath;
+                string previousPath = HomeDirectoryPath;
+                FolderBrowserDialog fbd = new FolderBrowserDialog() { Description = "Select Home Directory" };
+                if (!string.IsNullOrWhiteSpace(previousPath))
+                    fbd.SelectedPath = previousPath;
                 else
                     fbd.RootFolder = Environment.SpecialFolder.MyComputer;
                 fbd.ShowDialog();
-                if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                if (fbd.SelectedPath != previousPath)
+                {
                     if (fbd.SelectedPath.EndsWith("MCP"))
                         HomeDirectoryPath = fbd.SelectedPath;
                     else
                         HomeDirectoryPath = Path.Combine(fbd.SelectedPath, "MCP");
-                InitializeHomeDirectory();
+                }
             });
-            BrowseHomeDirectoryCommand = new RelayCommand(delegate { System.Diagnostics.Process.Start(HomeDirectoryPath); });
-            InitializeHomeDirectory();
+            BrowseHomeDirectoryCommand = new RelayCommand(delegate
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(HomeDirectoryPath);
+                }
+                catch { }
+            });
+            //
+            DispatcherTimer dt = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(20) };
+            dt.Tick += async delegate
+            {
+                dt.Stop();
+                if (string.IsNullOrWhiteSpace(HomeDirectoryPath))
+                {
+                    int sel = await CustomMessageBox.ShowAsync("Setup", "Welcome to the MCP!\r\n\r\nBefore you can start you must set a home directory where files will be saved.\r\n\r\nYou may set or change the home directory under \"Settings\".", System.Windows.MessageBoxImage.Information, 0, "Select Home Directory", "Okay");
+                    if (sel == 0)
+                        ChangeHomeDirectoryCommand.Execute(null);
+                }
+                else
+                    InitializeHomeDirectory();
+            };
+            dt.Start();
         }
+
         private void SaveSettings()
         {
             Properties.Settings.Default.Save();
@@ -71,7 +108,6 @@ namespace MasterControlProgram
                 Directory.CreateDirectory(ReactorDirectoryPath);
             if (!Directory.Exists(ExperimentsDirectoryPath))
                 Directory.CreateDirectory(ExperimentsDirectoryPath);
-
         }
     }
 }

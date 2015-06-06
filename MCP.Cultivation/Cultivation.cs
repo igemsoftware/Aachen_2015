@@ -135,7 +135,7 @@ namespace MCP.Cultivation
                 return;
             if (!IsRunning)
             {
-                int sel = await CustomMessageBox.ShowAsync("Not Running", "The experiment is not running at the moment.\r\n\r\nPlease select \"Start\" to send the setpoints again.", System.Windows.MessageBoxImage.Information, 1, "Start now", "Okay");
+                int sel = await CustomMessageBox.ShowAsync("Not Running", "This cultivation is not running at the moment.\r\n\r\nDo you want to start it now?", System.Windows.MessageBoxImage.Information, 1, "Start Now", "Okay");
                 if (sel == 0)
                     StartCultivationCommand.Execute(null);
             }

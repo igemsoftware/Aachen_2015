@@ -13,11 +13,6 @@ namespace MasterControlProgram
     /// </summary>
     public partial class App : Application
     {
-        //TODO: Menu Bar with "Settings" item
-        //TODO: SettingsWindow
-        //TODO: Setting for Home Directory
-        //TODO: system.windows.forms.datavisualization
-
         public static ViewModel ViewModel { get { return App.Current.Resources["ViewModel"] as ViewModel; } }
 
         public App()
