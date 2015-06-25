@@ -54,7 +54,6 @@
     <Compile Include="DataLogBase.cs" />
     <Compile Include="DataPostprocessingLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataPoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

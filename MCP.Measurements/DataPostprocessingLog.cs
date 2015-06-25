@@ -9,8 +9,8 @@ namespace MCP.Measurements
 {
     public class DataPostprocessingLog : DataLogBase
     {
-        private List<RawData> _RawDataCache = new List<RawData>();
-        public List<RawData> RawDataCache { get { return _RawDataCache; } set { _RawDataCache = value; } }
+        private List<DataPoint> _RawDataCache = new List<DataPoint>();
+        public List<DataPoint> RawDataCache { get { return _RawDataCache; } set { _RawDataCache = value; } }
 
         private int _MinimumSamples;
         private PostprocessingMode _PostprocessingMode;
@@ -36,7 +36,7 @@ namespace MCP.Measurements
             Initialize("Time", title, "s_" + title);
         }
 
-        public override void AddRawData(RawData data)
+        public override void AddRawData(DataPoint data)
         {
             RawDataCache.Add(data);
             TryToAccumulate();

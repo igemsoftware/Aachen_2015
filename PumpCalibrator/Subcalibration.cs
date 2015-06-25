@@ -18,9 +18,9 @@ namespace PumpCalibrator
         private SensorDataPointCollection _SensorDataCollection = new SensorDataPointCollection();//contains only recent datapoints
         public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; } }
 
-        private ObservableCollection<RawData> _SensorDataSet = new ObservableCollection<RawData>();//contains all datapoints
-        public ObservableCollection<RawData> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; } }
-        public EnumerableDataSource<RawData> DataSource { get; set; }
+        private ObservableCollection<DataPoint> _SensorDataSet = new ObservableCollection<DataPoint>();//contains all datapoints
+        public ObservableCollection<DataPoint> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; } }
+        public EnumerableDataSource<DataPoint> DataSource { get; set; }
 
         /// <summary>
         /// Returns the difference between the last and the first divided by the time difference.
@@ -29,11 +29,11 @@ namespace PumpCalibrator
         {
             get
             {
-                RawData start = SensorDataSet.FirstOrDefault();
-                RawData end = SensorDataSet.LastOrDefault();
+                DataPoint start = SensorDataSet.FirstOrDefault();
+                DataPoint end = SensorDataSet.LastOrDefault();
                 if (start == null || (end.Time - start.Time).TotalHours == 0)
                     return double.NaN;
-                return (end.Value - start.Value) / (end.Time - start.Time).TotalHours;
+                return (end.YValue - start.YValue) / (end.Time - start.Time).TotalHours;
             }
         }
 
@@ -44,9 +44,9 @@ namespace PumpCalibrator
         {
             get
             {
-                RawData start = SensorDataSet.FirstOrDefault();
-                RawData end = SensorDataSet.LastOrDefault();
-                double sum = SensorDataSet.Sum(d => d.Value);//calculate the sum of all data points
+                DataPoint start = SensorDataSet.FirstOrDefault();
+                DataPoint end = SensorDataSet.LastOrDefault();
+                double sum = SensorDataSet.Sum(d => d.YValue);//calculate the sum of all data points
                 if (start == null || (end.Time - start.Time).TotalMinutes == 0)
                     return double.NaN;
                 return sum / (end.Time - start.Time).TotalMinutes;
@@ -90,9 +90,9 @@ namespace PumpCalibrator
             this.Duration = duration;
             this.Symbol = symbol;
             this.Unit = unit;
-            DataSource = new EnumerableDataSource<RawData>(SensorDataCollection);
+            DataSource = new EnumerableDataSource<DataPoint>(SensorDataCollection);
             DataSource.SetXMapping(x => (x.Time - SensorDataSet.First().Time).TotalSeconds);
-            DataSource.SetYMapping(y => y.Value - SensorDataSet.First().Value);
+            DataSource.SetYMapping(y => y.YValue - SensorDataSet.First().YValue);
         }
 
         public async Task<bool> RunAsync()
@@ -106,7 +106,7 @@ namespace PumpCalibrator
             SensorDataCollection.Clear();
             SensorDataSet.Clear();
             DataSource.SetXMapping(x => (x.Time - SensorDataSet.First().Time).TotalSeconds);
-            DataSource.SetYMapping(y => y.Value - SensorDataSet.First().Value);
+            DataSource.SetYMapping(y => y.YValue - SensorDataSet.First().YValue);
             //start the calibration interval
             StartTimer();
             await waitTask;//wait for the interval to finish
@@ -131,18 +131,18 @@ namespace PumpCalibrator
                 waitTask.Start();
         }
 
-        public void AddPoint(RawData data)
+        public void AddPoint(DataPoint data)
         {
             if (!initialDelay.IsCompleted)
                 return;
             SensorDataSet.Add(data);
             if (Target == CalibrationTarget.Stirrer)
             {
-                RawData prev = SensorDataCollection.LastOrDefault();
+                DataPoint prev = SensorDataCollection.LastOrDefault();
                 double preval = 0;
                 if (prev != null)
-                    preval = prev.Value;
-                RawData data2 = new RawData(preval + data.Value, data.Time);
+                    preval = prev.YValue;
+                DataPoint data2 = new DataPoint(data.Time, preval + data.YValue);
                 SensorDataCollection.Add(data2);
             }
             else

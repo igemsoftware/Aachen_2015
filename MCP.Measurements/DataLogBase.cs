@@ -21,23 +21,25 @@ namespace MCP.Measurements
         [XmlIgnore]
         public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; } }
 
-        private ObservableCollection<RawData> _SensorDataSet = new ObservableCollection<RawData>();//contains all datapoints
+        private ObservableCollection<DataPoint> _SensorDataSet = new ObservableCollection<DataPoint>();//contains all datapoints
         [XmlIgnore]
-        public ObservableCollection<RawData> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; } }
+        public ObservableCollection<DataPoint> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; } }
 
         
 
         [XmlIgnore]
-        public EnumerableDataSource<RawData> DataSource { get; set; }
+        public EnumerableDataSource<DataPoint> DataSource { get; set; }
         [XmlIgnore]
         public DateTime StartTime { get; set; }
+
+        private bool IsPlotActivated { get; set; }
 
 
         public DataLogBase()
         {
-            DataSource = new EnumerableDataSource<RawData>(SensorDataCollection);
+            DataSource = new EnumerableDataSource<DataPoint>(SensorDataCollection);
             DataSource.SetXMapping(x => (x.Time - StartTime).TotalSeconds);
-            DataSource.SetYMapping(y => y.Value);
+            DataSource.SetYMapping(y => y.YValue);
         }
 
         internal void Initialize(params string[] headers)
@@ -52,9 +54,11 @@ namespace MCP.Measurements
             }
         }
 
-        public virtual void AddRawData(RawData data)
+        public virtual void AddRawData(DataPoint data)
         {
             WriteLine(data.ToString());
+            if (!IsPlotActivated)
+                return;
             SensorDataSet.Add(data);
             SensorDataCollection.Add(data);
         }
@@ -64,6 +68,26 @@ namespace MCP.Measurements
             writer.WriteLine(text);
             writer.Flush();
             writer.Dispose();
+        }
+
+        public void ActivatePlot()
+        {
+            IsPlotActivated = true;
+            SensorDataSet.Clear();
+            SensorDataCollection.Clear();
+            string[] lines = File.ReadAllLines(_FilePath);
+            for (int i = 1; i < lines.Length; i++)
+            {
+                DataPoint dp = new DataPoint(lines[i]);
+                SensorDataSet.Add(dp);
+                SensorDataCollection.Add(dp);
+            }
+        }
+        public void DeactivatePlot()
+        {
+            IsPlotActivated = false;
+            SensorDataSet.Clear();
+            SensorDataCollection.Clear();
         }
     }
 }

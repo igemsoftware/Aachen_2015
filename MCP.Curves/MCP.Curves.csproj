@@ -62,10 +62,13 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TCD.Controls">
+      <HintPath>..\packages\TCD.Controls.3.1.3\lib\net45\TCD.Controls.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RawData.cs" />
     <Compile Include="ResponseData.cs" />
     <Compile Include="ResponseDataPointCollection.cs" />
     <Compile Include="SensorDataPointCollection.cs" />

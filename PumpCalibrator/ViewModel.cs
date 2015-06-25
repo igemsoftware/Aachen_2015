@@ -61,7 +61,7 @@ namespace PumpCalibrator
                             break;
                     }
                     if (Calibrator.ActiveCalibrationSub != null)
-                        Calibrator.ActiveCalibrationSub.AddPoint(new RawData(val, DateTime.Now));
+                        Calibrator.ActiveCalibrationSub.AddPoint(new DataPoint(DateTime.Now, val));
                 };
                 dt.Start();
             }
@@ -79,13 +79,13 @@ namespace PumpCalibrator
                         {
                             double val = Convert.ToDouble(message.Contents[1].Substring(0,9), CultureInfo.InvariantCulture);
                             if (Calibrator.ActiveCalibrationSub != null)
-                                Calibrator.ActiveCalibrationSub.AddPoint(new RawData(val, DateTime.Now));
+                                Calibrator.ActiveCalibrationSub.AddPoint(new DataPoint(DateTime.Now, val));
                         }
                         else if (message.Contents[0] == "signals")
                         {
                             int val = Convert.ToInt32(message.Contents[1]);
                             if (Calibrator.ActiveCalibrationSub != null)
-                                Calibrator.ActiveCalibrationSub.AddPoint(new RawData(val, DateTime.Now));
+                                Calibrator.ActiveCalibrationSub.AddPoint(new DataPoint(DateTime.Now, val));
                         }
                         break;
                     case MessageType.Command:

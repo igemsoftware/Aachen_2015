@@ -60,7 +60,7 @@ namespace MCP.Measurements
         public void LogData(string[] data)
         {
             if (Logs.ContainsKey(data[0]))//TODO: check for the right unit
-                Logs[data[0]].AddRawData(new RawData(Convert.ToDouble(data[1]), DateTime.Now));
+                Logs[data[0]].AddRawData(new DataPoint(DateTime.Now, Convert.ToDouble(data[1])));
         }
     }
 }

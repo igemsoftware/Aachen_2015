@@ -150,6 +150,17 @@ namespace MCP.Cultivation
                 SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Agitation_Rate, AgitationRateSetpoint.ToString(), Unit.RPM));
             }
         }
+        public void StopCultivation()
+        {
+            //stop all motors
+            if (Reactor.FeedPump != null)
+                SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Feed_Rate, "0", Unit.SPH));
+            if (Reactor.AerationPump != null)
+                SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Aeration_Rate, "0", Unit.SPH));
+            if (Reactor.HarvestPump != null)
+                SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Harvest_Rate, "0", Unit.SPH));
+            SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Agitation_Rate, "0", Unit.RPM));
+        }
 
         
 

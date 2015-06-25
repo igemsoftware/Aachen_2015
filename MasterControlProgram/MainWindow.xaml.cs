@@ -37,6 +37,21 @@ namespace MasterControlProgram
 
         private void SelectedCultivation_Changed(object sender, SelectionChangedEventArgs e)
         {
+            foreach (Cultivation cultivation in e.RemovedItems)
+            {
+                if (cultivation != null)
+                    foreach (DataLogBase log in cultivation.CultivationLog.Logs.Values)
+                    {
+                        log.DeactivatePlot();
+                    }
+            }
+            foreach (Cultivation cultivation in cultivationsSelectionBox.SelectedItems)
+            {
+                foreach (DataLogBase log in cultivation.CultivationLog.Logs.Values)
+                {
+                    log.ActivatePlot();
+                }
+            }
             Redraw(graphsFilterLeft, plotterLeft);
             Redraw(graphsFilterRight, plotterRight);
         }

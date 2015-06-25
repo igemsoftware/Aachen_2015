@@ -110,6 +110,7 @@ namespace MCP.Cultivation
                             if (conflicting == null)
                             {
                                 c.IsRunning = true;
+                                c.SendSetpointUpdate();
                             }
                             else//ask the user to stop the other cultivation
                             {
@@ -123,8 +124,10 @@ namespace MCP.Cultivation
                                 if (result == 0)//if he wants to proceed and stop the other experiment
                                 {
                                     conflicting.IsRunning = false;
+                                    conflicting.StopCultivation();
                                     conflicting.Save();
                                     c.IsRunning = true;
+                                    c.SendSetpointUpdate();
                                 }
                             }
                             if (c.IsRunning)//everything is GO - start the culture and save the time
@@ -134,6 +137,7 @@ namespace MCP.Cultivation
                         c.StopCultivationCommand = new RelayCommand(delegate
                         {
                             c.IsRunning = false;
+                            c.StopCultivation();
                             c.Save();
                         });
                     }
@@ -150,7 +154,7 @@ namespace MCP.Cultivation
                 {
                     Experiment conflictingExperiment;
                     Cultivation conflicting = FindRunningCultivation(reactorInQuestion, out conflictingExperiment);
-                    if (conflicting != null)//if we don't know of any other experiment that is using the same reactor
+                    if (conflicting != null)//if we found another experiment that is using the same reactor
                     {
                         //ask the user to choose
                         int result = await CustomMessageBox.ShowAsync(
@@ -171,9 +175,10 @@ namespace MCP.Cultivation
                             conflicting.Save();
                         }
                     }
-
                 }
-            }
+                if (c.IsRunning)//a running cultivation was loaded and no conflict was found -> communicate the setpoints to the slaves
+                    c.SendSetpointUpdate();
+                }
         }
 
         public Cultivation FindRunningCultivation(ParticipantID reactor, out Experiment conflictingExperiment)

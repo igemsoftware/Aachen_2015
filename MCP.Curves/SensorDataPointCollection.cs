@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MCP.Curves
 {
-    public class SensorDataPointCollection : RingArray<RawData>
+    public class SensorDataPointCollection : RingArray<DataPoint>
     {
         //private const int TOTAL_POINTS = ViewModel.SecondsToShow * 1000 / ViewModel.UpdateInterval;
         private const int TOTAL_POINTS = 1000;
