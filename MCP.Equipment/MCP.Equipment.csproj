@@ -41,6 +41,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Speech" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -72,9 +73,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\PumpCalibrator\SpeechIO.cs">
+      <Link>SpeechIO.cs</Link>
+    </Compile>
     <Compile Include="Inventory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SensorInformation.cs" />
     <Compile Include="PumpInformation.cs" />
+    <Compile Include="SensorInformationWindow.xaml.cs">
+      <DependentUpon>SensorInformationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PumpInformationWindow.xaml.cs">
       <DependentUpon>PumpInformationWindow.xaml</DependentUpon>
     </Compile>
@@ -84,6 +92,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="SensorInformationWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="PumpInformationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

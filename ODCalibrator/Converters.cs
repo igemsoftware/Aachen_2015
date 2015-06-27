@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Documents;
 using System.Collections.Generic;
 using System.Windows;
+using MCP.Curves;
 
 namespace ODCalibrator
 {
@@ -47,6 +48,10 @@ namespace ODCalibrator
                         if (InvalidPathCharacters.Contains(c))
                             return false;
                     return true;
+                case "DataPointAvAndStd":
+                    if (!(value is DataPoint))
+                        return "Capture";
+                    return string.Format("{0} +- {1}", (value as DataPoint).YValue.ToString("0.00"), (value as DataPoint).StandardDeviation.ToString("0.00"));
                 case "IsParticipantIDOfReactor": return ((int)value >= (int)ParticipantID.Reactor_1);
                 case "IsNotNull": return (value != null);
                 case "BoolToVisibility": return ((bool)value == true) ? Visibility.Visible : Visibility.Collapsed;

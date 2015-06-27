@@ -43,6 +43,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -57,13 +58,35 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CalibrationProfiles.cs" />
+    <Compile Include="Calibrator.cs" />
     <Compile Include="Converters.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Subcalibration.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -107,9 +130,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MCP.Curves\MCP.Curves.csproj">
+      <Project>{5710fb56-0f1a-45ed-8e44-a99fc6102c12}</Project>
+      <Name>MCP.Curves</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MCP.Equipment\MCP.Equipment.csproj">
       <Project>{8f7428cb-025e-489c-8197-a6f697050d91}</Project>
       <Name>MCP.Equipment</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MCP.Measurements\MCP.Measurements.csproj">
+      <Project>{6e6b3b3d-c712-423e-8b65-dd89cbcc405d}</Project>
+      <Name>MCP.Measurements</Name>
     </ProjectReference>
     <ProjectReference Include="..\MCP.Protocol\MCP.Protocol.csproj">
       <Project>{11ecf3b6-e461-4972-abd9-3c35ee064187}</Project>

@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using TCD.Controls;
 using TCD;
 using MCP.Protocol;
+using Microsoft.Research.DynamicDataDisplay;
+using Microsoft.Research.DynamicDataDisplay.DataSources;
 
 namespace ODCalibrator
 {
@@ -27,6 +29,10 @@ namespace ODCalibrator
         {
             InitializeComponent();
             baudrateBox.SetUpItems(BaudRate._9600);
+            targetBox.SetUpItems(CalibrationTarget.OD);
+            modeBox.SetUpItems(CalibrationMode.Standard);
+            //chart
+            plotter.AddLineGraph(ViewModel.Current.DataSource, DesignColors.Red, 2, "Sensor Value");
         }
     }
 }

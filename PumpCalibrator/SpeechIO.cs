@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Speech.Synthesis;
 using System.Speech.Recognition;
 
-namespace PumpCalibrator
+namespace MCP.NUI
 {
     public static class SpeechIO
     {

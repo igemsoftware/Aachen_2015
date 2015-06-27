@@ -11,7 +11,7 @@ namespace MCP.Curves
     public class ResponseData
     {
         [XmlAttribute]
-        public int Setpoint { get; set; }
+        public double Setpoint { get; set; }
         [XmlAttribute]
         public double Response { get; set; }
 
