@@ -23,4 +23,10 @@ namespace ODCalibrator
         OD,
         Biomass
     }
+    public enum SubcalibrationState
+    {
+        Idle,
+        Running,
+        Complete
+    }
 }

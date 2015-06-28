@@ -50,45 +50,46 @@ namespace ODCalibrator
         #endregion
 
         #region Stuff to Run
-        private static int InitialDelay = 4;
-        private Task initialDelay = new Task(async delegate { await Task.Delay(InitialDelay); });
-        private Task waitTask = new Task(async delegate { await Task.Delay(1); });
+        private static int InitialDelay = 1;
+        private Task waitTask;
         private DateTime StartTime { get; set; }
-        private bool _IsRunning;
-        public bool IsRunning
+
+        private SubcalibrationState _State = SubcalibrationState.Idle;
+        public SubcalibrationState State
         {
-            get { return _IsRunning; }
+            get { return _State; }
             set
             {
-                _IsRunning = value;
+                _State = value;
                 OnPropertyChanged();
                 CaptureCommand.RaiseCanExecuteChanged();
                 AbortCommand.RaiseCanExecuteChanged();
             }
         }
-        
 			
         public double ProgressPercent
         {
             get
             {
-                if (SensorDataSet.Count == 0)
-                    return 0;
                 return Math.Min((DateTime.Now - StartTime).TotalSeconds / (Duration + InitialDelay) * 100, 100);
+            }
+            set
+            {
+
             }
         }
 
         #endregion
 
         #region Specificity and Settings
-        public double Setpoint { get; private set; }
+        public double Setpoint { get; set; }
+        public double CDW { get; set; }
         public double Duration { get; private set; }
+
         private string Symbol;
         private string Unit;
         private CalibrationTarget _Target;
         public CalibrationTarget Target { get { return _Target; } set { _Target = value; OnPropertyChanged(); } }
-        
-			
         #endregion
 
         public Subcalibration(double setpoint, double duration, string symbol, string unit)
@@ -100,21 +101,23 @@ namespace ODCalibrator
             CaptureCommand = new RelayCommand(delegate
             {
                 OnRequestCaptureEvent(this, new EventArgs());
-            }, () => !IsRunning);
+            }, () => State != SubcalibrationState.Running);
             AbortCommand = new RelayCommand(delegate
             {
                 SensorDataSet.Clear();
                 if (!waitTask.IsCompleted)
                     waitTask.Start();
-            }, () => IsRunning);
+            }, () => State == SubcalibrationState.Running);
         }
 
         public async Task<bool> RunAsync()
         {
-            IsRunning = true;
+            //prepare
+            waitTask = new Task(async delegate { await Task.Delay(1); });
+            //begin
+            State = SubcalibrationState.Running;
             StartTime = DateTime.Now;
-            initialDelay.Start();
-            await initialDelay;//always wait a few seconds to give the hardware time to react
+            await Task.Delay(InitialDelay * 1000);//always wait a few seconds to give the hardware time to react
             //reset all caches
             SensorDataSet.Clear();
             //start the calibration interval
@@ -122,25 +125,33 @@ namespace ODCalibrator
             await waitTask;//wait for the interval to finish
             //calculate the result
             if (SensorDataSet.Count < 2)
+            {
                 Result = null;
+                State = SubcalibrationState.Idle;
+                StartTime = new DateTime();
+            }
             else
+            {
                 Result = new DataPoint(Setpoint, SensorDataSet.Select(x => x.YValue));
-            IsRunning = false;
+                State = SubcalibrationState.Complete;
+                StartTime = new DateTime();
+            }
             OnCaptureEndedEvent(this, new EventArgs());
             return true;
         }
         private async void StartTimer()
         {
             await Task.Delay(1000 * (int)Duration);
-            if (!waitTask.IsCompleted)
-                waitTask.Start();
+            waitTask.Start();
         }
 
         public void AddPoint(DataPoint data)
         {
-            if (!initialDelay.IsCompleted)
-                return;
             SensorDataSet.Add(data);
+        }
+        public void Tick()
+        {
+            OnPropertyChanged("ProgressPercent");
         }
     }
 }

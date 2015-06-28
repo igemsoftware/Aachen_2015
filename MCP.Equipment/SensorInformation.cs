@@ -27,7 +27,7 @@ namespace MCP.Equipment
         /// </summary>
         [XmlArray]
         public List<ResponseData> ResponseCurve { get { return _ResponseCurve; } set { _ResponseCurve = value; OnPropertyChanged(); } }
-        
+        //TODO: how to incorporate OD %% CDW calibration curves into one?
 
         private RelayCommand _EditSensorCommand;
         [XmlIgnore]

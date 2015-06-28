@@ -50,25 +50,6 @@ namespace ODCalibrator
         }
 
 
-        public double ProgressPercent
-        {
-            get
-            {
-                if (ActiveCalibrationSub == null)
-                    return 0;
-                return ActiveCalibrationSub.ProgressPercent;
-            }
-        }
-
-        public TimeSpan RemainingCalibrationTime
-        {
-            get
-            {
-                if (ActiveCalibrationSub == null)
-                    return TimeSpan.FromSeconds(0);
-                return TimeSpan.FromSeconds(ActiveCalibrationSub.Duration - ActiveCalibrationSub.Duration * ActiveCalibrationSub.ProgressPercent / 100);
-            }
-        }
 
         private DispatcherTimer progressTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(100) };
 			
@@ -92,8 +73,8 @@ namespace ODCalibrator
             });
             progressTimer.Tick += delegate
             {
-                OnPropertyChanged("ProgressPercent");
-                OnPropertyChanged("RemainingCalibrationTime");
+                foreach (Subcalibration sub in Subcalibrations)
+                    sub.Tick();
             };
             progressTimer.Start();
             //Initialize

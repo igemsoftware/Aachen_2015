@@ -3,88 +3,83 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
         xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="OD Calibrator" Height="600" Width="800" DataContext="{StaticResource ViewModel}">
-    
+        Title="OD Calibrator" Height="600" Width="1000" DataContext="{StaticResource ViewModel}">
+    <!-- TODO: preset-knöpfe, datagrid oder itemscontrol, databinding auf subcalibrations kollektion -->
     <Grid>
-        <TabControl>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="300" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <TabControl Grid.Column="0">
             <TabItem Header="Calibration">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" MinWidth="200" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <GroupBox Grid.Row="0" Header="Points">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="Setpoint" Grid.Column="0" />
-                                    <TextBlock Text="Readout" Grid.Column="1" />
-                                </Grid>
-                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                                    <ItemsControl ItemsSource="{Binding Calibrator.Subcalibrations}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Text="{Binding Setpoint}" Grid.Column="0" />
-                                                    <Button Content="{Binding Result, Converter={StaticResource UIConverter}, ConverterParameter=DataPointAvAndStd}" Command="{Binding CaptureCommand}" Grid.Column="1" />
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </ScrollViewer>
-                            </StackPanel>
-                        </GroupBox>
-                        <GroupBox Grid.Row="1" Header="Result">
-                            <StackPanel>
-                                <Button Content="Show Result" Command="{Binding Calibrator.FinalizeCommand}" />
-                            </StackPanel>
-                        </GroupBox>
-                        <GroupBox Grid.Row="2" Header="Debug" DataContext="{Binding}" Visibility="{Binding IsDebugMode, Converter={StaticResource UIConverter}, ConverterParameter=BoolToVisibility}">
-                            <StackPanel>
-                                <CheckBox Content="Generate Random Data" Margin="5" IsChecked="{Binding IsRandomizerEnabled}" />
-                            </StackPanel>
-                        </GroupBox>
-                    </Grid>
-                    <Grid Grid.Column="1" DataContext="{Binding Calibrator}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <d3:ChartPlotter x:Name="plotter" LegendVisible="True" Margin="10">
-                            <d3:ChartPlotter.HorizontalAxis>
-                                <d3:HorizontalAxis x:Name="timeAxis" />
-                            </d3:ChartPlotter.HorizontalAxis>
-                            <d3:Header Content="Raw Values"/>
-                            <d3:HorizontalAxisTitle Content="time   [s]"/>
-                            <d3:VerticalAxisTitle Content="Analog Readout   [-]" />
-                        </d3:ChartPlotter>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left">
-                            <Button Content="Start Over" Command="{Binding StartOverCommand}" Width="105" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <GroupBox Grid.Row="0" Header="Calibration Settings" DataContext="{Binding Calibrator}" IsEnabled="{Binding ActiveCalibrationSub, Converter={StaticResource UIConverter}, ConverterParameter=IsNull}">
+                        <StackPanel>
+                            <TextBlock Text="Mode" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="modeBox" Grid.Column="0" Margin="0,5" SelectedItem="{Binding CalibrationMode, Mode=TwoWay}" />
+                                <Button Content="Apply" Grid.Column="1" Command="{Binding StartOverCommand}" Margin="5" />
+                            </Grid>
                         </StackPanel>
-                        <Grid Grid.Row="2" Height="20">
-                            <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Minimum="0" Maximum="100" />
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding RemainingCalibrationTime, Converter={StaticResource UIConverter}, ConverterParameter=TimeSpanToString}" />
-                        </Grid>
-                    </Grid>
+                    </GroupBox>
+                    <GroupBox Grid.Row="1" Header="Curve">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="5,0" Text="OD   [-]" Grid.Column="0" />
+                                <TextBlock Margin="5,0" Text="CDW   [mg/mL]" Grid.Column="1" />
+                                <TextBlock Margin="5,0" Text="Readout" Grid.Column="2" />
+                            </Grid>
+                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding Calibrator.Subcalibrations}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <toolkit:DoubleUpDown Grid.Column="0" Width="80" VerticalAlignment="Center" Value="{Binding Setpoint, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
+                                                <toolkit:DoubleUpDown Grid.Column="1" Width="80" VerticalAlignment="Center" Value="{Binding CDW, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
+                                                <Button Command="{Binding AbortCommand}" Grid.Column="2" HorizontalContentAlignment="Stretch" Height="24" Padding="0" VerticalContentAlignment="Stretch">
+                                                    <Grid>
+                                                        <ProgressBar Margin="0" Value="{Binding ProgressPercent}" BorderThickness="0" />
+                                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Abort" />
+                                                    </Grid>
+                                                </Button>
+                                                <Button Command="{Binding CaptureCommand}" Visibility="{Binding State, Converter={StaticResource UIConverter}, ConverterParameter=StateToCaptureVisibility}" Grid.Column="2" Content="{Binding Result, Converter={StaticResource UIConverter}, ConverterParameter=DataPointAvAndStd}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Grid.Row="2" Header="Result">
+                        <StackPanel>
+                            <Button Content="Show Result" Command="{Binding Calibrator.FinalizeCommand}" />
+                        </StackPanel>
+                    </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="Settings">
+            <TabItem Header="Connection">
                 <StackPanel>
-                    <GroupBox Grid.Row="0" Header="Connection" DataContext="{Binding PrimarySerial}">
+                    <GroupBox Header="Connection" DataContext="{Binding PrimarySerial}">
                         <StackPanel Margin="5,0">
                             <TextBlock Text="Port" Style="{StaticResource SubtleTextBlockStyle}" />
                             <Grid>
@@ -99,17 +94,25 @@
                             <ComboBox x:Name="baudrateBox" SelectedItem="{Binding ActivePort.BaudRate, Mode=TwoWay, Converter={StaticResource UIConverter}, ConverterParameter=BaudRate}" />
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Header="Calibration Settings" DataContext="{Binding Calibrator}" IsEnabled="{Binding ActiveCalibrationSub, Converter={StaticResource UIConverter}, ConverterParameter=IsNull}">
-                        <StackPanel Margin="5,0">
-                            <TextBlock Text="Target" Style="{StaticResource SubtleTextBlockStyle}" />
-                            <ComboBox x:Name="targetBox" SelectedItem="{Binding CalibrationTarget, Mode=TwoWay}" />
-                            <TextBlock Text="Mode" Style="{StaticResource SubtleTextBlockStyle}" />
-                            <ComboBox x:Name="modeBox" SelectedItem="{Binding CalibrationMode, Mode=TwoWay}" />
+                    <GroupBox Header="Debug" Visibility="{Binding IsDebugMode, Converter={StaticResource UIConverter}, ConverterParameter=BoolToVisibility}">
+                        <StackPanel>
+                            <CheckBox Content="Generate Random Data" Margin="5" IsChecked="{Binding IsRandomizerEnabled}" />
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
             </TabItem>
+            <TabItem Header="Help" IsEnabled="False">
+                
+            </TabItem>
         </TabControl>
+        <d3:ChartPlotter x:Name="plotter" Grid.Column="1" LegendVisible="True" Margin="10" DataContext="{Binding Calibrator}">
+            <d3:ChartPlotter.HorizontalAxis>
+                <d3:HorizontalAxis x:Name="timeAxis" />
+            </d3:ChartPlotter.HorizontalAxis>
+            <d3:Header Content="Raw Values"/>
+            <d3:HorizontalAxisTitle Content="time   [s]"/>
+            <d3:VerticalAxisTitle Content="Analog Readout   [-]" />
+        </d3:ChartPlotter>
     </Grid>
     
 </Window>

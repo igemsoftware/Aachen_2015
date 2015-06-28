@@ -29,7 +29,6 @@ namespace ODCalibrator
         {
             InitializeComponent();
             baudrateBox.SetUpItems(BaudRate._9600);
-            targetBox.SetUpItems(CalibrationTarget.OD);
             modeBox.SetUpItems(CalibrationMode.Standard);
             //chart
             plotter.AddLineGraph(ViewModel.Current.DataSource, DesignColors.Red, 2, "Sensor Value");

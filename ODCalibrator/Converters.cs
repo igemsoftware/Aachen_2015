@@ -56,6 +56,7 @@ namespace ODCalibrator
                 case "IsNotNull": return (value != null);
                 case "BoolToVisibility": return ((bool)value == true) ? Visibility.Visible : Visibility.Collapsed;
                 case "InvertBool": return ((bool)value == false);
+                case "StateToCaptureVisibility": return ((SubcalibrationState)value != SubcalibrationState.Running) ? Visibility.Visible : Visibility.Hidden;
                 default:
                     return null;
             }

@@ -55,6 +55,9 @@
     <Reference Include="TCD.Controls">
       <HintPath>..\packages\TCD.Controls.3.1.3\lib\net45\TCD.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="TCD.Serialization">
+      <HintPath>..\packages\TCD.Serialization.1.1.0\lib\portable-net4+sl4+wp7+win8\TCD.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -82,10 +85,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CalibrationPoint.cs" />
     <Compile Include="CalibrationProfiles.cs" />
     <Compile Include="Calibrator.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="SensorCalibratorSettings.cs" />
     <Compile Include="Subcalibration.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
