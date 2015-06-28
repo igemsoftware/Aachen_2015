@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace MCP.Measurements
 {
@@ -13,6 +14,10 @@ namespace MCP.Measurements
         public List<DataPoint> RawDataCache { get { return _RawDataCache; } set { _RawDataCache = value; } }
 
         private int _MinimumSamples;
+        private int _MinimumTime; // Neu
+        private System.Timers.Timer timer; // Neu
+        private bool _MeasurementTimeElapsed = false; // Neu
+
         private PostprocessingMode _PostprocessingMode;
 
 
@@ -24,7 +29,12 @@ namespace MCP.Measurements
             switch (mode)
             {
                 case PostprocessingMode.Biomass:
-                    _MinimumSamples = 1000;//TODO: implement Biomass postprocessing
+                    _MinimumSamples = 50;//TODO: implement Biomass postprocessing
+                    _MinimumTime = 30;
+                    timer = new System.Timers.Timer(_MinimumTime * 1000);
+                    timer.AutoReset = false;
+                    timer.Elapsed += new ElapsedEventHandler(TimerElapsed);
+                    timer.Enabled = true;
                     break;
                 case PostprocessingMode.Offgas:
                     _MinimumSamples = 500;//TODO: implement Offgas postprocessing
@@ -44,13 +54,28 @@ namespace MCP.Measurements
 
         private void TryToAccumulate()
         {
-            if (RawDataCache.Count < _MinimumSamples)
+            if (RawDataCache.Count < _MinimumSamples || !_MeasurementTimeElapsed) // changed
                 return;
+            _MeasurementTimeElapsed = false;
+            timer.Stop(); // Resets the timer
+            timer.Start();
+
             DataPoint point = null;
             switch (_PostprocessingMode)
             {
                 case PostprocessingMode.Biomass:
                     //TODO: implement Biomass analysis
+                    double average = 0;
+
+                    for (int i = 0; i < RawDataCache.Count; i++)
+                    {
+                        average += RawDataCache.ElementAt(i).YValue;
+                    }
+                    average /= RawDataCache.Count;
+                    RawDataCache.Clear();
+
+                    point = new DataPoint(DateTime.Now, average);
+
                     break;
                 case PostprocessingMode.Offgas:
                     //TODO: implement Offgas analysis
@@ -62,6 +87,11 @@ namespace MCP.Measurements
                 WriteLine(point.ToString());
                 RawDataCache.Clear();
             }
+        }
+
+        private void TimerElapsed(object source, ElapsedEventArgs e) // Neu
+        {
+            _MeasurementTimeElapsed = true;
         }
     }
     public enum PostprocessingMode

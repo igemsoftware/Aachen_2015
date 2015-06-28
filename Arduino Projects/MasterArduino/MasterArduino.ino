@@ -16,7 +16,7 @@ int corresponding_tx[] = {4, 5, 8, 9};
 
 String in_string = "";
 
-SoftwareSerial* slave_serial[19];
+SoftwareSerial* slave_serial[NUMBER_OF_SLAVES];
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
