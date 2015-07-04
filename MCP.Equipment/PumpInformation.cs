@@ -21,12 +21,12 @@ namespace MCP.Equipment
         private string _PumpID;
         public string PumpID { get { return _PumpID; } set { _PumpID = value; OnPropertyChanged(); } }
 
-        private List<ResponseData> _ResponseCurve = new List<ResponseData>();
+        private List<PumpResponseData> _ResponseCurve = new List<PumpResponseData>();
         /// <summary>
         /// What is the response of the pump [ml/h] to a certain setpoint [sph] ?
         /// </summary>
         [XmlArray]
-        public List<ResponseData> ResponseCurve { get { return _ResponseCurve; } set { _ResponseCurve = value; OnPropertyChanged(); } }
+        public List<PumpResponseData> ResponseCurve { get { return _ResponseCurve; } set { _ResponseCurve = value; OnPropertyChanged(); } }
         
 
         private RelayCommand _EditPumpCommand;
@@ -34,30 +34,30 @@ namespace MCP.Equipment
         public RelayCommand EditPumpCommand { get { return _EditPumpCommand; } set { _EditPumpCommand = value; OnPropertyChanged(); } }
 
         #region Drawing the Response Curve
-        private ResponseDataPointCollection _ResponseDataCollection = new ResponseDataPointCollection();//contains only recent datapoints
+        private PumpResponseDataPointCollection _ResponseDataCollection = new PumpResponseDataPointCollection();//contains only recent datapoints
         [XmlIgnore]
-        public ResponseDataPointCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
+        public PumpResponseDataPointCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
 
-        private ObservableCollection<ResponseData> _ResponseDataSet = new ObservableCollection<ResponseData>();//contains all datapoints
+        private ObservableCollection<PumpResponseData> _ResponseDataSet = new ObservableCollection<PumpResponseData>();//contains all datapoints
         [XmlIgnore]
-        public ObservableCollection<ResponseData> ResponseDataSet { get { return _ResponseDataSet; } set { _ResponseDataSet = value; } }
+        public ObservableCollection<PumpResponseData> ResponseDataSet { get { return _ResponseDataSet; } set { _ResponseDataSet = value; } }
 
         [XmlIgnore]
-        public EnumerableDataSource<ResponseData> DataSource { get; set; }
+        public EnumerableDataSource<PumpResponseData> DataSource { get; set; }
         #endregion
 
 
 
         public PumpInformation()
         {
-            ResponseCurve = new List<ResponseData>();
-            DataSource = new EnumerableDataSource<ResponseData>(ResponseDataCollection);
+            ResponseCurve = new List<PumpResponseData>();
+            DataSource = new EnumerableDataSource<PumpResponseData>(ResponseDataCollection);
             DataSource.SetXMapping(x => x.Setpoint);
             DataSource.SetYMapping(y => y.Response);
         }
         public void LoadResponseCurve()
         {
-            foreach (ResponseData ri in ResponseCurve)
+            foreach (PumpResponseData ri in ResponseCurve)
             {
                 ResponseDataCollection.Add(ri);
                 ResponseDataSet.Add(ri);

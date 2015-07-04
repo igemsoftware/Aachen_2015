@@ -52,13 +52,13 @@ namespace MCP.Protocol
         public static string Feed_Rate = "S_fin";
         public static string Harvest_Rate = "S_fout";
         public static string Temperature = "T";
-        public static string Biomass_Concentration = "X";
+        public static string Biomass = "Biomass";
         public static string O2_Saturation = "O2";
         public static string CO2_Saturation = "CO2";
         public static string CHx_Saturation = "CHx";
 
         public static string[] ControlParameters = new string[] { Dilution_Rate, Agitation_Rate, Temperature, Aeration_Rate };
-        public static string[] MeasuredParameters = new string[] { Biomass_Concentration, O2_Saturation, CO2_Saturation, CHx_Saturation };
+        public static string[] MeasuredParameters = new string[] { Biomass, O2_Saturation, CO2_Saturation, CHx_Saturation };
         public static Dictionary<string, Color> ParameterColors { get; set; }
 
         static DimensionSymbol()
@@ -69,7 +69,7 @@ namespace MCP.Protocol
             ParameterColors.Add(Temperature, DesignColors.Red);
             ParameterColors.Add(Aeration_Rate, DesignColors.LightGrey);
             //
-            ParameterColors.Add(Biomass_Concentration, DesignColors.Yellow);
+            ParameterColors.Add(Biomass, DesignColors.Yellow);
             ParameterColors.Add(O2_Saturation, DesignColors.Blue);
             ParameterColors.Add(CO2_Saturation, DesignColors.DarkGrey);
             ParameterColors.Add(CHx_Saturation, DesignColors.Red);
@@ -83,7 +83,7 @@ namespace MCP.Protocol
         public static string Celsius = "°C";
         public static string PerHour = "1/h";
         public static string Percent = "%";
-        public static string Biomass = "Biomass";
+        public static string Biomass = "analog";
     }
     public enum BaudRate
     {

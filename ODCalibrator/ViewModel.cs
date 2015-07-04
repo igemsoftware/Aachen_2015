@@ -62,16 +62,8 @@ namespace ODCalibrator
                     {
                         double val = rnd.NextDouble();
                         if (Calibrator.ActiveCalibrationSub != null)
-                            switch (Calibrator.CalibrationTarget)
-                            {
-                                case CalibrationTarget.OD:
-                                    val = val * 10 + (double)Calibrator.ActiveCalibrationSub.Setpoint * 170 + 120;
-                                    break;
-                                case CalibrationTarget.Biomass:
-                                    val = val * 10 + (double)Calibrator.ActiveCalibrationSub.Setpoint / 7 + 120;
-                                    break;
-                            }
-                        Message msg = new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.Biomass_Concentration, val, Unit.Biomass));
+                            val = val * 10 + (double)Calibrator.ActiveCalibrationSub.ResponsePoint.OD * 150 + 120;
+                        Message msg = new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.Biomass, val, Unit.Biomass));
                         PrimarySerial.InterpretMessage(msg.Raw);
                     }
                 };
@@ -79,7 +71,7 @@ namespace ODCalibrator
             }
             //data collection
             StartTime = DateTime.Now;
-            DataSource = new EnumerableDataSource<DataPoint>(SensorDataCollection);
+            DataSource = SensorDataCollection.AsDataSource<DataPoint>();
             DataSource.SetXMapping(x => (x.Time - StartTime).TotalSeconds);
             DataSource.SetYMapping(y => y.YValue);
         }
@@ -92,7 +84,7 @@ namespace ODCalibrator
                 switch (message.MessageType)
                 {
                     case MessageType.Data:
-                        if (message.Contents[0] == DimensionSymbol.Biomass_Concentration)
+                        if (message.Contents[0] == DimensionSymbol.Biomass)
                         {
                             double val = Convert.ToDouble(message.Contents[1]);
                             DataPoint dp = new DataPoint(DateTime.Now, val);

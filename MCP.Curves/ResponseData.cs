@@ -5,29 +5,89 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Accord.Statistics.Models.Regression.Linear;
+using TCD;
 
 namespace MCP.Curves
 {
-    public class ResponseData
+    public class SensorResponseData : PropertyChangedBase
+    {
+        private double _Analog = double.NaN;
+        [XmlAttribute]
+        public double Analog { get { return _Analog; } set { _Analog = value; OnPropertyChanged(); } }
+
+
+        private double _AnalogStd = double.NaN;
+        [XmlAttribute]
+        public double AnalogStd { get { return _AnalogStd; } set { _AnalogStd = value; OnPropertyChanged(); } }
+
+        private double _CalibrationDuration = double.NaN;
+        [XmlAttribute]
+        public double CalibrationDuration { get { return _CalibrationDuration; } set { _CalibrationDuration = value; OnPropertyChanged(); } }
+        
+        public SensorResponseData()
+        {
+
+        }
+    }
+    public class PumpResponseData
     {
         [XmlAttribute]
         public double Setpoint { get; set; }
         [XmlAttribute]
         public double Response { get; set; }
 
-        public ResponseData()
+        public PumpResponseData()
+        {
+
+        }
+    }
+    public class BiomassResponseData : SensorResponseData
+    {
+        private double _OD = double.NaN;
+        [XmlAttribute]
+        public double OD { get { return _OD; } set { _OD = value; OnPropertyChanged(); } }
+
+        private double _CDW = double.NaN;
+        [XmlAttribute]
+        public double CDW { get { return _CDW; } set { _CDW = value; OnPropertyChanged(); } }
+
+        public BiomassResponseData()
+        {
+
+        }
+    }
+    public class GasSensorResponseData : SensorResponseData
+    {
+        public double Percent { get; set; }
+
+        public GasSensorResponseData()
         {
 
         }
     }
     public static class ResponseDataExtensions
     {
-        public static double LinearTransformResponseToSetpoint(this List<ResponseData> data, double response)
+        public static double LinearTransformResponseToSetpoint(this List<PumpResponseData> curve, double response)
         {
             // linear regression without the intercept term (see http://en.wikipedia.org/wiki/Simple_linear_regression#Linear_regression_without_the_intercept_term)
-            double products = data.Select(d => d.Setpoint * d.Response).Sum();
-            double squares = data.Select(d => d.Response * d.Response).Sum();
+            double products = curve.Select(d => d.Setpoint * d.Response).Sum();
+            double squares = curve.Select(d => d.Response * d.Response).Sum();
             return response * (products / squares);
+        }
+        public static double LinearTransformAnalogToOD(this List<BiomassResponseData> curve, double analog)
+        {
+            SimpleLinearRegression slr = SimpleLinearRegression.FromData(curve.Select(p => p.Analog).ToArray(), curve.Select(p => p.OD).ToArray());
+            return slr.Compute(analog);
+        }
+        public static double LinearTransformAnalogToCDW(this List<BiomassResponseData> curve, double analog)
+        {
+            SimpleLinearRegression slr = SimpleLinearRegression.FromData(curve.Select(p => p.Analog).ToArray(), curve.Select(p => p.CDW).ToArray());
+            return slr.Compute(analog);
+        }
+        public static double LinearTransformAnalogToPercent(this List<GasSensorResponseData> curve, double analog)
+        {
+            SimpleLinearRegression slr = SimpleLinearRegression.FromData(curve.Select(p => p.Analog).ToArray(), curve.Select(p => p.Percent).ToArray());
+            return slr.Compute(analog);
         }
     }
 }

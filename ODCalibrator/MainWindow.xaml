@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
         xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="OD Calibrator" Height="600" Width="1000" DataContext="{StaticResource ViewModel}">
-    <!-- TODO: preset-knöpfe, datagrid oder itemscontrol, databinding auf subcalibrations kollektion -->
+        Title="OD Calibrator" MinHeight="600" MinWidth="800" Width="1000" DataContext="{StaticResource ViewModel}" ResizeMode="CanResizeWithGrip">
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MinWidth="300" />
@@ -20,29 +20,29 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <GroupBox Grid.Row="0" Header="Calibration Settings" DataContext="{Binding Calibrator}" IsEnabled="{Binding ActiveCalibrationSub, Converter={StaticResource UIConverter}, ConverterParameter=IsNull}">
-                        <StackPanel>
-                            <TextBlock Text="Mode" />
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Presets" Style="{StaticResource SubtleTextBlockStyle}" />
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
-                                <ComboBox x:Name="modeBox" Grid.Column="0" Margin="0,5" SelectedItem="{Binding CalibrationMode, Mode=TwoWay}" />
-                                <Button Content="Apply" Grid.Column="1" Command="{Binding StartOverCommand}" Margin="5" />
+                                <ComboBox x:Name="modeBox" Grid.Column="0" Margin="0,0,5,5" SelectedItem="{Binding CalibrationMode, Mode=TwoWay}" />
+                                <Button Content="Apply" Grid.Column="1" Command="{Binding StartOverCommand}" Margin="5,0,5,5" />
                             </Grid>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Grid.Row="1" Header="Curve">
                         <StackPanel>
-                            <Grid>
+                            <Grid Margin="5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Margin="5,0" Text="OD   [-]" Grid.Column="0" />
-                                <TextBlock Margin="5,0" Text="CDW   [mg/mL]" Grid.Column="1" />
-                                <TextBlock Margin="5,0" Text="Readout" Grid.Column="2" />
+                                <TextBlock Text="OD   [-]" Grid.Column="0" />
+                                <TextBlock Text="CDW   [mg/mL]" Grid.Column="1" />
+                                <TextBlock Text="Readout" Grid.Column="2" />
                             </Grid>
                             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                                 <ItemsControl ItemsSource="{Binding Calibrator.Subcalibrations}">
@@ -54,15 +54,15 @@
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
-                                                <toolkit:DoubleUpDown Grid.Column="0" Width="80" VerticalAlignment="Center" Value="{Binding Setpoint, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
-                                                <toolkit:DoubleUpDown Grid.Column="1" Width="80" VerticalAlignment="Center" Value="{Binding CDW, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
+                                                <toolkit:DoubleUpDown Grid.Column="0" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.OD, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
+                                                <toolkit:DoubleUpDown Grid.Column="1" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.CDW, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
                                                 <Button Command="{Binding AbortCommand}" Grid.Column="2" HorizontalContentAlignment="Stretch" Height="24" Padding="0" VerticalContentAlignment="Stretch">
                                                     <Grid>
                                                         <ProgressBar Margin="0" Value="{Binding ProgressPercent}" BorderThickness="0" />
                                                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Abort" />
                                                     </Grid>
                                                 </Button>
-                                                <Button Command="{Binding CaptureCommand}" Visibility="{Binding State, Converter={StaticResource UIConverter}, ConverterParameter=StateToCaptureVisibility}" Grid.Column="2" Content="{Binding Result, Converter={StaticResource UIConverter}, ConverterParameter=DataPointAvAndStd}" />
+                                                <Button Command="{Binding CaptureCommand}" Visibility="{Binding State, Converter={StaticResource UIConverter}, ConverterParameter=StateToCaptureVisibility}" Grid.Column="2" Content="{Binding ResponsePoint, Converter={StaticResource UIConverter}, ConverterParameter=ResponsePointAvAndStd}" />
                                             </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -70,8 +70,9 @@
                             </ScrollViewer>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Grid.Row="2" Header="Result">
+                    <GroupBox Grid.Row="2" Header="Import / Export">
                         <StackPanel>
+                            <Button Content="Open Calibration File" Command="{Binding Calibrator.OpenFileCommand}" />
                             <Button Content="Show Result" Command="{Binding Calibrator.FinalizeCommand}" />
                         </StackPanel>
                     </GroupBox>
@@ -101,8 +102,20 @@
                     </GroupBox>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Help" IsEnabled="False">
-                
+            <TabItem Header="Help" IsEnabled="True">
+                <StackPanel>
+                    <TextBlock>
+                        1. flush the sensor with sample of known OD
+                        <LineBreak></LineBreak>
+                        2. suck sample up and start pushing it out at a constant rate
+                        <LineBreak></LineBreak>
+                        3. click "capture"
+                        <LineBreak></LineBreak>
+                        4. continue pushig sample out until the capture finishes
+                        <LineBreak></LineBreak>
+                        5. push out all remaining sample and start over with step 1. for the next sample
+                    </TextBlock>
+                </StackPanel>
             </TabItem>
         </TabControl>
         <d3:ChartPlotter x:Name="plotter" Grid.Column="1" LegendVisible="True" Margin="10" DataContext="{Binding Calibrator}">

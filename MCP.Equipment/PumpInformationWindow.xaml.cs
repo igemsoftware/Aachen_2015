@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
+using MCP.Protocol;
 
 namespace MCP.Equipment
 {
@@ -30,7 +31,7 @@ namespace MCP.Equipment
             this.Title = title;
             pumpIDbox.IsEnabled = canEditID;
             this.DataContext = context;
-            plotter.AddLineGraph(context.DataSource, Colors.Blue, 2, "Response Curve");
+            var chart = plotter.AddLineGraph(context.DataSource, DesignColors.Blue, 2, "Response Curve");
             context.LoadResponseCurve();
         }
 

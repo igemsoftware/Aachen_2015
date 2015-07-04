@@ -48,10 +48,12 @@ namespace ODCalibrator
                         if (InvalidPathCharacters.Contains(c))
                             return false;
                     return true;
-                case "DataPointAvAndStd":
-                    if (!(value is DataPoint))
+                case "ResponsePointAvAndStd":
+                    BiomassResponseData brd = (BiomassResponseData)value;
+                    if (brd == null || double.IsNaN(brd.Analog))
                         return "Capture";
-                    return string.Format("{0} +- {1}", (value as DataPoint).YValue.ToString("0.00"), (value as DataPoint).StandardDeviation.ToString("0.00"));
+                    else
+                        return string.Format("{0} +- {1}", brd.Analog.ToString("0.00"), brd.AnalogStd.ToString("0.00"));
                 case "IsParticipantIDOfReactor": return ((int)value >= (int)ParticipantID.Reactor_1);
                 case "IsNotNull": return (value != null);
                 case "BoolToVisibility": return ((bool)value == true) ? Visibility.Visible : Visibility.Collapsed;

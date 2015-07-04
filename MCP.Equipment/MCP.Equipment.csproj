@@ -78,10 +78,10 @@
     </Compile>
     <Compile Include="Inventory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SensorInformation.cs" />
+    <Compile Include="BiomassSensorInformation.cs" />
     <Compile Include="PumpInformation.cs" />
-    <Compile Include="SensorInformationWindow.xaml.cs">
-      <DependentUpon>SensorInformationWindow.xaml</DependentUpon>
+    <Compile Include="BiomassSensorInformationWindow.xaml.cs">
+      <DependentUpon>BiomassSensorInformationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PumpInformationWindow.xaml.cs">
       <DependentUpon>PumpInformationWindow.xaml</DependentUpon>
@@ -92,7 +92,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="SensorInformationWindow.xaml">
+    <Page Include="BiomassSensorInformationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

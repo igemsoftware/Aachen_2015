@@ -43,17 +43,17 @@ namespace ODCalibrator
         #region Data Collection
         private ObservableCollection<DataPoint> _SensorDataSet = new ObservableCollection<DataPoint>();//contains all datapoints
         public ObservableCollection<DataPoint> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; } }
-        
-
-        private DataPoint _Result;
-        public DataPoint Result { get { return _Result; } set { _Result = value; OnPropertyChanged(); } }
         #endregion
 
-        #region Stuff to Run
+        #region Stuff to Run and Settings
+        //Tasks and Delays
         private static int InitialDelay = 1;
-        private Task waitTask;
+        private Task finishTask;
+
+        //Interval-related
         private DateTime StartTime { get; set; }
 
+        //Properties
         private SubcalibrationState _State = SubcalibrationState.Idle;
         public SubcalibrationState State
         {
@@ -66,12 +66,12 @@ namespace ODCalibrator
                 AbortCommand.RaiseCanExecuteChanged();
             }
         }
-			
+
         public double ProgressPercent
         {
             get
             {
-                return Math.Min((DateTime.Now - StartTime).TotalSeconds / (Duration + InitialDelay) * 100, 100);
+                return Math.Min((DateTime.Now - StartTime).TotalSeconds / (ResponsePoint.CalibrationDuration + InitialDelay) * 100, 100);
             }
             set
             {
@@ -79,23 +79,18 @@ namespace ODCalibrator
             }
         }
 
-        #endregion
-
-        #region Specificity and Settings
-        public double Setpoint { get; set; }
-        public double CDW { get; set; }
-        public double Duration { get; private set; }
+        public BiomassResponseData ResponsePoint { get; set; }
 
         private string Symbol;
         private string Unit;
+
         private CalibrationTarget _Target;
         public CalibrationTarget Target { get { return _Target; } set { _Target = value; OnPropertyChanged(); } }
         #endregion
 
-        public Subcalibration(double setpoint, double duration, string symbol, string unit)
+        public Subcalibration(BiomassResponseData sensorRD, string symbol, string unit)
         {
-            this.Setpoint = setpoint;
-            this.Duration = duration;
+            this.ResponsePoint = sensorRD;
             this.Symbol = symbol;
             this.Unit = unit;
             CaptureCommand = new RelayCommand(delegate
@@ -105,15 +100,15 @@ namespace ODCalibrator
             AbortCommand = new RelayCommand(delegate
             {
                 SensorDataSet.Clear();
-                if (!waitTask.IsCompleted)
-                    waitTask.Start();
+                if (!finishTask.IsCompleted)
+                    finishTask.Start();
             }, () => State == SubcalibrationState.Running);
         }
 
         public async Task<bool> RunAsync()
         {
             //prepare
-            waitTask = new Task(async delegate { await Task.Delay(1); });
+            finishTask = new Task(async delegate { await Task.Delay(1); });
             //begin
             State = SubcalibrationState.Running;
             StartTime = DateTime.Now;
@@ -122,27 +117,41 @@ namespace ODCalibrator
             SensorDataSet.Clear();
             //start the calibration interval
             StartTimer();
-            await waitTask;//wait for the interval to finish
+            await finishTask;//wait for the interval to finish
             //calculate the result
             if (SensorDataSet.Count < 2)
             {
-                Result = null;
+                ResponsePoint.Analog = double.NaN;
+                ResponsePoint.AnalogStd = double.NaN;
                 State = SubcalibrationState.Idle;
                 StartTime = new DateTime();
             }
             else
             {
-                Result = new DataPoint(Setpoint, SensorDataSet.Select(x => x.YValue));
+                double[] avAndStd = DataPoint.AverageAndStd(SensorDataSet.Select(x => x.YValue));
+                ResponsePoint.Analog = avAndStd[0];
+                ResponsePoint.AnalogStd = avAndStd[1];
                 State = SubcalibrationState.Complete;
                 StartTime = new DateTime();
             }
+            OnPropertyChanged("ResponsePoint");
             OnCaptureEndedEvent(this, new EventArgs());
             return true;
         }
         private async void StartTimer()
         {
-            await Task.Delay(1000 * (int)Duration);
-            waitTask.Start();
+            while ((DateTime.Now - StartTime).TotalSeconds < ResponsePoint.CalibrationDuration && !finishTask.IsCompleted)
+            {
+                await Task.Delay(10);
+            }
+            try
+            {
+                finishTask.Start();
+            }
+            catch
+            {
+
+            }
         }
 
         public void AddPoint(DataPoint data)

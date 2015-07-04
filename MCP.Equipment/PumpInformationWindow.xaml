@@ -21,12 +21,11 @@
             </StackPanel>
         </StackPanel>
         <d3:ChartPlotter x:Name="plotter" Grid.Row="1" Grid.ColumnSpan="2" LegendVisible="True" Margin="10">
-            <d3:ChartPlotter.HorizontalAxis>
-                <d3:HorizontalAxis x:Name="timeAxis" />
-            </d3:ChartPlotter.HorizontalAxis>
-            <d3:Header Content="Response Curve"/>
-            <d3:HorizontalAxisTitle Content="setpoint   [sph]"/>
+            <d3:VerticalAxis Placement="Left" />
             <d3:VerticalAxisTitle Content="response   [ml/h]" />
+            <d3:Header Content="Response Curve"/>
+            <d3:HorizontalAxis x:Name="timeAxis" />
+            <d3:HorizontalAxisTitle Content="setpoint   [sph]"/>
         </d3:ChartPlotter>
         <Button Grid.Row="2" Grid.Column="0" Content="Save" Margin="5" Click="Save_Click" IsEnabled="{Binding PumpID, Converter={StaticResource UIConverter}, ConverterParameter=IsLegalFilenameString}" />
         <Button Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="5" Click="Cancel_Click" />
