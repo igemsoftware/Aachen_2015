@@ -11,7 +11,7 @@ using System.Windows;
 using MCP.Curves;
 using MCP.Calibration;
 
-namespace ODCalibrator
+namespace GasSensorCalibrator
 {
     public class UIConverter : IValueConverter
     {

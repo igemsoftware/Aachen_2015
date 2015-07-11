@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TCD;
 
-namespace ODCalibrator
+namespace GasSensorCalibrator
 {
     public class Subcalibration : PropertyChangedBase
     {

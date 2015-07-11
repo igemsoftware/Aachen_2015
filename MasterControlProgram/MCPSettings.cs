@@ -37,6 +37,7 @@ namespace MasterControlProgram
             }
         }
         public string PumpDirectoryPath { get { return Path.Combine(HomeDirectoryPath, "Pumps"); } }
+        public string SensorDirectoryPath { get { return Path.Combine(HomeDirectoryPath, "Sensors"); } }
         public string ReactorDirectoryPath { get { return Path.Combine(HomeDirectoryPath, "Reactors"); } }
         public string ExperimentsDirectoryPath { get { return Path.Combine(HomeDirectoryPath, "Experiments"); } }
 			
@@ -104,6 +105,8 @@ namespace MasterControlProgram
                 Directory.CreateDirectory(HomeDirectoryPath);
             if (!Directory.Exists(PumpDirectoryPath))
                 Directory.CreateDirectory(PumpDirectoryPath);
+            if (!Directory.Exists(SensorDirectoryPath))
+                Directory.CreateDirectory(SensorDirectoryPath);
             if (!Directory.Exists(ReactorDirectoryPath))
                 Directory.CreateDirectory(ReactorDirectoryPath);
             if (!Directory.Exists(ExperimentsDirectoryPath))

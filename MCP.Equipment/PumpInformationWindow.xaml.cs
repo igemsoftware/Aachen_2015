@@ -30,6 +30,7 @@ namespace MCP.Equipment
             InitializeComponent();
             this.Title = title;
             pumpIDbox.IsEnabled = canEditID;
+            saveButton.IsEnabled = canEditID;
             this.DataContext = context;
             var chart = plotter.AddLineGraph(context.DataSource, DesignColors.Blue, 2, "Response Curve");
             context.LoadResponseCurve();

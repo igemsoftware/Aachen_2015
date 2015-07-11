@@ -45,7 +45,7 @@ namespace MasterControlProgram
         public ViewModel()
         {
             MCPSettings.HomeDirectoryChanged += MCPSettings_HomeDirectoryChanged;
-            Inventory.Initialize(MCPSettings.PumpDirectoryPath, MCPSettings.ReactorDirectoryPath);
+            Inventory.Initialize(MCPSettings.PumpDirectoryPath, MCPSettings.ReactorDirectoryPath, MCPSettings.SensorDirectoryPath);
             ExperimentLibrary.Initialize(MCPSettings.ExperimentsDirectoryPath);
             PrimarySerial.NewMessageReceived += PrimarySerial_NewMessageReceived;
             if (IsDebugMode)
@@ -63,7 +63,7 @@ namespace MasterControlProgram
 
         private void MCPSettings_HomeDirectoryChanged(object sender, EventArgs e)
         {
-            Inventory.Initialize(MCPSettings.PumpDirectoryPath, MCPSettings.ReactorDirectoryPath);
+            Inventory.Initialize(MCPSettings.PumpDirectoryPath, MCPSettings.ReactorDirectoryPath, MCPSettings.SensorDirectoryPath);
             ExperimentLibrary.Initialize(MCPSettings.ExperimentsDirectoryPath);
         }
 

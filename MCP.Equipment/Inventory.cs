@@ -16,8 +16,10 @@ namespace MCP.Equipment
     {
         private FileSystemWatcher pumpWatcher = null;
         private FileSystemWatcher reactorWatcher = null;
+        private FileSystemWatcher sensorWatcher = null;
         private string pumpDirectory = null;
         private string reactorDirectory = null;
+        private string sensorDirectory = null;
 
         public static Inventory Current { get; set; }
         
@@ -25,16 +27,25 @@ namespace MCP.Equipment
         private Dictionary<string, PumpInformation> _Pumps = new Dictionary<string, PumpInformation>();
         public Dictionary<string, PumpInformation> Pumps { get { return _Pumps; } set { _Pumps = value; OnPropertyChanged(); } }
 
+        private Dictionary<string, BiomassSensorInformation> _BiomassSensors = new Dictionary<string, BiomassSensorInformation>();
+        public Dictionary<string, BiomassSensorInformation> BiomassSensors { get { return _BiomassSensors; } set { _BiomassSensors = value; OnPropertyChanged(); } }
+
+        private Dictionary<string, GasSensorInformation> _GasSensors = new Dictionary<string, GasSensorInformation>();
+        public Dictionary<string, GasSensorInformation> GasSensors { get { return _GasSensors; } set { _GasSensors = value; OnPropertyChanged(); } }
+        
+
         private Dictionary<ParticipantID, ReactorInformation> _Reactors = new Dictionary<ParticipantID, ReactorInformation>();
         public Dictionary<ParticipantID, ReactorInformation> Reactors { get { return _Reactors; } set { _Reactors = value; OnPropertyChanged(); } }
 
-        #region Commands
-        private RelayCommand _AddPumpCommand;
-        public RelayCommand AddPumpCommand { get { return _AddPumpCommand; } set { _AddPumpCommand = value; OnPropertyChanged(); } }
 
+        #region Commands
         private RelayCommand _ImportPumpCommand;
         public RelayCommand ImportPumpCommand { get { return _ImportPumpCommand; } set { _ImportPumpCommand = value; OnPropertyChanged(); } }
 
+        private RelayCommand _ImportSensorCommand;
+        public RelayCommand ImportSensorCommand { get { return _ImportSensorCommand; } set { _ImportSensorCommand = value; OnPropertyChanged(); } }
+
+        
         private RelayCommand _AddReactorCommand;
         public RelayCommand AddReactorCommand { get { return _AddReactorCommand; } set { _AddReactorCommand = value; OnPropertyChanged(); } }
 
@@ -49,17 +60,6 @@ namespace MCP.Equipment
         public Inventory()
         {
             Current = this;
-            AddPumpCommand = new RelayCommand(async delegate
-            {
-                PumpInformation newPump = new PumpInformation();
-                PumpInformationWindow piw = new PumpInformationWindow("Add New Pump", true, newPump);
-                piw.Show();
-                await piw.WaitTask;
-                if (piw.Confirmed)
-                {
-                    newPump.SaveTo(pumpDirectory);
-                }
-            });
             ImportPumpCommand = new RelayCommand(delegate
             {
                 OpenFileDialog ofd = new OpenFileDialog() { Filter = "Pump Calibration Files|*.pump" };
@@ -70,6 +70,23 @@ namespace MCP.Equipment
                     try
                     {
                         File.Copy(ofd.FileName, Path.Combine(pumpDirectory, fi.Name));
+                    }
+                    catch (Exception ex)
+                    {
+                        Task mb = CustomMessageBox.ShowAsync("Can't import", "There was an error:\r\n\r\n" + ex.Message, System.Windows.MessageBoxImage.Error, 0, "Ok");
+                    }
+                }
+            });
+            ImportSensorCommand = new RelayCommand(delegate
+            {
+                OpenFileDialog ofd = new OpenFileDialog() { Filter = "Biomass Sensor Calibration Files|*.biomass" };
+                DialogResult result = ofd.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    FileInfo fi = new FileInfo(ofd.FileName);
+                    try
+                    {
+                        File.Copy(ofd.FileName, Path.Combine(sensorDirectory, fi.Name));
                     }
                     catch (Exception ex)
                     {
@@ -106,9 +123,9 @@ namespace MCP.Equipment
                 }
             });
         }
-        public void Initialize(string pumpPath, string reactorPath)
+        public void Initialize(string pumpPath, string reactorPath, string sensorPath)
         {
-            if (!Directory.Exists(pumpPath) || !Directory.Exists(reactorPath))
+            if (!Directory.Exists(pumpPath) || !Directory.Exists(reactorPath) || !Directory.Exists(sensorPath))
                 return;
             pumpDirectory = pumpPath;
             pumpWatcher = new FileSystemWatcher(pumpPath, "*.pump");
@@ -125,6 +142,14 @@ namespace MCP.Equipment
             reactorWatcher.Deleted += reactorWatcher_Changed;
             reactorWatcher.EnableRaisingEvents = true;
             ScanReactorDirectory();
+            //
+            sensorDirectory = sensorPath;
+            sensorWatcher = new FileSystemWatcher(sensorPath, "*.*"); //TDO: filter for .biomass or .sensor
+            sensorWatcher.Renamed += sensorWatcher_Changed;
+            sensorWatcher.Created += sensorWatcher_Changed;
+            sensorWatcher.Deleted += sensorWatcher_Changed;
+            sensorWatcher.EnableRaisingEvents = true;
+            ScanSensorDirectory();
         }
 
         public async void pumpWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -197,33 +222,50 @@ namespace MCP.Equipment
                 }
             }
             Reactors = newReactors;
+        }
+        public async void sensorWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            await Task.Delay(100);//this is to avoid file access conflicts
+            ScanSensorDirectory();
+        }
+        private void ScanSensorDirectory()
+        {
+            Dictionary<string, BiomassSensorInformation> newBiomassSensors = new Dictionary<string, BiomassSensorInformation>();
+            Dictionary<string, GasSensorInformation> newGasSensors = new Dictionary<string, GasSensorInformation>();
 
-            //Dictionary<ParticipantID, ReactorInformation> reactors = new Dictionary<ParticipantID, ReactorInformation>();
-            //foreach (string file in Directory.EnumerateFiles(reactorDirectory, "*.reactor"))
-            //{
-            //    FileInfo fi = new FileInfo(file);
-            //    ReactorInformation ri = ReactorInformation.LoadFromFile(file);
-            //    reactors.Add(ri.ParticipantID, ri);
-            //}
-            ////add or update all reactors
-            //List<ParticipantID> extraReactors = new List<ParticipantID>();
-            //foreach (var kvp in Reactors)
-            //{
-            //    if (reactors.ContainsKey(kvp.Key))
-            //    {
-            //        Reactors[kvp.Key] = reactors[kvp.Key];
-            //        reactors.Remove(kvp.Key);
-            //    }
-            //    else
-            //    {
-            //        extraReactors.Add(kvp.Key);
-            //    }
-            //}
-            ////remove extra reactors
-            //foreach (ParticipantID pi in extraReactors)
-            //{
-            //    Reactors.Remove(pi);
-            //}
+            foreach (string file in Directory.EnumerateFiles(sensorDirectory, "*.biomass"))
+            {
+                BiomassSensorInformation sensor = BiomassSensorInformation.LoadFromFile(file);
+                if (sensor != null)
+                {
+                    sensor.EditSensorCommand = new RelayCommand(async delegate
+                    {
+                        BiomassSensorInformationWindow bsiw = new BiomassSensorInformationWindow("Sensor Calibration", false, sensor);
+                        bsiw.Show();
+                        await bsiw.WaitTask;
+                    });
+                    newBiomassSensors.Add(sensor.SensorID, sensor);
+                }
+
+            }
+            foreach (string file in Directory.EnumerateFiles(sensorDirectory, "*.sensor"))
+            {
+                GasSensorInformation sensor = GasSensorInformation.LoadFromFile(file);
+                if (sensor != null)
+                {
+                    sensor.EditSensorCommand = new RelayCommand(async delegate
+                    {
+                        GasSensorInformationWindow bsiw = new GasSensorInformationWindow("Sensor Calibration", false, sensor);
+                        bsiw.Show();
+                        await bsiw.WaitTask;
+                    });
+                    newGasSensors.Add(sensor.SensorID, sensor);
+                }
+            }
+
+            BiomassSensors = newBiomassSensors;
+            GasSensors = newGasSensors;
         }
     }
+
 }

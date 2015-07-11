@@ -44,9 +44,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCP.Curves", "MCP.Curves\MC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODCalibrator", "ODCalibrator\ODCalibrator.csproj", "{CA1160A4-52A3-47EE-BDFB-260C65EEFBF7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GasSensorCalibrator", "GasSensorCalibrator\GasSensorCalibrator.csproj", "{44A41EC2-BE43-4E7A-809C-47031E4C189B}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 10
+		SccNumberOfProjects = 11
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://igemaachen.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -79,6 +81,9 @@ Global
 		SccProjectUniqueName9 = ODCalibrator\\ODCalibrator.csproj
 		SccProjectName9 = ODCalibrator
 		SccLocalPath9 = ODCalibrator
+		SccProjectUniqueName10 = GasSensorCalibrator\\GasSensorCalibrator.csproj
+		SccProjectName10 = GasSensorCalibrator
+		SccLocalPath10 = GasSensorCalibrator
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -179,6 +184,16 @@ Global
 		{CA1160A4-52A3-47EE-BDFB-260C65EEFBF7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{CA1160A4-52A3-47EE-BDFB-260C65EEFBF7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CA1160A4-52A3-47EE-BDFB-260C65EEFBF7}.Release|Win32.ActiveCfg = Release|Any CPU
+		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

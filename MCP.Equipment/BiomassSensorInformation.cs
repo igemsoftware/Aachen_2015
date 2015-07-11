@@ -33,9 +33,9 @@ namespace MCP.Equipment
         public RelayCommand EditSensorCommand { get { return _EditSensorCommand; } set { _EditSensorCommand = value; OnPropertyChanged(); } }
 
         #region Drawing the Response Curve
-        private BiomassResponseDataPointCollection _ResponseDataCollection = new BiomassResponseDataPointCollection();//contains only recent datapoints
+        private BiomassResponseDataCollection _ResponseDataCollection = new BiomassResponseDataCollection();//contains only recent datapoints
         [XmlIgnore]
-        public BiomassResponseDataPointCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
+        public BiomassResponseDataCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
 
         private ObservableCollection<BiomassResponseData> _ResponseDataSet = new ObservableCollection<BiomassResponseData>();//contains all datapoints
         [XmlIgnore]

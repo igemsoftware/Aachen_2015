@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TCD.Controls;
 
-namespace PumpCalibrator
+namespace MCP.Calibration
 {
     public enum CalibrationMode
     {
@@ -21,11 +21,21 @@ namespace PumpCalibrator
     public enum CalibrationTarget
     {
         Pump,
-        Stirrer
+        Stirrer,
+        OD,
+        Biomass,
+        Oxygen,
+        Carbon_Dioxide
     }
     public enum CalibrationFluid
     {
         [Display(Name="Water (22 °C)")]
         Water = 997800 // [µg/ml]
+    }
+    public enum SubcalibrationState
+    {
+        Idle,
+        Running,
+        Complete
     }
 }

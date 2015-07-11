@@ -76,12 +76,16 @@
     <Compile Include="..\PumpCalibrator\SpeechIO.cs">
       <Link>SpeechIO.cs</Link>
     </Compile>
+    <Compile Include="BiomassSensorInformationWindow.xaml.cs">
+      <DependentUpon>BiomassSensorInformationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GasSensorInformation.cs" />
     <Compile Include="Inventory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BiomassSensorInformation.cs" />
     <Compile Include="PumpInformation.cs" />
-    <Compile Include="BiomassSensorInformationWindow.xaml.cs">
-      <DependentUpon>BiomassSensorInformationWindow.xaml</DependentUpon>
+    <Compile Include="GasSensorInformationWindow.xaml.cs">
+      <DependentUpon>GasSensorInformationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PumpInformationWindow.xaml.cs">
       <DependentUpon>PumpInformationWindow.xaml</DependentUpon>
@@ -93,6 +97,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="BiomassSensorInformationWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GasSensorInformationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

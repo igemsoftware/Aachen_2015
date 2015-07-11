@@ -45,6 +45,15 @@ namespace MCP.Equipment
         public PumpInformation HarvestPump { get { return (Inventory.Current.Pumps.ContainsKey(_HarvestPumpID) ? Inventory.Current.Pumps[_HarvestPumpID] : null); } }
         #endregion
 
+        #region Sensors
+        private string _BiomassSensorID = string.Empty;
+        [XmlElement]
+        public string BiomassSensorID { get { return _BiomassSensorID; } set { _BiomassSensorID = value; OnPropertyChanged(); } }
+        [XmlIgnore]
+        public BiomassSensorInformation BiomassSensor { get { return (Inventory.Current.BiomassSensors.ContainsKey(_BiomassSensorID) ? Inventory.Current.BiomassSensors[_BiomassSensorID] : null); } }
+
+        #endregion
+
         #region Commands
         private RelayCommand _EditReactorCommand;
         [XmlIgnore]

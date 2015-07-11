@@ -28,7 +28,7 @@
             <d3:HorizontalAxisTitle Content="raw value   [-]"/>
             <d3:VerticalAxisTitle Content="readout   [???]" />
         </d3:ChartPlotter>
-        <Button Grid.Row="2" Grid.Column="0" Content="Save" Margin="5" Click="Save_Click" IsEnabled="{Binding SensorID, Converter={StaticResource UIConverter}, ConverterParameter=IsLegalFilenameString}" />
+        <Button x:Name="saveButton" Grid.Row="2" Grid.Column="0" Content="Save" Margin="5" Click="Save_Click" IsEnabled="{Binding SensorID, Converter={StaticResource UIConverter}, ConverterParameter=IsLegalFilenameString}" />
         <Button Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="5" Click="Cancel_Click" />
     </Grid>
 </Window>

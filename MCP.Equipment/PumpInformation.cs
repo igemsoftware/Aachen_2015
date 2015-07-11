@@ -34,9 +34,9 @@ namespace MCP.Equipment
         public RelayCommand EditPumpCommand { get { return _EditPumpCommand; } set { _EditPumpCommand = value; OnPropertyChanged(); } }
 
         #region Drawing the Response Curve
-        private PumpResponseDataPointCollection _ResponseDataCollection = new PumpResponseDataPointCollection();//contains only recent datapoints
+        private PumpResponseDataCollection _ResponseDataCollection = new PumpResponseDataCollection();//contains only recent datapoints
         [XmlIgnore]
-        public PumpResponseDataPointCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
+        public PumpResponseDataCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
 
         private ObservableCollection<PumpResponseData> _ResponseDataSet = new ObservableCollection<PumpResponseData>();//contains all datapoints
         [XmlIgnore]

@@ -7,22 +7,32 @@ using System.Threading.Tasks;
 
 namespace MCP.Curves
 {
-    public class BiomassResponseDataPointCollection : RingArray<BiomassResponseData>
+    public class BiomassResponseDataCollection : RingArray<BiomassResponseData>
     {
         //private const int TOTAL_POINTS = ViewModel.SecondsToShow * 1000 / ViewModel.UpdateInterval;
         private const int TOTAL_POINTS = 1000;
 
-        public BiomassResponseDataPointCollection()
+        public BiomassResponseDataCollection()
             : base(TOTAL_POINTS) // here i set how much values to show 
         {
         }
     }
-    public class PumpResponseDataPointCollection : RingArray<PumpResponseData>
+    public class GasSensorResponseDataCollection : RingArray<GasSensorResponseData>
     {
         //private const int TOTAL_POINTS = ViewModel.SecondsToShow * 1000 / ViewModel.UpdateInterval;
         private const int TOTAL_POINTS = 1000;
 
-        public PumpResponseDataPointCollection()
+        public GasSensorResponseDataCollection()
+            : base(TOTAL_POINTS) // here i set how much values to show 
+        {
+        }
+    }
+    public class PumpResponseDataCollection : RingArray<PumpResponseData>
+    {
+        //private const int TOTAL_POINTS = ViewModel.SecondsToShow * 1000 / ViewModel.UpdateInterval;
+        private const int TOTAL_POINTS = 1000;
+
+        public PumpResponseDataCollection()
             : base(TOTAL_POINTS) // here i set how much values to show 
         {
         }

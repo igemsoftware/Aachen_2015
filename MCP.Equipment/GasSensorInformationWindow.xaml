@@ -1,4 +1,4 @@
-﻿<Window x:Class="MCP.Equipment.PumpInformationWindow"
+﻿<Window x:Class="MCP.Equipment.GasSensorInformationWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:toolkit="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,8 +16,8 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.ColumnSpan="2">
             <StackPanel Margin="10">
-                <TextBlock Text="Pump ID" Style="{StaticResource SubtleTextBlockStyle}" />
-                <TextBox x:Name="pumpIDbox" Text="{Binding PumpID, Mode=TwoWay}" Margin="0,5" />
+                <TextBlock Text="Sensor ID" Style="{StaticResource SubtleTextBlockStyle}" />
+                <TextBox x:Name="sensorIDbox" Text="{Binding SensorID, Mode=TwoWay}" Margin="0,5" />
             </StackPanel>
         </StackPanel>
         <d3:ChartPlotter x:Name="plotter" Grid.Row="1" Grid.ColumnSpan="2" LegendVisible="True" Margin="10">
@@ -25,10 +25,10 @@
                 <d3:HorizontalAxis x:Name="timeAxis" />
             </d3:ChartPlotter.HorizontalAxis>
             <d3:Header Content="Response Curve"/>
-            <d3:HorizontalAxisTitle Content="setpoint   [sph]"/>
-            <d3:VerticalAxisTitle Content="response   [ml/h]" />
+            <d3:HorizontalAxisTitle Content="raw value   [-]"/>
+            <d3:VerticalAxisTitle Content="Vol.%   [%]" />
         </d3:ChartPlotter>
-        <Button x:Name="saveButton" Grid.Row="2" Grid.Column="0" Content="Save" Margin="5" Click="Save_Click" IsEnabled="{Binding PumpID, Converter={StaticResource UIConverter}, ConverterParameter=IsLegalFilenameString}" />
+        <Button x:Name="saveButton" Grid.Row="2" Grid.Column="0" Content="Save" Margin="5" Click="Save_Click" IsEnabled="{Binding SensorID, Converter={StaticResource UIConverter}, ConverterParameter=IsLegalFilenameString}" />
         <Button Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="5" Click="Cancel_Click" />
     </Grid>
 </Window>

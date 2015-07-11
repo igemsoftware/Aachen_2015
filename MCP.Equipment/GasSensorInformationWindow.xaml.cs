@@ -20,25 +20,21 @@ namespace MCP.Equipment
     /// <summary>
     /// Interaction logic for SensorInformationWindow.xaml
     /// </summary>
-    public partial class BiomassSensorInformationWindow : Window
+    public partial class GasSensorInformationWindow : Window
     {
         public Task WaitTask = new Task(async delegate { await Task.Delay(1); });
         public bool Confirmed = false;
 
-        public BiomassSensorInformationWindow(string title, bool canEditID, BiomassSensorInformation context)
+        public GasSensorInformationWindow(string title, bool canEditID, GasSensorInformation context)
         {
             InitializeComponent();
             this.Title = title;
             sensorIDbox.IsEnabled = canEditID;
             saveButton.IsEnabled = canEditID;
             this.DataContext = context;
-            if ((from rd in context.ResponseCurve where double.IsNaN(rd.OD) select rd).Count() == 0)
+            if ((from rd in context.ResponseCurve where double.IsNaN(rd.Percent) select rd).Count() == 0)
             {
-                plotter.AddLineGraph(context.ODDataSource, DesignColors.Blue, 2, "OD Curve");
-            }
-            if ((from rd in context.ResponseCurve where double.IsNaN(rd.CDW) select rd).Count() == 0)
-            {
-                plotter.AddLineGraph(context.CDWDataSource, DesignColors.Yellow, 2, "CDW Curve");
+                plotter.AddLineGraph(context.DataSource, DesignColors.Blue, 2, "Response Curve");
             }
             context.LoadResponseCurve();
         }

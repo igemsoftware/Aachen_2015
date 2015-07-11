@@ -17,7 +17,7 @@ using MCP.NUI;
 using System.Windows.Forms;
 using MCP.Calibration;
 
-namespace ODCalibrator
+namespace GasSensorCalibrator
 {
     public class Calibrator : PropertyChangedBase
     {
@@ -39,6 +39,30 @@ namespace ODCalibrator
         private CalibrationTarget _CalibrationTarget = CalibrationTarget.Biomass;
         public CalibrationTarget CalibrationTarget { get { return _CalibrationTarget; } set { _CalibrationTarget = value; OnPropertyChanged(); } }
 
+        public string CalibrationTargetSymbol
+        {
+            get
+            {
+                switch (_CalibrationTarget)
+                {
+                    case CalibrationTarget.Pump:
+                        return null;
+                    case CalibrationTarget.Stirrer:
+                        return DimensionSymbol.Agitation_Rate;
+                    case CalibrationTarget.OD:
+                        return null;
+                    case CalibrationTarget.Biomass:
+                        return null;
+                    case CalibrationTarget.Oxygen:
+                        return DimensionSymbol.O2_Saturation;
+                    case CalibrationTarget.Carbon_Dioxide:
+                        return DimensionSymbol.CO2_Saturation;
+                    default:
+                        return null;
+                }
+            }
+        }
+        //TODO: can CalibrationTarget be replaced with the DimensionSymbol?
 
 
         private Subcalibration _ActiveCalibrationSub;

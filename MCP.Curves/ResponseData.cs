@@ -9,6 +9,18 @@ using TCD;
 
 namespace MCP.Curves
 {
+    public class PumpResponseData
+    {
+        [XmlAttribute]
+        public double Setpoint { get; set; }
+        [XmlAttribute]
+        public double Response { get; set; }
+
+        public PumpResponseData()
+        {
+
+        }
+    }
     public class SensorResponseData : PropertyChangedBase
     {
         private double _Analog = double.NaN;
@@ -23,20 +35,8 @@ namespace MCP.Curves
         private double _CalibrationDuration = double.NaN;
         [XmlAttribute]
         public double CalibrationDuration { get { return _CalibrationDuration; } set { _CalibrationDuration = value; OnPropertyChanged(); } }
-        
+
         public SensorResponseData()
-        {
-
-        }
-    }
-    public class PumpResponseData
-    {
-        [XmlAttribute]
-        public double Setpoint { get; set; }
-        [XmlAttribute]
-        public double Response { get; set; }
-
-        public PumpResponseData()
         {
 
         }

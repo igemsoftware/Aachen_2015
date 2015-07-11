@@ -217,10 +217,49 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                         <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <!--<Button Content="Create New Pump" Command="{Binding AddPumpCommand}" IsEnabled="False" />-->
                             <Button Content="Import Pump" Command="{Binding ImportPumpCommand}" />
                         </StackPanel>
                         
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Sensors" DataContext="{Binding Inventory}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <GroupBox Header="Biomass" Grid.Row="0">
+                            <ItemsControl Grid.Row="0" ItemsSource="{Binding BiomassSensors}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button DataContext="{Binding Value}" Command="{Binding EditSensorCommand}" Padding="0" Margin="5" HorizontalContentAlignment="Stretch">
+                                            <Grid Margin="5,0">
+                                                <TextBlock Text="{Binding SensorID}" Style="{StaticResource LargeValueTextBlockStyle}" HorizontalAlignment="Left" />
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </GroupBox>
+                        <GroupBox Header="Offgas" Grid.Row="1">
+                            <ItemsControl Grid.Row="0" ItemsSource="{Binding GasSensors}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button DataContext="{Binding Value}" Command="{Binding EditSensorCommand}" Padding="0" Margin="5" HorizontalContentAlignment="Stretch">
+                                            <Grid Margin="5,0">
+                                                <TextBlock Text="{Binding SensorID}" Style="{StaticResource LargeValueTextBlockStyle}" HorizontalAlignment="Left" />
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </GroupBox>
+                        
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <Button Content="Import Sensor" Command="{Binding ImportSensorCommand}" />
+                        </StackPanel>
+
                     </Grid>
                 </TabItem>
             </TabControl>
