@@ -14,6 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TCD.Controls;
+using Microsoft.Research.DynamicDataDisplay;
+using Microsoft.Research.DynamicDataDisplay.DataSources;
 
 namespace GasSensorCalibrator
 {
@@ -26,6 +29,8 @@ namespace GasSensorCalibrator
         {
             InitializeComponent();
             baudrateBox.SetUpItems(BaudRate._9600);
+            targetBox.UseEnumItemTemplate();
+            targetBox.ItemsSource = (new CalibrationTarget[] { CalibrationTarget.Oxygen, CalibrationTarget.Carbon_Dioxide, CalibrationTarget.CHx });
             modeBox.SetUpItems(CalibrationMode.Standard);
             //chart
             plotter.AddLineGraph(ViewModel.Current.DataSource, DesignColors.Red, 2, "Sensor Value");

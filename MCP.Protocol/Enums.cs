@@ -83,7 +83,7 @@ namespace MCP.Protocol
         public static string Celsius = "°C";
         public static string PerHour = "1/h";
         public static string Percent = "%";
-        public static string Biomass = "analog";
+        public static string Analog = "analog";
     }
     public enum BaudRate
     {

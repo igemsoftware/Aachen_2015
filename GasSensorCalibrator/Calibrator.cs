@@ -36,7 +36,7 @@ namespace GasSensorCalibrator
         private CalibrationMode _CalibrationMode = CalibrationMode.Standard;
         public CalibrationMode CalibrationMode { get { return _CalibrationMode; } set { _CalibrationMode = value; OnPropertyChanged(); } }
 
-        private CalibrationTarget _CalibrationTarget = CalibrationTarget.Biomass;
+        private CalibrationTarget _CalibrationTarget = CalibrationTarget.Oxygen;
         public CalibrationTarget CalibrationTarget { get { return _CalibrationTarget; } set { _CalibrationTarget = value; OnPropertyChanged(); } }
 
         public string CalibrationTargetSymbol
@@ -57,6 +57,8 @@ namespace GasSensorCalibrator
                         return DimensionSymbol.O2_Saturation;
                     case CalibrationTarget.Carbon_Dioxide:
                         return DimensionSymbol.CO2_Saturation;
+                    case CalibrationTarget.CHx:
+                        return DimensionSymbol.CHx_Saturation;
                     default:
                         return null;
                 }
@@ -87,8 +89,8 @@ namespace GasSensorCalibrator
             StartOverCommand = new RelayCommand(delegate
             {
                 Subcalibrations.Clear();
-                foreach (BiomassResponseData brd in CalibrationProfiles.Profiles[CalibrationTarget][CalibrationMode])
-                    Subcalibrations.Add(new Subcalibration(brd, CalibrationProfiles.Symbols[CalibrationTarget], CalibrationProfiles.Units[CalibrationTarget]) { Target = CalibrationTarget });
+                foreach (GasSensorResponseData gsrd in CalibrationProfiles.Profiles[CalibrationTarget][CalibrationMode])
+                    Subcalibrations.Add(new Subcalibration(gsrd, CalibrationProfiles.Symbols[CalibrationTarget], CalibrationProfiles.Units[CalibrationTarget]) { Target = CalibrationTarget });
                 foreach (Subcalibration sub in Subcalibrations)
                 {
                     sub.RequestCapture += sub_RequestCapture;
@@ -128,14 +130,14 @@ namespace GasSensorCalibrator
 
         private async void PrepareResults()
         {
-            BiomassSensorInformation si = new BiomassSensorInformation();
+            GasSensorInformation si = new GasSensorInformation();
             foreach (Subcalibration sub in Subcalibrations)
                 if (!double.IsNaN(sub.ResponsePoint.Analog))
                     si.ResponseCurve.Add(sub.ResponsePoint);
-            BiomassSensorInformationWindow piw = new BiomassSensorInformationWindow("Save Sensor Calibration", true, si);
-            piw.Show();
-            await piw.WaitTask;
-            if (piw.Confirmed)
+            GasSensorInformationWindow gsiw = new GasSensorInformationWindow("Save Sensor Calibration", true, si);
+            gsiw.Show();
+            await gsiw.WaitTask;
+            if (gsiw.Confirmed)
             {
                 System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
                 fbd.ShowDialog();
@@ -154,11 +156,11 @@ namespace GasSensorCalibrator
                 FileInfo fi = new FileInfo(ofd.FileName);
                 try
                 {
-                    BiomassSensorInformation si = BiomassSensorInformation.LoadFromFile(ofd.FileName);
+                    GasSensorInformation si = GasSensorInformation.LoadFromFile(ofd.FileName);
                     Subcalibrations.Clear();
-                    foreach (BiomassResponseData brd in si.ResponseCurve)
+                    foreach (GasSensorResponseData gsrd in si.ResponseCurve)
                     {
-                        Subcalibrations.Add(new Subcalibration(brd, CalibrationProfiles.Symbols[CalibrationTarget], CalibrationProfiles.Units[CalibrationTarget]) { Target = CalibrationTarget });
+                        Subcalibrations.Add(new Subcalibration(gsrd, CalibrationProfiles.Symbols[CalibrationTarget], CalibrationProfiles.Units[CalibrationTarget]) { Target = CalibrationTarget });
                         foreach (Subcalibration sub in Subcalibrations)
                         {
                             sub.RequestCapture += sub_RequestCapture;

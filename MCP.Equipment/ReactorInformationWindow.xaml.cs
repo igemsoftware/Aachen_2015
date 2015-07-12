@@ -23,16 +23,20 @@ namespace MCP.Equipment
         public Task WaitTask = new Task(async delegate { await Task.Delay(1); });
         public bool Confirmed = false;
 
-        public ReactorInformationWindow(string title, bool canEditID, IEnumerable<string> availablePumps)
+        public ReactorInformationWindow(string title, bool canEditID, IEnumerable<PumpInformation> availablePumps, IEnumerable<BiomassSensorInformation> availableBiomassSensors, IEnumerable<GasSensorInformation> availableGasSensors)
         {
             InitializeComponent();
             this.Title = title;
             reactorIDbox.IsEnabled = canEditID;
             var pids = (Enum.GetValues(typeof(ParticipantID)) as ParticipantID[]).Skip(2);
             reactorIDbox.ItemsSource = pids;
-            feedID.ItemsSource = availablePumps;
-            aerationID.ItemsSource = availablePumps;
-            harvestID.ItemsSource = availablePumps;
+            feedID.ItemsSource = availablePumps.Select(p => p.PumpID);
+            aerationID.ItemsSource = availablePumps.Select(p => p.PumpID);
+            harvestID.ItemsSource = availablePumps.Select(p => p.PumpID);
+            biomassID.ItemsSource = availableBiomassSensors.Select(s => s.SensorID);
+            oxygenID.ItemsSource = (from GasSensorInformation gsi in availableGasSensors where gsi.SensorType == SensorType.Oxygen select gsi.SensorID);
+            carbondioxideID.ItemsSource = (from GasSensorInformation gsi in availableGasSensors where gsi.SensorType == SensorType.Carbon_Dioxide select gsi.SensorID);
+            chxID.ItemsSource = (from GasSensorInformation gsi in availableGasSensors where gsi.SensorType == SensorType.CHx select gsi.SensorID);
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

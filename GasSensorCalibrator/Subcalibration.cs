@@ -80,7 +80,7 @@ namespace GasSensorCalibrator
             }
         }
 
-        public BiomassResponseData ResponsePoint { get; set; }
+        public GasSensorResponseData ResponsePoint { get; set; }
 
         private string Symbol;
         private string Unit;
@@ -89,7 +89,7 @@ namespace GasSensorCalibrator
         public CalibrationTarget Target { get { return _Target; } set { _Target = value; OnPropertyChanged(); } }
         #endregion
 
-        public Subcalibration(BiomassResponseData sensorRD, string symbol, string unit)
+        public Subcalibration(GasSensorResponseData sensorRD, string symbol, string unit)
         {
             this.ResponsePoint = sensorRD;
             this.Symbol = symbol;

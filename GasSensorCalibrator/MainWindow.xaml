@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
         xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="OD Calibrator" MinHeight="600" MinWidth="800" Width="1000" DataContext="{StaticResource ViewModel}" ResizeMode="CanResizeWithGrip">
+        Title="Gas Sensor Calibrator" MinHeight="600" MinWidth="800" Width="1000" DataContext="{StaticResource ViewModel}" ResizeMode="CanResizeWithGrip">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -30,6 +30,8 @@
                                 <ComboBox x:Name="modeBox" Grid.Column="0" Margin="0,0,5,5" SelectedItem="{Binding CalibrationMode, Mode=TwoWay}" />
                                 <Button Content="Apply" Grid.Column="1" Command="{Binding StartOverCommand}" Margin="5,0,5,5" />
                             </Grid>
+                            <TextBlock Text="Gas" Style="{StaticResource SubtleTextBlockStyle}" />
+                            <ComboBox x:Name="targetBox" Margin="0,0,5,5" SelectedItem="{Binding CalibrationTarget, Mode=TwoWay}" />
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Grid.Row="1" Header="Curve">
@@ -38,11 +40,9 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="OD   [-]" Grid.Column="0" />
-                                <TextBlock Text="CDW   [mg/mL]" Grid.Column="1" />
-                                <TextBlock Text="Readout" Grid.Column="2" />
+                                <TextBlock Text="Vol.%" Grid.Column="0" />
+                                <TextBlock Text="Readout" Grid.Column="1" />
                             </Grid>
                             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                                 <ItemsControl ItemsSource="{Binding Calibrator.Subcalibrations}">
@@ -52,11 +52,9 @@
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
-                                                <toolkit:DoubleUpDown Grid.Column="0" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.OD, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
-                                                <toolkit:DoubleUpDown Grid.Column="1" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.CDW, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
-                                                <Button Command="{Binding AbortCommand}" Grid.Column="2" HorizontalContentAlignment="Stretch" Height="24" Padding="0" VerticalContentAlignment="Stretch">
+                                                <toolkit:DoubleUpDown Grid.Column="0" Margin="5,0" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.Percent, Mode=TwoWay}" Increment="0.01" FormatString="0.00" HorizontalAlignment="Left" />
+                                                <Button Command="{Binding AbortCommand}" Grid.Column="1" HorizontalContentAlignment="Stretch" Height="24" Padding="0" VerticalContentAlignment="Stretch">
                                                     <Grid>
                                                         <ProgressBar Margin="0" Value="{Binding ProgressPercent}" BorderThickness="0" />
                                                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Abort" />
@@ -102,18 +100,10 @@
                     </GroupBox>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Help" IsEnabled="True">
+            <TabItem Header="Help" IsEnabled="False">
                 <StackPanel>
                     <TextBlock>
-                        1. flush the sensor with sample of known OD
-                        <LineBreak></LineBreak>
-                        2. suck sample up and start pushing it out at a constant rate
-                        <LineBreak></LineBreak>
-                        3. click "capture"
-                        <LineBreak></LineBreak>
-                        4. continue pushig sample out until the capture finishes
-                        <LineBreak></LineBreak>
-                        5. push out all remaining sample and start over with step 1. for the next sample
+                        TODO
                     </TextBlock>
                 </StackPanel>
             </TabItem>

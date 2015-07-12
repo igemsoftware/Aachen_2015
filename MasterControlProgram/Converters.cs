@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Documents;
 using System.Collections.Generic;
 using System.Windows;
+using MCP.Equipment;
 
 namespace MasterControlProgram
 {

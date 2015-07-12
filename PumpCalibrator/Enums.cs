@@ -25,7 +25,10 @@ namespace MCP.Calibration
         OD,
         Biomass,
         Oxygen,
-        Carbon_Dioxide
+        [Display(Name="Carbon Dioxide")]
+        Carbon_Dioxide,
+        [Display(Name = "Hydrocarbons")]
+        CHx
     }
     public enum CalibrationFluid
     {

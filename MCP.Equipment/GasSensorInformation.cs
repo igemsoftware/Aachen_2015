@@ -16,9 +16,11 @@ namespace MCP.Equipment
     public class GasSensorInformation : PropertyChangedBase
     {
         private string _SensorID;
+        [XmlElement]
         public string SensorID { get { return _SensorID; } set { _SensorID = value; OnPropertyChanged(); } }
 
         private SensorType _SensorType;
+        [XmlElement]
         public SensorType SensorType { get { return _SensorType; } set { _SensorType = value; OnPropertyChanged(); } }
         
 
@@ -62,7 +64,7 @@ namespace MCP.Equipment
             }
         }
 
-        public double CaluclatePercent(double analog)
+        public double CalculatePercent(double analog)
         {
             return ResponseCurve.LinearTransformAnalogToPercent(analog);
         }
@@ -103,6 +105,9 @@ namespace MCP.Equipment
     }
     public enum SensorType
     {
-        Oxygen, Carbon_Dioxide
+        Oxygen,
+        [Display(Name = "Carbon Dioxide")]
+        Carbon_Dioxide,
+        CHx
     }
 }

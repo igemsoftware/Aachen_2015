@@ -79,7 +79,7 @@ namespace MCP.Equipment
             });
             ImportSensorCommand = new RelayCommand(delegate
             {
-                OpenFileDialog ofd = new OpenFileDialog() { Filter = "Biomass Sensor Calibration Files|*.biomass" };
+                OpenFileDialog ofd = new OpenFileDialog() { Filter = "Sensor Calibration Files|*.biomass;*.sensor" };
                 DialogResult result = ofd.ShowDialog();
                 if (result == DialogResult.OK)
                 {
@@ -97,7 +97,7 @@ namespace MCP.Equipment
             AddReactorCommand = new RelayCommand(async delegate
             {
                 ReactorInformation newReactor = new ReactorInformation();
-                ReactorInformationWindow piw = new ReactorInformationWindow("Add New Reactor", true, Pumps.Keys) { DataContext = newReactor };
+                ReactorInformationWindow piw = new ReactorInformationWindow("Add New Reactor", true, Pumps.Values, BiomassSensors.Values, GasSensors.Values) { DataContext = newReactor };
                 piw.Show();
                 await piw.WaitTask;
                 if (piw.Confirmed)
@@ -205,9 +205,13 @@ namespace MCP.Equipment
                             ParticipantID = reactor.ParticipantID,
                             FeedPumpID = reactor.FeedPumpID,
                             AerationPumpID = reactor.AerationPumpID,
-                            HarvestPumpID = reactor.HarvestPumpID
+                            HarvestPumpID = reactor.HarvestPumpID,
+                            BiomassSensorID = reactor.BiomassSensorID,
+                            OxygenSensorID = reactor.OxygenSensorID,
+                            CarbonDioxideSensorID = reactor.CarbonDioxideSensorID,
+                            CHxSensorID = reactor.CHxSensorID
                         };
-                        ReactorInformationWindow riw = new ReactorInformationWindow("Edit Reactor", false, Pumps.Keys) { DataContext = newReactor };
+                        ReactorInformationWindow riw = new ReactorInformationWindow("Edit Reactor", false, Pumps.Values, BiomassSensors.Values, GasSensors.Values) { DataContext = newReactor };
                         riw.Show();
                         await riw.WaitTask;
                         if (riw.Confirmed)
@@ -215,6 +219,10 @@ namespace MCP.Equipment
                             reactor.FeedPumpID = newReactor.FeedPumpID;
                             reactor.AerationPumpID = newReactor.AerationPumpID;
                             reactor.HarvestPumpID = newReactor.HarvestPumpID;
+                            reactor.BiomassSensorID = newReactor.BiomassSensorID;
+                            reactor.OxygenSensorID = newReactor.OxygenSensorID;
+                            reactor.CarbonDioxideSensorID = newReactor.CarbonDioxideSensorID;
+                            reactor.CHxSensorID = newReactor.CHxSensorID;
                             reactor.SaveTo(reactorDirectory);
                         }
                     });

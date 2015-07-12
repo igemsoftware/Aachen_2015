@@ -62,9 +62,21 @@ namespace GasSensorCalibrator
                     {
                         double val = rnd.NextDouble();
                         if (Calibrator.ActiveCalibrationSub != null)
-                            val = val * 10 + (double)Calibrator.ActiveCalibrationSub.ResponsePoint.OD * 150 + 120;
-                        Message msg = new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.Biomass, val, Unit.Biomass));
-                        PrimarySerial.InterpretMessage(msg.Raw);
+                            val = val * 10 + (double)Calibrator.ActiveCalibrationSub.ResponsePoint.Percent * 150 + 120;
+                            switch (Calibrator.CalibrationTarget)
+                            {
+                                case MCP.Calibration.CalibrationTarget.Oxygen:
+                                    PrimarySerial.InterpretMessage(new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.O2_Saturation, val, Unit.Analog)).Raw);
+                                    break;
+                                case MCP.Calibration.CalibrationTarget.Carbon_Dioxide:
+                                    PrimarySerial.InterpretMessage(new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.CO2_Saturation, val, Unit.Analog)).Raw);
+                                    break;
+                                case MCP.Calibration.CalibrationTarget.CHx:
+                                    PrimarySerial.InterpretMessage(new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.CHx_Saturation, val, Unit.Analog)).Raw);
+                                    break;
+                                default:
+                                    break;
+                            }
                     }
                 };
                 dt.Start();

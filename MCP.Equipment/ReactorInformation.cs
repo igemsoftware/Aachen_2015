@@ -52,6 +52,24 @@ namespace MCP.Equipment
         [XmlIgnore]
         public BiomassSensorInformation BiomassSensor { get { return (Inventory.Current.BiomassSensors.ContainsKey(_BiomassSensorID) ? Inventory.Current.BiomassSensors[_BiomassSensorID] : null); } }
 
+        private string _OxygenSensorID = string.Empty;
+        [XmlElement]
+        public string OxygenSensorID { get { return _OxygenSensorID; } set { _OxygenSensorID = value; OnPropertyChanged(); } }
+        [XmlIgnore]
+        public GasSensorInformation OxygenSensor { get { return (Inventory.Current.GasSensors.ContainsKey(_OxygenSensorID) ? Inventory.Current.GasSensors[_OxygenSensorID] : null); } }
+
+        private string _CarbonDioxideSensorID = string.Empty;
+        [XmlElement]
+        public string CarbonDioxideSensorID { get { return _CarbonDioxideSensorID; } set { _CarbonDioxideSensorID = value; OnPropertyChanged(); } }
+        [XmlIgnore]
+        public GasSensorInformation CarbonDioxideSensor { get { return (Inventory.Current.GasSensors.ContainsKey(_CarbonDioxideSensorID) ? Inventory.Current.GasSensors[_CarbonDioxideSensorID] : null); } }
+        
+        private string _CHxSensorID = string.Empty;
+        [XmlElement]
+        public string CHxSensorID { get { return _CHxSensorID; } set { _CHxSensorID = value; OnPropertyChanged(); } }
+        [XmlIgnore]
+        public GasSensorInformation CHxSensor { get { return (Inventory.Current.GasSensors.ContainsKey(_CHxSensorID) ? Inventory.Current.GasSensors[_CHxSensorID] : null); } }
+
         #endregion
 
         #region Commands

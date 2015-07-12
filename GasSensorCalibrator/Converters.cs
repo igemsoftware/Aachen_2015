@@ -50,7 +50,7 @@ namespace GasSensorCalibrator
                             return false;
                     return true;
                 case "ResponsePointAvAndStd":
-                    BiomassResponseData brd = (BiomassResponseData)value;
+                    SensorResponseData brd = (SensorResponseData)value;
                     if (brd == null || double.IsNaN(brd.Analog))
                         return "Capture";
                     else
