@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using TCD;
@@ -55,6 +56,14 @@ namespace PumpCalibrator
         }
         #endregion
 
+        #region Screensaver-Deactivation
+        [DllImport("kernel32.dll")]
+        private static extern uint SetThreadExecutionState(uint esFlags);
+        private const uint ES_CONTINUOUS = 0x80000000;
+        private const uint ES_SYSTEM_REQUIRED = 0x00000001;
+        private const uint ES_DISPLAY_REQUIRED = 0x00000002;
+        #endregion
+
         #region Stuff to Run
         private static int InitialDelay = 4;
         private Task initialDelay = new Task(async delegate { await Task.Delay(InitialDelay); });
@@ -98,6 +107,8 @@ namespace PumpCalibrator
 
         public async Task<bool> RunAsync()
         {
+            //deactivate screensaver
+            SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
             //set the new setpoint
             ViewModel.Current.PrimarySerial.SendMessage(new Message(ParticipantID.MCP, ParticipantID.Reactor_1, MessageType.Command, Symbol, ((int)Setpoint).ToString(), Unit));
             StartTime = DateTime.Now;
@@ -116,6 +127,8 @@ namespace PumpCalibrator
             //if (double.IsNaN(AbsoluteChangePerHour) || AbsoluteChangePerHour == 0)//without a response you can't calibrate
             //    return false;
             RanToCompletion = true;
+            //re-activate screensaver
+            SetThreadExecutionState(ES_CONTINUOUS);
             return true;
         }
         public void Abort()
