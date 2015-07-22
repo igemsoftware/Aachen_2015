@@ -31,11 +31,7 @@ namespace PumpCalibrator
         {
             get
             {
-                DataPoint start = SensorDataSet.FirstOrDefault();
-                DataPoint end = SensorDataSet.LastOrDefault();
-                if (start == null || (end.Time - start.Time).TotalHours == 0)
-                    return double.NaN;
-                return (end.YValue - start.YValue) / (end.Time - start.Time).TotalHours;
+                return SensorDataSet.ChangePerHourByLinearRegression();
             }
         }
 

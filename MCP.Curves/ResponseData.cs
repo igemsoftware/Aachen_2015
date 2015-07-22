@@ -65,7 +65,7 @@ namespace MCP.Curves
 
         }
     }
-    public static class ResponseDataExtensions
+    public static class RegressionExtensions
     {
         public static double LinearTransformResponseToSetpoint(this List<PumpResponseData> curve, double response)
         {
@@ -88,6 +88,14 @@ namespace MCP.Curves
         {
             SimpleLinearRegression slr = SimpleLinearRegression.FromData(curve.Select(p => p.Analog).ToArray(), curve.Select(p => p.Percent).ToArray());
             return slr.Compute(analog);
+        }
+        public static double ChangePerHourByLinearRegression(this IEnumerable<DataPoint> data)
+        {
+            if (data.Count() < 2)
+                return double.NaN;
+            DateTime start = data.FirstOrDefault().Time;
+            SimpleLinearRegression slr = SimpleLinearRegression.FromData(data.Select(d => (d.Time - start).TotalMinutes).ToArray(), data.Select(d => d.YValue).ToArray());
+            return slr.Slope / 60;
         }
     }
 }

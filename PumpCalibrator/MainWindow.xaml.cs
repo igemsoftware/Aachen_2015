@@ -29,7 +29,8 @@ namespace PumpCalibrator
         {
             InitializeComponent();
             fluidBox.SetUpItems(CalibrationFluid.Water);
-            targetBox.SetUpItems(CalibrationTarget.Pump);
+            targetBox.UseEnumItemTemplate();
+            targetBox.ItemsSource = (new CalibrationTarget[] { CalibrationTarget.Pump, CalibrationTarget.Stirrer });
             modeBox.SetUpItems(CalibrationMode.Standard);
             baudrateBox.SetUpItems(BaudRate._9600);
             ViewModel.Current.Calibrator.Subcalibrations.CollectionChanged += Subcalibrations_CollectionChanged;
