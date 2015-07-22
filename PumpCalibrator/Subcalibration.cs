@@ -1,4 +1,5 @@
-﻿using MCP.Curves;
+﻿using MCP.Calibration;
+using MCP.Curves;
 using MCP.Measurements;
 using MCP.Protocol;
 using Microsoft.Research.DynamicDataDisplay.DataSources;

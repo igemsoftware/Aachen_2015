@@ -16,6 +16,7 @@ using Microsoft.Research.DynamicDataDisplay;
 using TCD.Controls;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using MCP.Protocol;
+using MCP.Calibration;
 
 namespace PumpCalibrator
 {
