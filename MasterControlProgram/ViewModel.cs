@@ -39,6 +39,14 @@ namespace MasterControlProgram
 			
         #endregion
 
+        #region Sequential Offgas Analysis
+        private ParticipantID _CurrentOffgasScope = ParticipantID.Reactor_1;
+        public ParticipantID CurrentOffgasScope { get { return _CurrentOffgasScope; } set { _CurrentOffgasScope = value; OnPropertyChanged(); } }
+        
+			
+
+
+        #endregion
 
 
 
@@ -50,7 +58,9 @@ namespace MasterControlProgram
             PrimarySerial.NewMessageReceived += PrimarySerial_NewMessageReceived;
             if (IsDebugMode)
                 StartRandomValuesGenerator();
+            Cultivation.OffgasCollected += delegate(ParticipantID sender) { NextOffgasStream(); };
         }
+
 
         private void PrimarySerial_NewMessageReceived(object sender, Message message)
         {
@@ -58,14 +68,50 @@ namespace MasterControlProgram
             Cultivation receiver = ExperimentLibrary.FindRunningCultivation(message.Sender, out receivingExperiment);
             if (receiver == null)
                 return;
-            receiver.CultivationLog.ReceiveMessage(message);
+            receiver.ReceiveMessage(message);
         }
 
         private void MCPSettings_HomeDirectoryChanged(object sender, EventArgs e)
         {
             Inventory.Initialize(MCPSettings.PumpDirectoryPath, MCPSettings.ReactorDirectoryPath, MCPSettings.SensorDirectoryPath);
             ExperimentLibrary.Initialize(MCPSettings.ExperimentsDirectoryPath);
+            NextOffgasStream();
         }
+
+        #region Offgas Switching
+        private void NextOffgasStream()
+        {
+            //TODO: only consider Reactors with configured offgas sensors for offgas analysis!
+            List<Cultivation> cultivations = ExperimentLibrary.RunningCultivations;//(from Cultivation c in ExperimentLibrary.RunningCultivations where c.g;
+            Cultivation next = null;
+            for (int i = 0; i < cultivations.Count; i++)
+            {
+                if (cultivations[i].Reactor.ParticipantID == CurrentOffgasScope)
+                {
+                    if (i+1 < cultivations.Count)
+                        next = cultivations[i+1];
+                    else
+                        next = cultivations[0];
+                    break;
+                }
+            }
+            if (next != null)
+            {
+                CurrentOffgasScope = next.Reactor.ParticipantID;
+                foreach (DataPostprocessingLog dpl in next.PostprocessingLogs.Values)
+                {
+                    dpl.ResetInterval();//start a new measurement interval from here
+                }
+                //switch the valves to the next reactor
+                //TODO: the switching is broken... maybe avoid the timer and get the interval information from the first vs. current DataPoint?
+                //TODO: who shall receive the signal for switching?
+                PrimarySerial.SendMessage(new Message(ParticipantID.MCP, ParticipantID.Master, MessageType.Command, "offgas", ((int)CurrentOffgasScope).ToString()));
+            }
+        }
+
+        #endregion
+
+
 
 
         private void StartRandomValuesGenerator()
@@ -75,8 +121,19 @@ namespace MasterControlProgram
             {
                 if (IsRandomizerEnabled)
                 {
-                    Message msg = new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.Temperature, 36 + 2 * rnd.NextDouble(), Unit.Celsius));
-                    PrimarySerial.InterpretMessage(msg.Raw);
+                    Message temp = new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.Temperature, 36 + 2 * rnd.NextDouble(), Unit.Celsius));
+                    PrimarySerial.InterpretMessage(temp.Raw);
+
+                    Message biom = new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.Biomass, 345 + 13 * rnd.NextDouble(), Unit.Analog));
+                    PrimarySerial.InterpretMessage(biom.Raw);
+
+
+                    Message ox = new Message(CurrentOffgasScope, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.O2_Saturation, 345 + 13 * rnd.NextDouble(), Unit.Analog));
+                    PrimarySerial.InterpretMessage(ox.Raw);
+                    Message cd = new Message(CurrentOffgasScope, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.CO2_Saturation, 120 + 23 * rnd.NextDouble(), Unit.Analog));
+                    PrimarySerial.InterpretMessage(cd.Raw);
+                    Message ch = new Message(CurrentOffgasScope, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.CHx_Saturation, 600 + 12 * rnd.NextDouble(), Unit.Analog));
+                    PrimarySerial.InterpretMessage(ch.Raw);
                 }                
             };
             dt.Start();

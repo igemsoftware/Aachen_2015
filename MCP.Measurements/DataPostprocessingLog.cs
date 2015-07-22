@@ -13,90 +13,48 @@ namespace MCP.Measurements
         private List<DataPoint> _RawDataCache = new List<DataPoint>();
         public List<DataPoint> RawDataCache { get { return _RawDataCache; } set { _RawDataCache = value; } }
 
-        private int _MinimumSamples;
-        private int _MinimumTime; // Neu
+        public int MinimumSamples;
+        public int MinimumTime; // Neu
         private System.Timers.Timer timer; // Neu
         private bool _MeasurementTimeElapsed = false; // Neu
 
-        private PostprocessingMode _PostprocessingMode;
 
 
 
-        public DataPostprocessingLog(string path, string symbol, string unit, PostprocessingMode mode)
+        public void ResetInterval()
         {
-            this._FilePath = path;
-            this._PostprocessingMode = mode;
-            switch (mode)
-            {
-                case PostprocessingMode.Biomass:
-                    _MinimumSamples = 50;//TODO: implement Biomass postprocessing
-                    _MinimumTime = 30;
-                    timer = new System.Timers.Timer(_MinimumTime * 1000);
-                    timer.AutoReset = false;
-                    timer.Elapsed += new ElapsedEventHandler(TimerElapsed);
-                    timer.Enabled = true;
-                    break;
-                case PostprocessingMode.Offgas:
-                    _MinimumSamples = 500;//TODO: implement Offgas postprocessing
-                    break;
-                default:
-                    break;
-            }
-            string title = string.Format("{0} [{1}]", symbol, unit);
-            Initialize("Time", title, "s_" + title);
+            RawDataCache.Clear();
+            timer = new System.Timers.Timer(MinimumTime * 1000);
+            timer.AutoReset = false;
+            timer.Elapsed += delegate { _MeasurementTimeElapsed = true; };
+            timer.Enabled = true;
         }
 
-        public override void AddRawData(DataPoint data)
+        public override bool AddRawData(DataPoint data)
         {
             RawDataCache.Add(data);
-            TryToAccumulate();
-        }
-
-        private void TryToAccumulate()
-        {
-            if (RawDataCache.Count < _MinimumSamples || !_MeasurementTimeElapsed) // changed
-                return;
-            _MeasurementTimeElapsed = false;
-            timer.Stop(); // Resets the timer
-            timer.Start();
-
-            DataPoint point = null;
-            switch (_PostprocessingMode)
+            //TODO: the oder here has to be optimized:
+            //at least _MinimumSamples
+            //try to detect a stable signal until the timer elapses
+            //check if there's ENOUGH data or we waited for too long
+            if (RawDataCache.Count > MinimumSamples || _MeasurementTimeElapsed) // changed
             {
-                case PostprocessingMode.Biomass:
-                    //TODO: implement Biomass analysis
-                    double average = 0;
-
-                    for (int i = 0; i < RawDataCache.Count; i++)
-                    {
-                        average += RawDataCache.ElementAt(i).YValue;
-                    }
-                    average /= RawDataCache.Count;
-                    RawDataCache.Clear();
-
-                    point = new DataPoint(DateTime.Now, average);
-
-                    break;
-                case PostprocessingMode.Offgas:
-                    //TODO: implement Offgas analysis
-                    break;
-            }
-            // if the analysis was successful, we should now have a DataPoint
-            if (point != null)
-            {
-                WriteLine(point.ToString());
+                //reset the measurement interval
+                _MeasurementTimeElapsed = false;
+                timer.Stop();
+                timer.Start();
+                //now compute the signal
+                bool res = ComputeSignal();
                 RawDataCache.Clear();
+                return res;
             }
+            return false;
         }
 
-        private void TimerElapsed(object source, ElapsedEventArgs e) // Neu
+        public virtual bool ComputeSignal()
         {
-            _MeasurementTimeElapsed = true;
+           //implement this in the deriving classes for GasSensors or BiomassSensors
+            throw new NotImplementedException();
         }
-    }
-    public enum PostprocessingMode
-    {
-        Biomass,
-        Offgas
     }
 }

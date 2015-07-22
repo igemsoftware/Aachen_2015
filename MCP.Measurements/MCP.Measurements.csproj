@@ -49,7 +49,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CultivationLog.cs" />
     <Compile Include="DataLiveLog.cs" />
     <Compile Include="DataLogBase.cs" />
     <Compile Include="DataPostprocessingLog.cs" />

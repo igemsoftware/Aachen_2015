@@ -46,19 +46,21 @@ namespace MCP.Protocol
     }
     public static class DimensionSymbol
     {
-        public static string Dilution_Rate = "D";
-        public static string Agitation_Rate = "n";
-        public static string Aeration_Rate = "q_g";
-        public static string Feed_Rate = "S_fin";
-        public static string Harvest_Rate = "S_fout";
-        public static string Temperature = "T";
-        public static string Biomass = "Biomass";
-        public static string O2_Saturation = "O2";
-        public static string CO2_Saturation = "CO2";
-        public static string CHx_Saturation = "CHx";
+        public const string Dilution_Rate = "D";
+        public const string Agitation_Rate = "n";
+        public const string Aeration_Rate = "q_g";
+        public const string Feed_Rate = "S_fin";
+        public const string Harvest_Rate = "S_fout";
+        public const string Temperature = "T";
+        public const string Biomass = "Biomass";
+        public const string Turbidity = "OD";
+        public const string Biomass_Concentration = "X";
+        public const string O2_Saturation = "O2";
+        public const string CO2_Saturation = "CO2";
+        public const string CHx_Saturation = "CHx";
 
         public static string[] ControlParameters = new string[] { Dilution_Rate, Agitation_Rate, Temperature, Aeration_Rate };
-        public static string[] MeasuredParameters = new string[] { Biomass, O2_Saturation, CO2_Saturation, CHx_Saturation };
+        public static string[] MeasuredParameters = new string[] { O2_Saturation, CO2_Saturation, CHx_Saturation, Turbidity, Biomass_Concentration };
         public static Dictionary<string, Color> ParameterColors { get; set; }
 
         static DimensionSymbol()
@@ -69,7 +71,8 @@ namespace MCP.Protocol
             ParameterColors.Add(Temperature, DesignColors.Red);
             ParameterColors.Add(Aeration_Rate, DesignColors.LightGrey);
             //
-            ParameterColors.Add(Biomass, DesignColors.Yellow);
+            ParameterColors.Add(Turbidity, DesignColors.Yellow);
+            ParameterColors.Add(Biomass_Concentration, DesignColors.Green);
             ParameterColors.Add(O2_Saturation, DesignColors.Blue);
             ParameterColors.Add(CO2_Saturation, DesignColors.DarkGrey);
             ParameterColors.Add(CHx_Saturation, DesignColors.Red);
@@ -84,6 +87,8 @@ namespace MCP.Protocol
         public static string PerHour = "1/h";
         public static string Percent = "%";
         public static string Analog = "analog";
+        public static string None = "-";
+        public static string BiomassConcentration = "mgCDW/ml";
     }
     public enum BaudRate
     {

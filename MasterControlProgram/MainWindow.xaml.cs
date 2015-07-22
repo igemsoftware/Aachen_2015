@@ -40,17 +40,19 @@ namespace MasterControlProgram
             foreach (Cultivation cultivation in e.RemovedItems)
             {
                 if (cultivation != null)
-                    foreach (DataLogBase log in cultivation.CultivationLog.Logs.Values)
-                    {
+                {
+                    foreach (DataLogBase log in cultivation.LiveLogs.Values)
                         log.DeactivatePlot();
-                    }
+                    foreach (DataPostprocessingLog log in cultivation.PostprocessingLogs.Values)
+                        log.DeactivatePlot();
+                }
             }
             foreach (Cultivation cultivation in cultivationsSelectionBox.SelectedItems)
             {
-                foreach (DataLogBase log in cultivation.CultivationLog.Logs.Values)
-                {
+                foreach (DataLogBase log in cultivation.LiveLogs.Values)
                     log.ActivatePlot();
-                }
+                foreach (DataPostprocessingLog log in cultivation.PostprocessingLogs.Values)
+                    log.ActivatePlot();
             }
             Redraw(graphsFilterLeft, plotterLeft);
             Redraw(graphsFilterRight, plotterRight);
@@ -78,10 +80,22 @@ namespace MasterControlProgram
             foreach (Cultivation cultivation in cultivationsSelectionBox.SelectedItems)
             {
                 foreach (string param in graphsFilter.SelectedItems)
-                    if (cultivation.CultivationLog.Logs.ContainsKey(param))
-                        plotter.AddLineGraph(cultivation.CultivationLog.Logs[param].DataSource, DimensionSymbol.ParameterColors[param], 2, param);
+                {
+                    switch (param)
+                    {
+                        case DimensionSymbol.Turbidity:
+                        case DimensionSymbol.Biomass_Concentration:
+                        case DimensionSymbol.O2_Saturation:
+                        case DimensionSymbol.CO2_Saturation:
+                        case DimensionSymbol.CHx_Saturation:
+                            plotter.AddLineGraph((cultivation.PostprocessingLogs[param] as DataPostprocessingLog).DataSource, DimensionSymbol.ParameterColors[param], 2, param);
+                            break;
+                        default:
+                            plotter.AddLineGraph(cultivation.LiveLogs[param].DataSource, DimensionSymbol.ParameterColors[param], 2, param);
+                            break;
+                    }
+                }
             }
         }
-
     }
 }

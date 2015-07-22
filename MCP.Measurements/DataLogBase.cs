@@ -13,7 +13,7 @@ namespace MCP.Measurements
 {
     public class DataLogBase
     {
-        internal string _FilePath { get; set; }
+        public string _FilePath { get; set; }
 
 
 
@@ -42,7 +42,7 @@ namespace MCP.Measurements
             DataSource.SetYMapping(y => y.YValue);
         }
 
-        internal void Initialize(params string[] headers)
+        public void Initialize(params string[] headers)
         {
             bool existed = File.Exists(_FilePath);
             if (!existed)
@@ -54,15 +54,16 @@ namespace MCP.Measurements
             }
         }
 
-        public virtual void AddRawData(DataPoint data)
+        public virtual bool AddRawData(DataPoint data)
         {
             WriteLine(data.ToString());
             if (!IsPlotActivated)
-                return;
+                return true;
             SensorDataSet.Add(data);
             SensorDataCollection.Add(data);
+            return true;
         }
-        internal void WriteLine(string text)
+        public void WriteLine(string text)
         {
             StreamWriter writer = File.AppendText(_FilePath);
             writer.WriteLine(text);

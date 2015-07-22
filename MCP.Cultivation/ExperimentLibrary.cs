@@ -23,7 +23,19 @@ namespace MCP.Cultivation
         private ObservableCollection<Experiment> _Experiments = new ObservableCollection<Experiment>();
         public ObservableCollection<Experiment> Experiments { get { return _Experiments; } set { _Experiments = value; OnPropertyChanged(); } }
         			
-        
+        public List<Cultivation> RunningCultivations
+        {
+            get
+            {
+                List<Cultivation> running = new List<Cultivation>();
+                foreach (Experiment exp in Experiments)
+                    foreach (Cultivation cul in exp.Cultivations)
+                        if (cul.IsRunning)
+                            running.Add(cul);
+                return running;
+            }
+        }
+
         private RelayCommand _AddExperimentCommand;
         public RelayCommand AddExperimentCommand { get { return _AddExperimentCommand; } set { _AddExperimentCommand = value; OnPropertyChanged(); } }
 
