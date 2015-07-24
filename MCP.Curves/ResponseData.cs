@@ -16,6 +16,9 @@ namespace MCP.Curves
         [XmlAttribute]
         public double Response { get; set; }
 
+        [XmlAttribute]
+        public double Std { get; set; }
+
         public PumpResponseData()
         {
 
@@ -89,13 +92,42 @@ namespace MCP.Curves
             SimpleLinearRegression slr = SimpleLinearRegression.FromData(curve.Select(p => p.Analog).ToArray(), curve.Select(p => p.Percent).ToArray());
             return slr.Compute(analog);
         }
-        public static double ChangePerHourByLinearRegression(this IEnumerable<DataPoint> data)
+        public static double[] ChangePerHourByLinearRegression(this IEnumerable<DataPoint> data)
         {
-            if (data.Count() < 2)
-                return double.NaN;
+            if (data.Count() < 6)
+                return new double[] { double.NaN, double.NaN };
+            //split the dataset into three sets
+            List<DataPoint> set1 = new List<DataPoint>();
+            List<DataPoint> set2 = new List<DataPoint>();
+            List<DataPoint> set3 = new List<DataPoint>();
+            for (int i = 0; i < data.Count(); i += 3)
+                set1.Add(data.ElementAt(i));
+            for (int i = 1; i < data.Count(); i += 3)
+                set2.Add(data.ElementAt(i));
+            for (int i = 2; i < data.Count(); i += 3)
+                set3.Add(data.ElementAt(i));
+            //calculate three Linear Regressions
             DateTime start = data.FirstOrDefault().Time;
-            SimpleLinearRegression slr = SimpleLinearRegression.FromData(data.Select(d => (d.Time - start).TotalMinutes).ToArray(), data.Select(d => d.YValue).ToArray());
-            return slr.Slope / 60;
+            SimpleLinearRegression slr1 = SimpleLinearRegression.FromData(set1.Select(d => (d.Time - start).TotalHours).ToArray(), set1.Select(d => d.YValue).ToArray());
+            SimpleLinearRegression slr2 = SimpleLinearRegression.FromData(set2.Select(d => (d.Time - start).TotalHours).ToArray(), set2.Select(d => d.YValue).ToArray());
+            SimpleLinearRegression slr3 = SimpleLinearRegression.FromData(set3.Select(d => (d.Time - start).TotalHours).ToArray(), set3.Select(d => d.YValue).ToArray());
+            //return the average and standard deviation of the slopes
+            double[] slopes = new double[] { slr1.Slope, slr2.Slope, slr3.Slope };
+            return new double[] { slopes.Average(), slopes.StdDev() };
+        }
+        public static double StdDev(this IEnumerable<double> values)
+        {
+            double ret = double.NaN;
+            if (values.Count() > 2)
+            {
+                //Compute the Average      
+                double avg = values.Average();
+                //Perform the Sum of (value-avg)_2_2      
+                double sum = values.Sum(d => Math.Pow(d - avg, 2));
+                //Put it all together      
+                ret = Math.Sqrt((sum) / (values.Count() - 1));
+            }
+            return ret;
         }
     }
 }

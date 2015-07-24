@@ -27,7 +27,7 @@ namespace PumpCalibrator
         /// <summary>
         /// Returns the difference between the last and the first divided by the time difference.
         /// </summary>
-        public double AbsoluteChangePerHour
+        public double[] AbsoluteChangePerHour
         {
             get
             {
