@@ -80,12 +80,16 @@ void loop()
 ///////////////////////////// Pumps ////////////////////////////////
 void UpdatePumpSetpoint(int pump, String pname, float stepsPerHour)
 {
-  if (stepsPerHour <= 0)
-    periods[pump] = -1;
-  else
-    periods[pump] = 3600000 / stepsPerHour;//calculate the period
-  String answer[] = { pname, String((int)stepsPerHour), "ms/step" };//report back the SPH setpoint
-  SendMessage(ReactorID, MCP, Data, answer);
+	if (stepsPerHour <= 0)
+		periods[pump] = -1;
+	else
+		periods[pump] = 3600000 / stepsPerHour;//calculate the period
+  
+	char TempString[10];  //  Hold The Convert Data
+	dtostrf(stepsPerHour,5,0,TempString);
+
+	String answer[] = { pname, TempString, "ms/step" };//report back the SPH setpoint
+	SendMessage(ReactorID, MCP, Data, answer);
 }
 void MakeSteps()
 {
