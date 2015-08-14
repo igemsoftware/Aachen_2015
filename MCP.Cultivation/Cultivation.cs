@@ -175,11 +175,11 @@ namespace MCP.Cultivation
             }
             if (IsRunning)
             {
-                if (Reactor.FeedPump != null)
+                if (Reactor.FeedPump != null && Reactor.FeedPump.ResponseCurve.Count > 1)
                     SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Feed_Rate, FeedPumpSPH.ToString("0"), Unit.SPH));
-                if (Reactor.AerationPump != null)
+                if (Reactor.AerationPump != null && Reactor.AerationPump.ResponseCurve.Count > 1)
                     SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Aeration_Rate, AerationPumpSPH.ToString("0"), Unit.SPH));
-                if (Reactor.HarvestPump != null)
+                if (Reactor.HarvestPump != null && Reactor.HarvestPump.ResponseCurve.Count > 1)
                     SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Harvest_Rate, HarvestPumpSPH.ToString("0"), Unit.SPH));
                 SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Agitation_Rate, AgitationRateSetpoint.ToString(), Unit.RPM));
             }
