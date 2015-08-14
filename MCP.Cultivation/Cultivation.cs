@@ -157,6 +157,8 @@ namespace MCP.Cultivation
             LiveLogs.Add(DimensionSymbol.Agitation_Rate, new DataLiveLog(Path.Combine(_BaseDirectory, "Agitation.log"), DimensionSymbol.Agitation_Rate, Unit.RPM));
             LiveLogs.Add(DimensionSymbol.Aeration_Rate, new DataLiveLog(Path.Combine(_BaseDirectory, "Aeration.log"), DimensionSymbol.Aeration_Rate, Unit.VVM));
             LiveLogs.Add(DimensionSymbol.Dilution_Rate, new DataLiveLog(Path.Combine(_BaseDirectory, "DilutionRate.log"), DimensionSymbol.Dilution_Rate, Unit.PerHour));
+            LiveLogs.Add(DimensionSymbol.Feed_Rate, new DataLiveLog(Path.Combine(_BaseDirectory, "FeedRate.log"), DimensionSymbol.Feed_Rate, Unit.SPH));
+            LiveLogs.Add(DimensionSymbol.Harvest_Rate, new DataLiveLog(Path.Combine(_BaseDirectory, "HarvestRate.log"), DimensionSymbol.Harvest_Rate, Unit.SPH));
             LiveLogs.Add(DimensionSymbol.Temperature, new DataLiveLog(Path.Combine(_BaseDirectory, "Temperature.log"), DimensionSymbol.Temperature, Unit.Celsius));
         }
 
