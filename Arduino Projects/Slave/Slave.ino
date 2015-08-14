@@ -85,10 +85,7 @@ void UpdatePumpSetpoint(int pump, String pname, float stepsPerHour)
 	else
 		periods[pump] = 3600000 / stepsPerHour;//calculate the period
   
-	char TempString[10];  //  Hold The Convert Data
-	dtostrf(stepsPerHour,5,0,TempString);
-
-	String answer[] = { pname, TempString, "ms/step" };//report back the SPH setpoint
+	String answer[] = { pname, floatToString(stepsPerHour, 5, 0), "ms/step" };//report back the SPH setpoint
 	SendMessage(ReactorID, MCP, Data, answer);
 }
 void MakeSteps()
@@ -204,4 +201,10 @@ String getValue(String data, char separator, int index)
     }
   }
   return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+char* floatToString(double __val, signed char __width, unsigned char __precision)
+{
+	char result[10];
+	dtostrf(value, __width, __precision, result);
+	return result;
 }
