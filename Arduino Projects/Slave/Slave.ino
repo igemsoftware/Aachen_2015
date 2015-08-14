@@ -84,7 +84,7 @@ void UpdatePumpSetpoint(int pump, String pname, float stepsPerHour)
     periods[pump] = -1;
   else
     periods[pump] = 3600000 / stepsPerHour;//calculate the period
-  String answer[] = { pname, String(periods[pump]), "ms/step" };//report back
+  String answer[] = { pname, String((int)periods[pump]), "ms/step" };//report back
   SendMessage(ReactorID, MCP, Data, answer);
 }
 void MakeSteps()
