@@ -100,6 +100,7 @@
                                                 <StackPanel Grid.Column="5" Orientation="Vertical">
                                                     <Button Content="Start" Command="{Binding StartCultivationCommand}" IsEnabled="{Binding IsRunning, Converter={StaticResource UIConverter}, ConverterParameter=InvertBool}" />
                                                     <Button Content="Stop" Command="{Binding StopCultivationCommand}" IsEnabled="{Binding IsRunning}" />
+                                                    <Ellipse Width="20" Height="20" Fill="{Binding IsReceiving, Converter={StaticResource UIConverter}, ConverterParameter=BlinkBrush}" Stroke="{StaticResource DarkGrey}" StrokeThickness="1" VerticalAlignment="Center" Margin="5" />
                                                 </StackPanel>
                                             </Grid>
                                         </Button>

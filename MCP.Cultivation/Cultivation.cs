@@ -112,6 +112,10 @@ namespace MCP.Cultivation
         //TODO: StabilityIndicator is not the only relevant parameter - also consider if the Reactor even has a calibrated sensor!!!!
         [XmlIgnore]
         private bool[] StabilityIndicators = new bool[] { false, false, false };
+
+        private bool _IsReceiving;
+        public bool IsReceiving { get { return _IsReceiving; } set { _IsReceiving = value; OnPropertyChanged(); } }       
+			
         #endregion
 
         #region Commands
@@ -196,7 +200,7 @@ namespace MCP.Cultivation
             SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Agitation_Rate, "0", Unit.RPM));
         }
 
-        public void ReceiveMessage(Message msg)
+        public async void ReceiveMessage(Message msg)
         {
             switch (msg.MessageType)
             {
@@ -212,6 +216,9 @@ namespace MCP.Cultivation
                 default:
                     break;
             }
+            IsReceiving = true;
+            await Task.Delay(100);
+            IsReceiving = false;
         }
         private void ProcessData(string[] contents)
         {
