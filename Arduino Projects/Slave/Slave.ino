@@ -1,9 +1,10 @@
+////////////////////// Includes /////////////////////////////
+#include <SoftwareSerial.h>
 ////////////////////// Defines //////////////////////////////
 #define ReactorID 2
-
 ////////////////////// for everyone //////////////////////////////
 long now = millis();
-
+int id = 2;
 ////////////////////// Pumps ////////////////////////////////
 //Pin assignments (except step pins)
 #define Dir  12
@@ -22,13 +23,16 @@ int pin_stirrer = 6;
 int setpoint_n = 0;
 
 ////////////////////////  OD  ////////////////////////////////
-#define DELAY_TIME 200
-#define BAUD_RATE 9600
-int pin_od = A0;
-int i_value = 0;
-long l_last_modulo;
+#define OD_MEASUREMENT_TIME 500
+#define OD_SENSOR_PIN 2
+
+unsigned long last_time;
+volatile unsigned long counter;
+
+void od_interrupt_process(){counter++;}
 
 /////////////////// Communication ////////////////////////////
+#define BAUD_RATE 9600
 typedef enum
 {
   Data = 0,
@@ -42,6 +46,9 @@ typedef enum
   MCP = 0,
   Master = 1
 } ParticipantID;
+
+SoftwareSerial softSerial(10, 11);
+String message;
 
 /////////////////// Setup and Loop ////////////////////////////
 void setup()
@@ -60,10 +67,14 @@ void setup()
   }
   //Stirrer
   pinMode(pin_stirrer, OUTPUT);
-  //OD
-  pinMode(pin_od, INPUT);
+  /// OD measurement
+  pinMode(OD_SENSOR_PIN, INPUT);
+  digitalWrite(OD_SENSOR_PIN, HIGH);
+  attachInterrupt(0, od_interrupt_process, RISING);
+  last_time = millis();
   //Communication
   Serial.begin(BAUD_RATE);
+  softSerial.begin(9600);
   
   //for debugging
   UpdatePumpSetpoint(1, "S_fin", 40000);
@@ -133,42 +144,58 @@ void SetStirrer()
 ////////////////////////  OD  ////////////////////////////////
 void ReadOD()
 {
-  if (now % DELAY_TIME < l_last_modulo)
-  {
-    i_value = analogRead(pin_od);
-    String content[] = { "X", String(i_value), "[-]" };//report raw value
-    SendMessage(ReactorID, MCP, Data, content);
+  if(now - last_time >= OD_MEASUREMENT_TIME){
+  
+    String send_value;
+    send_value += counter;
+    counter = 0;
+  
+    String package[] = { "Biomass", send_value, "-" };
+    SendMessage(2, 0, 0, package);
+    
+    last_time = now;
   }
-  l_last_modulo = now % DELAY_TIME;
 }
 
 /////////////////// Communication ////////////////////////////
 void ReadIncoming()
 {
-  if (Serial.available())//there's something incoming
-  {
-    String message = Serial.readStringUntil('\n');//read the whole message
-    int sender = message[0];
-    int receiver = message[1];
-    MessageType type = (MessageType)message[2];
-    String content = message.substring(3);
-    switch (type)
-    {
-      case Command:
-        if (getValue(content, '\t', 0) == "n")
-          if (getValue(content, '\t', 2) == "rpm")//check if we're speaking the same protocol language/version
-            UpdateStirrerSetpoint(getValue(content, '\t', 1).toInt()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
-        if (getValue(content, '\t', 0) == "S_fin")
-          if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
-            UpdatePumpSetpoint(1, "S_fin", getValue(content, '\t', 1).toFloat()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
-        if (getValue(content, '\t', 0) == "S_fout")
-          if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
-            UpdatePumpSetpoint(0, "S_fout", getValue(content, '\t', 1).toFloat()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
-        if (getValue(content, '\t', 0) == "q_g")
-          if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
-            UpdatePumpSetpoint(2, "q_g", getValue(content, '\t', 1).toFloat()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
-        break;
+  if(softSerial.available()){
+    while(softSerial.available()){
+      message = softSerial.readStringUntil('\n');
+    }  
+    Serial.println(message);
+  }
+
+  if(Serial.available()){
+    while(Serial.available()){
+      message = Serial.readStringUntil('\n');
+    }  
+    if(message[1] == id)
+      int sender = message[0];
+      int receiver = message[1];
+      MessageType type = (MessageType)message[2];
+      String content = message.substring(3);
+      switch (type)
+      {
+        case Command:
+          if (getValue(content, '\t', 0) == "n")
+            if (getValue(content, '\t', 2) == "rpm")//check if we're speaking the same protocol language/version
+              UpdateStirrerSetpoint(getValue(content, '\t', 1).toInt()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
+          if (getValue(content, '\t', 0) == "S_fin")
+            if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
+              UpdatePumpSetpoint(1, "S_fin", getValue(content, '\t', 1).toFloat()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
+          if (getValue(content, '\t', 0) == "S_fout")
+            if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
+              UpdatePumpSetpoint(0, "S_fout", getValue(content, '\t', 1).toFloat()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
+          if (getValue(content, '\t', 0) == "q_g")
+            if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
+              UpdatePumpSetpoint(2, "q_g", getValue(content, '\t', 1).toFloat()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
+          break;
+       }
     }
+    else{
+      softSerial.println(message);
   }
 }
 void SendMessage(int sender, int receiver, int type, String contents[])
