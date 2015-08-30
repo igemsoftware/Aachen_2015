@@ -1,4 +1,5 @@
-﻿using MCP.Curves;
+﻿using DynamicDataDisplay.Markers.DataSources;
+using MCP.Curves;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml.Serialization;
 
 namespace MCP.Measurements
@@ -17,9 +19,9 @@ namespace MCP.Measurements
 
 
 
-        private SensorDataPointCollection _SensorDataCollection = new SensorDataPointCollection();//contains only recent datapoints
-        [XmlIgnore]
-        public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; } }
+        //private SensorDataPointCollection _SensorDataCollection = new SensorDataPointCollection();//contains only recent datapoints
+        //[XmlIgnore]
+        //public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; } }
 
         private ObservableCollection<DataPoint> _SensorDataSet = new ObservableCollection<DataPoint>();//contains all datapoints
         [XmlIgnore]
@@ -28,7 +30,7 @@ namespace MCP.Measurements
         
 
         [XmlIgnore]
-        public EnumerableDataSource<DataPoint> DataSource { get; set; }
+        public EnumerableDataSource DataSource { get; set; }
         [XmlIgnore]
         public DateTime StartTime { get; set; }
 
@@ -37,9 +39,8 @@ namespace MCP.Measurements
 
         public DataLogBase()
         {
-            DataSource = new EnumerableDataSource<DataPoint>(SensorDataCollection);
-            DataSource.SetXMapping(x => (x.Time - StartTime).TotalSeconds);
-            DataSource.SetYMapping(y => y.YValue);
+            DataSource = new EnumerableDataSource(SensorDataSet);
+            DataSource.DataToPoint = new Func<object, Point>(dp => new Point(((dp as DataPoint).Time - StartTime).TotalSeconds, (dp as DataPoint).YValue));
         }
 
         public void Initialize(params string[] headers)
@@ -60,7 +61,6 @@ namespace MCP.Measurements
             if (!IsPlotActivated)
                 return true;
             SensorDataSet.Add(data);
-            SensorDataCollection.Add(data);
             return true;
         }
         public void WriteLine(string text)
@@ -75,20 +75,17 @@ namespace MCP.Measurements
         {
             IsPlotActivated = true;
             SensorDataSet.Clear();
-            SensorDataCollection.Clear();
             string[] lines = File.ReadAllLines(_FilePath);
             for (int i = 1; i < lines.Length; i++)
             {
                 DataPoint dp = new DataPoint(lines[i]);
                 SensorDataSet.Add(dp);
-                SensorDataCollection.Add(dp);
             }
         }
         public void DeactivatePlot()
         {
             IsPlotActivated = false;
             SensorDataSet.Clear();
-            SensorDataCollection.Clear();
         }
     }
 }

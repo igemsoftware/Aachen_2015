@@ -21,9 +21,6 @@
             </StackPanel>
         </StackPanel>
         <d3:ChartPlotter x:Name="plotter" Grid.Row="1" Grid.ColumnSpan="2" LegendVisible="True" Margin="10">
-            <d3:ChartPlotter.HorizontalAxis>
-                <d3:HorizontalAxis x:Name="timeAxis" />
-            </d3:ChartPlotter.HorizontalAxis>
             <d3:Header Content="Response Curve"/>
             <d3:HorizontalAxisTitle Content="setpoint   [sph]"/>
             <d3:VerticalAxisTitle Content="response   [ml/h]" />

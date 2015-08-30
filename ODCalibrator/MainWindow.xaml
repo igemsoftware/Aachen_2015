@@ -119,9 +119,6 @@
             </TabItem>
         </TabControl>
         <d3:ChartPlotter x:Name="plotter" Grid.Column="1" LegendVisible="True" Margin="10" DataContext="{Binding Calibrator}">
-            <d3:ChartPlotter.HorizontalAxis>
-                <d3:HorizontalAxis x:Name="timeAxis" />
-            </d3:ChartPlotter.HorizontalAxis>
             <d3:Header Content="Raw Values"/>
             <d3:HorizontalAxisTitle Content="time   [s]"/>
             <d3:VerticalAxisTitle Content="Analog Readout   [-]" />

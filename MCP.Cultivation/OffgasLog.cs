@@ -36,7 +36,7 @@ namespace MCP.Cultivation
             {
                 this.WriteLine(dp.ToString());
                 this.SensorDataSet.Add(dp);
-                this.SensorDataCollection.Add(dp);
+                //this.SensorDataCollection.Add(dp);
                 return true;
             }
             return false;

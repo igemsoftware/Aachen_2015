@@ -12,6 +12,8 @@ using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System.Collections.ObjectModel;
 using MCP.Curves;
+using DynamicDataDisplay.Markers.DataSources;
+using System.Windows;
 
 namespace MCP.Equipment
 {
@@ -33,18 +35,18 @@ namespace MCP.Equipment
         public RelayCommand EditSensorCommand { get { return _EditSensorCommand; } set { _EditSensorCommand = value; OnPropertyChanged(); } }
 
         #region Drawing the Response Curve
-        private BiomassResponseDataCollection _ResponseDataCollection = new BiomassResponseDataCollection();//contains only recent datapoints
-        [XmlIgnore]
-        public BiomassResponseDataCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
+        //private BiomassResponseDataCollection _ResponseDataCollection = new BiomassResponseDataCollection();//contains only recent datapoints
+        //[XmlIgnore]
+        //public BiomassResponseDataCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
 
         private ObservableCollection<BiomassResponseData> _ResponseDataSet = new ObservableCollection<BiomassResponseData>();//contains all datapoints
         [XmlIgnore]
         public ObservableCollection<BiomassResponseData> ResponseDataSet { get { return _ResponseDataSet; } set { _ResponseDataSet = value; } }
 
         [XmlIgnore]
-        public EnumerableDataSource<BiomassResponseData> ODDataSource { get; set; }
+        public EnumerableDataSource ODDataSource { get; set; }
         [XmlIgnore]
-        public EnumerableDataSource<BiomassResponseData> CDWDataSource { get; set; }
+        public EnumerableDataSource CDWDataSource { get; set; }
         #endregion
 
 
@@ -52,18 +54,15 @@ namespace MCP.Equipment
         public BiomassSensorInformation()
         {
             ResponseCurve = new List<BiomassResponseData>();
-            ODDataSource = new EnumerableDataSource<BiomassResponseData>(ResponseDataCollection);
-            ODDataSource.SetXMapping(x => x.Analog);
-            ODDataSource.SetYMapping(y => y.OD);
-            CDWDataSource = new EnumerableDataSource<BiomassResponseData>(ResponseDataCollection);
-            CDWDataSource.SetXMapping(x => x.Analog);
-            CDWDataSource.SetYMapping(y => y.CDW);
+            ODDataSource = new EnumerableDataSource(ResponseDataSet);
+            ODDataSource.DataToPoint = new Func<object, Point>(rd => new Point((rd as BiomassResponseData).Analog, (rd as BiomassResponseData).OD));
+            CDWDataSource = new EnumerableDataSource(ResponseDataSet);
+            CDWDataSource.DataToPoint = new Func<object, Point>(rd => new Point((rd as BiomassResponseData).Analog, (rd as BiomassResponseData).CDW));
         }
         public void LoadResponseCurve()
         {
             foreach (BiomassResponseData ri in ResponseCurve)
             {
-                ResponseDataCollection.Add(ri);
                 ResponseDataSet.Add(ri);
             }
         }

@@ -1,4 +1,5 @@
-﻿using MCP.Curves;
+﻿using DynamicDataDisplay.Markers.DataSources;
+using MCP.Curves;
 using MCP.Protocol;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System;
@@ -8,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 using TCD;
 
@@ -24,13 +26,13 @@ namespace ODCalibrator
         public static ViewModel Current { get; private set; }
 
         #region Data
-        private SensorDataPointCollection _SensorDataCollection = new SensorDataPointCollection();//contains only recent datapoints
-        public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; } }
+        //private SensorDataPointCollection _SensorDataCollection = new SensorDataPointCollection();//contains only recent datapoints
+        //public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; } }
 
         private ObservableCollection<DataPoint> _SensorDataSet = new ObservableCollection<DataPoint>();//contains all datapoints
         public ObservableCollection<DataPoint> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; } }
 
-        public EnumerableDataSource<DataPoint> DataSource { get; set; }
+        public EnumerableDataSource DataSource { get; set; }
 
         private DateTime StartTime { get; set; }
         #endregion
@@ -63,7 +65,7 @@ namespace ODCalibrator
                         double val = rnd.NextDouble();
                         if (Calibrator.ActiveCalibrationSub != null)
                             val = val * 10 + (double)Calibrator.ActiveCalibrationSub.ResponsePoint.OD * 150 + 120;
-                        Message msg = new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.Biomass, val, Unit.Biomass));
+                        Message msg = new Message(ParticipantID.Reactor_1, ParticipantID.MCP, MessageType.Data, string.Format("{0}\t{1}\t{2}", DimensionSymbol.Biomass, val, Unit.BiomassConcentration));
                         PrimarySerial.InterpretMessage(msg.Raw);
                     }
                 };
@@ -71,9 +73,8 @@ namespace ODCalibrator
             }
             //data collection
             StartTime = DateTime.Now;
-            DataSource = SensorDataCollection.AsDataSource<DataPoint>();
-            DataSource.SetXMapping(x => (x.Time - StartTime).TotalSeconds);
-            DataSource.SetYMapping(y => y.YValue);
+            DataSource = new EnumerableDataSource(SensorDataSet);
+            DataSource.DataToPoint = new Func<object, Point>(dp => new Point(((dp as DataPoint).Time - StartTime).TotalSeconds, (dp as DataPoint).YValue));
         }
 
 
@@ -89,7 +90,6 @@ namespace ODCalibrator
                             double val = Convert.ToDouble(message.Contents[1]);
                             DataPoint dp = new DataPoint(DateTime.Now, val);
                             SensorDataSet.Add(dp);
-                            SensorDataCollection.Add(dp);
                             if (Calibrator.ActiveCalibrationSub != null)
                                 Calibrator.ActiveCalibrationSub.AddPoint(new DataPoint(DateTime.Now, val));
                         }

@@ -32,7 +32,7 @@ namespace ODCalibrator
             baudrateBox.SetUpItems(BaudRate._9600);
             modeBox.SetUpItems(CalibrationMode.Standard);
             //chart
-            plotter.AddLineGraph(ViewModel.Current.DataSource, DesignColors.Red, 2, "Sensor Value");
+            plotter.AddLineChart(ViewModel.Current.DataSource).WithDescription("Sensor Value").WithStroke(new SolidColorBrush(DesignColors.Red)).WithStrokeThickness(2);
         }
     }
 }

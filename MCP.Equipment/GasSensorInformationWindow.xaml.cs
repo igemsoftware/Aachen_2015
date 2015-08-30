@@ -34,7 +34,7 @@ namespace MCP.Equipment
             this.DataContext = context;
             if ((from rd in context.ResponseCurve where double.IsNaN(rd.Percent) select rd).Count() == 0)
             {
-                plotter.AddLineGraph(context.DataSource, DesignColors.Blue, 2, "Response Curve");
+                plotter.AddLineChart(context.DataSource).WithDescription("Response Curve").WithStroke(new SolidColorBrush(DesignColors.Blue)).WithStrokeThickness(2);
             }
             context.LoadResponseCurve();
         }

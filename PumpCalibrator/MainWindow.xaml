@@ -47,9 +47,6 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <d3:ChartPlotter x:Name="plotter" Grid.Row="0" LegendVisible="True" Margin="10">
-                <d3:ChartPlotter.HorizontalAxis>
-                    <d3:HorizontalAxis x:Name="timeAxis" />
-                </d3:ChartPlotter.HorizontalAxis>
                 <d3:Header Content="{Binding ElementName=targetBox, Path=SelectedItem, Converter={StaticResource UIConverter}, ConverterParameter=TargetToChartTitle}"/>
                 <d3:HorizontalAxisTitle Content="time   [s]"/>
                 <d3:VerticalAxisTitle Content="{Binding ElementName=targetBox, Path=SelectedItem, Converter={StaticResource UIConverter}, ConverterParameter=TargetToYAxis}" />

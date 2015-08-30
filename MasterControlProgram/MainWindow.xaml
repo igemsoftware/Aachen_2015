@@ -115,9 +115,6 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <d3:ChartPlotter x:Name="plotterLeft" Grid.Column="0" LegendVisible="True" Margin="10">
-                                <d3:ChartPlotter.HorizontalAxis>
-                                    <d3:HorizontalAxis />
-                                </d3:ChartPlotter.HorizontalAxis>
                                 <d3:Header Content="Control Parameters"/>
                                 <d3:HorizontalAxisTitle Content="time   [h]"/>
                                 <!--<d3:VerticalAxisTitle Content="Vertical Axis Title" />-->
@@ -147,9 +144,6 @@
                                 </GroupBox>  
                             </Grid>                          
                             <d3:ChartPlotter x:Name="plotterRight" Grid.Column="2" LegendVisible="True" Margin="10">
-                                <d3:ChartPlotter.HorizontalAxis>
-                                    <d3:HorizontalAxis />
-                                </d3:ChartPlotter.HorizontalAxis>
                                 <d3:Header Content="Measurements"/>
                                 <d3:HorizontalAxisTitle Content="time   [h]"/>
                                 <!--<d3:VerticalAxisTitle Content="Vertical Axis Title" />-->

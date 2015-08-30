@@ -21,13 +21,33 @@
             </StackPanel>
         </StackPanel>
         <d3:ChartPlotter x:Name="plotter" Grid.Row="1" Grid.ColumnSpan="2" LegendVisible="True" Margin="10">
+            <!--<d3:InjectedPlotter Name="innerPlotter">
+                <d3:VerticalAxis Placement="Right" />
+                <d3:VerticalAxisTitle Content="CDW readout   [-]" Placement="Right"/>
+                <d3:AxisNavigation Placement="Right"/>
+                --><!--<d3:HorizontalAxis Placement="Bottom" Background="#33554433"/>--><!--
+                <d3:AxisNavigation Placement="Bottom"/>
+            </d3:InjectedPlotter>-->
+
+            <d3:DependentPlotter Name="dependentPlotter">
+                <d3:VerticalAxis Placement="Right" />
+                <d3:VerticalAxisTitle Content="CDW readout   [-]" Placement="Right"/>
+                <d3:AxisNavigation Placement="Right"/>
+                <!--<d3:HorizontalAxis Placement="Bottom" Background="#33662211"/>-->
+                <d3:AxisNavigation Placement="Bottom"/>
+            </d3:DependentPlotter>
+
+            <d3:VerticalAxisTitle Content="OD readout   [-]"/>
+            <d3:HorizontalAxisTitle>raw value   [-]</d3:HorizontalAxisTitle>
+        </d3:ChartPlotter>
+        <!--<d3:ChartPlotter x:Name="plotter" Grid.Row="1" Grid.ColumnSpan="2" LegendVisible="True" Margin="10">
             <d3:ChartPlotter.HorizontalAxis>
                 <d3:HorizontalAxis x:Name="timeAxis" />
             </d3:ChartPlotter.HorizontalAxis>
             <d3:Header Content="Response Curve"/>
             <d3:HorizontalAxisTitle Content="raw value   [-]"/>
             <d3:VerticalAxisTitle Content="readout   [???]" />
-        </d3:ChartPlotter>
+        </d3:ChartPlotter>-->
         <Button x:Name="saveButton" Grid.Row="2" Grid.Column="0" Content="Save" Margin="5" Click="Save_Click" IsEnabled="{Binding SensorID, Converter={StaticResource UIConverter}, ConverterParameter=IsLegalFilenameString}" />
         <Button Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="5" Click="Cancel_Click" />
     </Grid>

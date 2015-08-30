@@ -1,4 +1,5 @@
-﻿using MCP.Curves;
+﻿using DynamicDataDisplay.Markers.DataSources;
+using MCP.Curves;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml.Serialization;
 using TCD;
 using TCD.Controls;
@@ -36,30 +38,28 @@ namespace MCP.Equipment
         public RelayCommand EditSensorCommand { get { return _EditSensorCommand; } set { _EditSensorCommand = value; OnPropertyChanged(); } }
 
         #region Drawing the Response Curve
-        private GasSensorResponseDataCollection _ResponseDataCollection = new GasSensorResponseDataCollection();//contains only recent datapoints
-        [XmlIgnore]
-        public GasSensorResponseDataCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
+        //private GasSensorResponseDataCollection _ResponseDataCollection = new GasSensorResponseDataCollection();//contains only recent datapoints
+        //[XmlIgnore]
+        //public GasSensorResponseDataCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
 
         private ObservableCollection<GasSensorResponseData> _ResponseDataSet = new ObservableCollection<GasSensorResponseData>();//contains all datapoints
         [XmlIgnore]
         public ObservableCollection<GasSensorResponseData> ResponseDataSet { get { return _ResponseDataSet; } set { _ResponseDataSet = value; } }
 
         [XmlIgnore]
-        public EnumerableDataSource<GasSensorResponseData> DataSource { get; set; }
+        public EnumerableDataSource DataSource { get; set; }
         #endregion
 
         public GasSensorInformation()
         {
             ResponseCurve = new List<GasSensorResponseData>();
-            DataSource = new EnumerableDataSource<GasSensorResponseData>(ResponseDataCollection);
-            DataSource.SetXMapping(x => x.Analog);
-            DataSource.SetYMapping(y => y.Percent);
+            DataSource = new EnumerableDataSource(ResponseDataSet);
+            DataSource.DataToPoint = new Func<object, System.Windows.Point>(rd => new Point((rd as GasSensorResponseData).Analog, (rd as GasSensorResponseData).Percent));
         }
         public void LoadResponseCurve()
         {
             foreach (GasSensorResponseData ri in ResponseCurve)
             {
-                ResponseDataCollection.Add(ri);
                 ResponseDataSet.Add(ri);
             }
         }

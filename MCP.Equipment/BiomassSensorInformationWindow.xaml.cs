@@ -34,11 +34,12 @@ namespace MCP.Equipment
             this.DataContext = context;
             if ((from rd in context.ResponseCurve where double.IsNaN(rd.OD) select rd).Count() == 0)
             {
-                plotter.AddLineGraph(context.ODDataSource, DesignColors.Blue, 2, "OD Curve");
+                plotter.AddLineChart(context.ODDataSource).WithDescription("OD Curve").WithStroke(new SolidColorBrush(DesignColors.Blue)).WithStrokeThickness(2);
             }
             if ((from rd in context.ResponseCurve where double.IsNaN(rd.CDW) select rd).Count() == 0)
             {
-                plotter.AddLineGraph(context.CDWDataSource, DesignColors.Yellow, 2, "CDW Curve");
+                dependentPlotter.ConjunctionMode = ViewportConjunctionMode.XY;
+                dependentPlotter.AddLineChart(context.CDWDataSource).WithDescription("CDW Curve").WithStroke(new SolidColorBrush(DesignColors.Yellow)).WithStrokeThickness(2);
             }
             context.LoadResponseCurve();
         }

@@ -20,13 +20,9 @@
                 <TextBox x:Name="sensorIDbox" Text="{Binding SensorID, Mode=TwoWay}" Margin="0,5" />
             </StackPanel>
         </StackPanel>
-        <d3:ChartPlotter x:Name="plotter" Grid.Row="1" Grid.ColumnSpan="2" LegendVisible="True" Margin="10">
-            <d3:ChartPlotter.HorizontalAxis>
-                <d3:HorizontalAxis x:Name="timeAxis" />
-            </d3:ChartPlotter.HorizontalAxis>
-            <d3:Header Content="Response Curve"/>
-            <d3:HorizontalAxisTitle Content="raw value   [-]"/>
-            <d3:VerticalAxisTitle Content="Vol.%   [%]" />
+        <d3:ChartPlotter Name="plotter" Grid.Row="1" Grid.ColumnSpan="2" LegendVisible="True" Margin="10">
+            <d3:VerticalAxisTitle Content="Vol.%   [%]"/>
+            <d3:HorizontalAxisTitle>raw value   [-]</d3:HorizontalAxisTitle>
         </d3:ChartPlotter>
         <Button x:Name="saveButton" Grid.Row="2" Grid.Column="0" Content="Save" Margin="5" Click="Save_Click" IsEnabled="{Binding SensorID, Converter={StaticResource UIConverter}, ConverterParameter=IsLegalFilenameString}" />
         <Button Grid.Row="2" Grid.Column="1" Content="Cancel" Margin="5" Click="Cancel_Click" />

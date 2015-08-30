@@ -12,6 +12,8 @@ using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System.Collections.ObjectModel;
 using MCP.Curves;
+using DynamicDataDisplay.Markers.DataSources;
+using System.Windows;
 
 namespace MCP.Equipment
 {
@@ -34,16 +36,16 @@ namespace MCP.Equipment
         public RelayCommand EditPumpCommand { get { return _EditPumpCommand; } set { _EditPumpCommand = value; OnPropertyChanged(); } }
 
         #region Drawing the Response Curve
-        private PumpResponseDataCollection _ResponseDataCollection = new PumpResponseDataCollection();//contains only recent datapoints
-        [XmlIgnore]
-        public PumpResponseDataCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
+        //private PumpResponseDataCollection _ResponseDataCollection = new PumpResponseDataCollection();//contains only recent datapoints
+        //[XmlIgnore]
+        //public PumpResponseDataCollection ResponseDataCollection { get { return _ResponseDataCollection; } set { _ResponseDataCollection = value; } }
 
         private ObservableCollection<PumpResponseData> _ResponseDataSet = new ObservableCollection<PumpResponseData>();//contains all datapoints
         [XmlIgnore]
         public ObservableCollection<PumpResponseData> ResponseDataSet { get { return _ResponseDataSet; } set { _ResponseDataSet = value; } }
 
         [XmlIgnore]
-        public EnumerableDataSource<PumpResponseData> DataSource { get; set; }
+        public EnumerableDataSource DataSource { get; set; }
         #endregion
 
 
@@ -51,15 +53,13 @@ namespace MCP.Equipment
         public PumpInformation()
         {
             ResponseCurve = new List<PumpResponseData>();
-            DataSource = new EnumerableDataSource<PumpResponseData>(ResponseDataCollection);
-            DataSource.SetXMapping(x => x.Setpoint);
-            DataSource.SetYMapping(y => y.Response);
+            DataSource = new EnumerableDataSource(ResponseDataSet);
+            DataSource.DataToPoint = new Func<object,System.Windows.Point>(rd => new Point((rd as PumpResponseData).Setpoint, (rd as PumpResponseData).Response));
         }
         public void LoadResponseCurve()
         {
             foreach (PumpResponseData ri in ResponseCurve)
             {
-                ResponseDataCollection.Add(ri);
                 ResponseDataSet.Add(ri);
             }
         }

@@ -88,10 +88,13 @@ namespace MasterControlProgram
                         case DimensionSymbol.O2_Saturation:
                         case DimensionSymbol.CO2_Saturation:
                         case DimensionSymbol.CHx_Saturation:
-                            plotter.AddLineGraph((cultivation.PostprocessingLogs[param] as DataPostprocessingLog).DataSource, DimensionSymbol.ParameterColors[param], 2, param);
+                            //TODO: modify this - the first plot comes onto the left y axis - all additional plots get their own y-axes (which have to be created!!)
+                            plotter.AddLineChart(cultivation.PostprocessingLogs[param].DataSource).WithDescription(param).WithStroke(new SolidColorBrush(DimensionSymbol.ParameterColors[param])).WithStrokeThickness(2);
+                            //plotter.AddLineGraph((cultivation.PostprocessingLogs[param] as DataPostprocessingLog).DataSource, DimensionSymbol.ParameterColors[param], 2, param);
                             break;
                         default:
-                            plotter.AddLineGraph(cultivation.LiveLogs[param].DataSource, DimensionSymbol.ParameterColors[param], 2, param);
+                            plotter.AddLineChart(cultivation.LiveLogs[param].DataSource).WithDescription(param).WithStroke(new SolidColorBrush(DimensionSymbol.ParameterColors[param])).WithStrokeThickness(2);    
+                            //plotter.AddLineGraph(cultivation.LiveLogs[param].DataSource, DimensionSymbol.ParameterColors[param], 2, param);
                             break;
                     }
                 }
