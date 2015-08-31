@@ -39,8 +39,8 @@ namespace MCP.Measurements
 
         public DataLogBase()
         {
-            DataSource = new EnumerableDataSource(SensorDataSet);
-            DataSource.DataToPoint = new Func<object, Point>(dp => new Point(((dp as DataPoint).Time - StartTime).TotalSeconds, (dp as DataPoint).YValue));
+            //DataSource = new EnumerableDataSource(SensorDataSet);
+            //DataSource.DataToPoint = new Func<object, Point>(dp => new Point(((dp as DataPoint).Time - StartTime).TotalHours, (dp as DataPoint).YValue));
         }
 
         public void Initialize(params string[] headers)
@@ -59,7 +59,7 @@ namespace MCP.Measurements
         {
             WriteLine(data.ToString());
             if (!IsPlotActivated)
-                return true;
+                return true;            
             SensorDataSet.Add(data);
             return true;
         }
@@ -71,10 +71,14 @@ namespace MCP.Measurements
             writer.Dispose();
         }
 
-        public void ActivatePlot()
+        public void ActivatePlot(DateTime referenceTime)
         {
+            StartTime = referenceTime;
             IsPlotActivated = true;
             SensorDataSet.Clear();
+            //create the data source
+            DataSource = new EnumerableDataSource(SensorDataSet);
+            DataSource.DataToPoint = new Func<object, Point>(dp => new Point(((dp as DataPoint).Time - StartTime).TotalHours, (dp as DataPoint).YValue));
             string[] lines = File.ReadAllLines(_FilePath);
             for (int i = 1; i < lines.Length; i++)
             {
@@ -85,7 +89,9 @@ namespace MCP.Measurements
         public void DeactivatePlot()
         {
             IsPlotActivated = false;
-            SensorDataSet.Clear();
+            DataSource = null;
+            if (SensorDataSet.Count > 0)
+                SensorDataSet.Clear();
         }
     }
 }

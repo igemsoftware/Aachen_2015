@@ -21,6 +21,7 @@ using TCD.Controls;
 using MCP.Measurements;
 using MCP.Protocol;
 using System.Collections;
+using Microsoft.Research.DynamicDataDisplay.Markers2;
 
 namespace MasterControlProgram
 {
@@ -50,9 +51,9 @@ namespace MasterControlProgram
             foreach (Cultivation cultivation in cultivationsSelectionBox.SelectedItems)
             {
                 foreach (DataLogBase log in cultivation.LiveLogs.Values)
-                    log.ActivatePlot();
+                    log.ActivatePlot(cultivation.StartTime);
                 foreach (DataPostprocessingLog log in cultivation.PostprocessingLogs.Values)
-                    log.ActivatePlot();
+                    log.ActivatePlot(cultivation.StartTime);
             }
             Redraw(graphsFilterLeft, plotterLeft);
             Redraw(graphsFilterRight, plotterRight);
@@ -70,9 +71,10 @@ namespace MasterControlProgram
             //remove old graphs
             for (int i = 0; i < plotter.Children.Count; i++)
             {
-                if (plotter.Children[i] is LineGraph)
+                if (plotter.Children[i] is LineChart)
                 {
-                    plotter.Children.RemoveAt(i);
+                    (plotter.Children[i] as LineChart).RemoveFromPlotter();
+                    //plotter.Children.RemoveAt(i);
                     i--;
                 }
             }
@@ -89,6 +91,7 @@ namespace MasterControlProgram
                         case DimensionSymbol.CO2_Saturation:
                         case DimensionSymbol.CHx_Saturation:
                             //TODO: modify this - the first plot comes onto the left y axis - all additional plots get their own y-axes (which have to be created!!)
+
                             plotter.AddLineChart(cultivation.PostprocessingLogs[param].DataSource).WithDescription(param).WithStroke(new SolidColorBrush(DimensionSymbol.ParameterColors[param])).WithStrokeThickness(2);
                             //plotter.AddLineGraph((cultivation.PostprocessingLogs[param] as DataPostprocessingLog).DataSource, DimensionSymbol.ParameterColors[param], 2, param);
                             break;
