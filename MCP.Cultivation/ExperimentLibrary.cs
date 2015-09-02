@@ -119,6 +119,14 @@ namespace MCP.Cultivation
                         {
                             if (c.IsRunning == false)
                             {
+                                int continuationMode = 0;
+                                if (c.StartTime != new DateTime())
+                                {
+                                    continuationMode = await CustomMessageBox.ShowAsync(
+                                        "Attention!", "This cultivation was running previously. Please select how to proceed.",
+                                        System.Windows.MessageBoxImage.Warning, 0, "Just Continue", "Reset the Start Time"
+                                        );
+                                }
                                 Experiment conflictingExperiment;
                                 Cultivation conflicting = FindRunningCultivation(c.Reactor.ParticipantID, out conflictingExperiment);
                                 if (conflicting == null)
@@ -146,6 +154,18 @@ namespace MCP.Cultivation
                                 }
                                 if (c.IsRunning)//everything is GO - start the culture and save the time
                                     c.StartTime = DateTime.Now;
+                                switch (continuationMode)
+                                {
+                                    case 0:
+                                        // just continue
+                                        break;
+                                    case 1:
+                                        c.StartTime = DateTime.Now;
+                                        break;
+                                    case 2:
+                                        //TODO: implement the third option: "delete previous measurements and start"
+                                        break;
+                                }
                                 c.Save();
                             }
                             else
@@ -154,43 +174,6 @@ namespace MCP.Cultivation
                                 c.StopCultivation();
                                 c.Save();
                             }
-                        });
-                        c.StartCultivationCommand = new RelayCommand(async delegate
-                        {
-                            Experiment conflictingExperiment;
-                            Cultivation conflicting = FindRunningCultivation(c.Reactor.ParticipantID, out conflictingExperiment);
-                            if (conflicting == null)
-                            {
-                                c.IsRunning = true;
-                                c.SendSetpointUpdate();
-                            }
-                            else//ask the user to stop the other cultivation
-                            {
-                                int result = await CustomMessageBox.ShowAsync(
-                                    "Conflict - Reactor already in use",
-                                    string.Format("{0} is already in use by {1}\r\n\r\nDo you want to stop the other cultivation?", reactorInQuestion.GetValueName(), conflictingExperiment.ToString()),
-                                    System.Windows.MessageBoxImage.Warning,
-                                    1,
-                                    string.Format("Stop {0}", conflictingExperiment.ToString()),
-                                    "Cancel");
-                                if (result == 0)//if he wants to proceed and stop the other experiment
-                                {
-                                    conflicting.IsRunning = false;
-                                    conflicting.StopCultivation();
-                                    conflicting.Save();
-                                    c.IsRunning = true;
-                                    c.SendSetpointUpdate();
-                                }
-                            }
-                            if (c.IsRunning)//everything is GO - start the culture and save the time
-                                c.StartTime = DateTime.Now;
-                            c.Save();
-                        }); 
-                        c.StopCultivationCommand = new RelayCommand(delegate
-                        {
-                            c.IsRunning = false;
-                            c.StopCultivation();
-                            c.Save();
                         });
                     }
                     Experiments.Add(exp);

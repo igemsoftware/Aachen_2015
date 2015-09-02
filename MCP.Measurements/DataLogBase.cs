@@ -31,8 +31,9 @@ namespace MCP.Measurements
 
         [XmlIgnore]
         public EnumerableDataSource DataSource { get; set; }
-        [XmlIgnore]
-        public DateTime StartTime { get; set; }
+        
+        public delegate double CalculateRuntimeMethodDelegate(DateTime point);
+        
 
         private bool IsPlotActivated { get; set; }
 
@@ -71,14 +72,13 @@ namespace MCP.Measurements
             writer.Dispose();
         }
 
-        public void ActivatePlot(DateTime referenceTime)
+        public void ActivatePlot(DataLogBase.CalculateRuntimeMethodDelegate  calculateRuntimeMethod)
         {
-            StartTime = referenceTime;
             IsPlotActivated = true;
             SensorDataSet.Clear();
             //create the data source
             DataSource = new EnumerableDataSource(SensorDataSet);
-            DataSource.DataToPoint = new Func<object, Point>(dp => new Point(((dp as DataPoint).Time - StartTime).TotalHours, (dp as DataPoint).YValue));
+            DataSource.DataToPoint = new Func<object, Point>(dp => new Point(calculateRuntimeMethod.Invoke((dp as DataPoint).Time), (dp as DataPoint).YValue));
             string[] lines = File.ReadAllLines(_FilePath);
             for (int i = 1; i < lines.Length; i++)
             {

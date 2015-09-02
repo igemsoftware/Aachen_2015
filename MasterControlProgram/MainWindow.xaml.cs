@@ -51,9 +51,9 @@ namespace MasterControlProgram
             foreach (Cultivation cultivation in cultivationsSelectionBox.SelectedItems)
             {
                 foreach (DataLogBase log in cultivation.LiveLogs.Values)
-                    log.ActivatePlot(cultivation.StartTime);
+                    log.ActivatePlot(cultivation.CalculateRuntime);
                 foreach (DataPostprocessingLog log in cultivation.PostprocessingLogs.Values)
-                    log.ActivatePlot(cultivation.StartTime);
+                    log.ActivatePlot(cultivation.CalculateRuntime);
             }
             Redraw(graphsFilterLeft, plotterLeft);
             Redraw(graphsFilterRight, plotterRight);

@@ -58,7 +58,7 @@ namespace MCP.Curves
 
         public override string ToString()
         {
-            return string.Format("{0}\t{1}\t{2}", Time, YValue, StandardDeviation);//TODO: make Time.ToString or something that is okay with Excel
+            return string.Format("{0}\t{1}\t{2}", Time.ToString("dd.MM.yyyy HH:mm:ss"), YValue, StandardDeviation);//TODO: make Time.ToString or something that is okay with Excel
         }
 
 

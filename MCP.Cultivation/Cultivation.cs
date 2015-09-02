@@ -119,14 +119,6 @@ namespace MCP.Cultivation
         #endregion
 
         #region Commands
-        private RelayCommand _StartCultivationCommand;
-        [XmlIgnore]
-        public RelayCommand StartCultivationCommand { get { return _StartCultivationCommand; } set { _StartCultivationCommand = value; OnPropertyChanged(); } }
-
-        private RelayCommand _StopCultivationCommand;
-        [XmlIgnore]
-        public RelayCommand StopCultivationCommand { get { return _StopCultivationCommand; } set { _StopCultivationCommand = value; OnPropertyChanged(); } }
-
         private RelayCommand _StartStopCultivationCommand;
         [XmlIgnore]
         public RelayCommand StartStopCultivationCommand { get { return _StartStopCultivationCommand; } set { _StartStopCultivationCommand = value; OnPropertyChanged(); } }
@@ -208,6 +200,11 @@ namespace MCP.Cultivation
             if (Reactor.HarvestPump != null)
                 SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Harvest_Rate, "0", Unit.SPH));
             SerialIO.Current.SendMessage(new Message(ParticipantID.MCP, Reactor.ParticipantID, MessageType.Command, DimensionSymbol.Agitation_Rate, "0", Unit.RPM));
+        }
+
+        public double CalculateRuntime(DateTime point)
+        {
+            return (point - StartTime).TotalHours;
         }
 
         public async void ReceiveMessage(Message msg)
