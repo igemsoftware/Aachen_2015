@@ -115,6 +115,46 @@ namespace MCP.Cultivation
                     foreach (Cultivation c in exp.Cultivations)
                     {
                         ParticipantID reactorInQuestion = c.Reactor.ParticipantID;
+                        c.StartStopCultivationCommand = new RelayCommand(async delegate
+                        {
+                            if (c.IsRunning == false)
+                            {
+                                Experiment conflictingExperiment;
+                                Cultivation conflicting = FindRunningCultivation(c.Reactor.ParticipantID, out conflictingExperiment);
+                                if (conflicting == null)
+                                {
+                                    c.IsRunning = true;
+                                    c.SendSetpointUpdate();
+                                }
+                                else//ask the user to stop the other cultivation
+                                {
+                                    int result = await CustomMessageBox.ShowAsync(
+                                        "Conflict - Reactor already in use",
+                                        string.Format("{0} is already in use by {1}\r\n\r\nDo you want to stop the other cultivation?", reactorInQuestion.GetValueName(), conflictingExperiment.ToString()),
+                                        System.Windows.MessageBoxImage.Warning,
+                                        1,
+                                        string.Format("Stop {0}", conflictingExperiment.ToString()),
+                                        "Cancel");
+                                    if (result == 0)//if he wants to proceed and stop the other experiment
+                                    {
+                                        conflicting.IsRunning = false;
+                                        conflicting.StopCultivation();
+                                        conflicting.Save();
+                                        c.IsRunning = true;
+                                        c.SendSetpointUpdate();
+                                    }
+                                }
+                                if (c.IsRunning)//everything is GO - start the culture and save the time
+                                    c.StartTime = DateTime.Now;
+                                c.Save();
+                            }
+                            else
+                            {
+                                c.IsRunning = false;
+                                c.StopCultivation();
+                                c.Save();
+                            }
+                        });
                         c.StartCultivationCommand = new RelayCommand(async delegate
                         {
                             Experiment conflictingExperiment;

@@ -127,6 +127,12 @@ namespace MCP.Cultivation
         [XmlIgnore]
         public RelayCommand StopCultivationCommand { get { return _StopCultivationCommand; } set { _StopCultivationCommand = value; OnPropertyChanged(); } }
 
+        private RelayCommand _StartStopCultivationCommand;
+        [XmlIgnore]
+        public RelayCommand StartStopCultivationCommand { get { return _StartStopCultivationCommand; } set { _StartStopCultivationCommand = value; OnPropertyChanged(); } }
+        
+
+
         private RelayCommand _ChangeParametersCommand;
         [XmlIgnore]
         public RelayCommand ChangeParametersCommand { get { return _ChangeParametersCommand; } set { _ChangeParametersCommand = value; OnPropertyChanged(); } }
@@ -175,7 +181,11 @@ namespace MCP.Cultivation
             {
                 int sel = await CustomMessageBox.ShowAsync("Not Running", "This cultivation is not running at the moment.\r\n\r\nDo you want to start it now?", System.Windows.MessageBoxImage.Information, 1, "Start Now", "Okay");
                 if (sel == 0)
-                    StartCultivationCommand.Execute(null);
+                {
+                    IsRunning = true;
+                    StartStopCultivationCommand.Execute(null);
+                    //StartCultivationCommand.Execute(null);
+                }
             }
             if (IsRunning)
             {

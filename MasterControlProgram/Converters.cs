@@ -60,6 +60,7 @@ namespace MasterControlProgram
                 case "BoolToVisibility": return ((bool)value == true) ? Visibility.Visible : Visibility.Collapsed;
                 case "InvertBool": return ((bool)value == false);
                 case "BlinkBrush": return ((bool)value) ? App.Current.Resources["Green"] : App.Current.Resources["LightGray"];
+                case "IsRunningToPlayPause": return ((bool)value) ? "\uE103" : "\uE102";
                 default:
                     return null;
             }
