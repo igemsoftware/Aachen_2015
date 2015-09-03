@@ -24,7 +24,7 @@ int setpoint_n = 0;
 
 ////////////////////////  OD  ////////////////////////////////
 #define OD_MEASUREMENT_TIME 500
-#define OD_SENSOR_PIN 2
+#define OD_SENSOR_PIN 4
 
 unsigned long last_time;
 volatile unsigned long counter;
@@ -47,7 +47,7 @@ typedef enum
   Master = 1
 } ParticipantID;
 
-SoftwareSerial softSerial(10, 11);
+SoftwareSerial softSerial(5, 8);
 String message;
 
 /////////////////// Setup and Loop ////////////////////////////
@@ -70,7 +70,7 @@ void setup()
   /// OD measurement
   pinMode(OD_SENSOR_PIN, INPUT);
   digitalWrite(OD_SENSOR_PIN, HIGH);
-  attachInterrupt(0, od_interrupt_process, RISING);
+  attachInterrupt(1, od_interrupt_process, RISING);
   last_time = millis();
   //Communication
   Serial.begin(BAUD_RATE);
