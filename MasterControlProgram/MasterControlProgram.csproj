@@ -54,6 +54,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\DynamicDataDisplay.Markers2.dll</HintPath>
     </Reference>
+    <Reference Include="Parser">
+      <HintPath>..\Dependencies\Parser.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
