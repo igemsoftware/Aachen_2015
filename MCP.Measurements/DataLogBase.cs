@@ -60,8 +60,12 @@ namespace MCP.Measurements
         {
             WriteLine(data.ToString());
             if (!IsPlotActivated)
-                return true;            
-            SensorDataSet.Add(data);
+                return true;
+            try
+            {
+                SensorDataSet.Add(data);
+            }
+            catch { }
             return true;
         }
         public void WriteLine(string text)
@@ -75,7 +79,11 @@ namespace MCP.Measurements
         public void ActivatePlot(DataLogBase.CalculateRuntimeMethodDelegate  calculateRuntimeMethod)
         {
             IsPlotActivated = true;
-            SensorDataSet.Clear();
+            try
+            {
+                SensorDataSet.Clear();
+            }
+            catch { }
             //create the data source
             DataSource = new EnumerableDataSource(SensorDataSet);
             DataSource.DataToPoint = new Func<object, Point>(dp => new Point(calculateRuntimeMethod.Invoke((dp as DataPoint).Time), (dp as DataPoint).YValue));
@@ -83,7 +91,14 @@ namespace MCP.Measurements
             for (int i = 1; i < lines.Length; i++)
             {
                 DataPoint dp = new DataPoint(lines[i]);
-                SensorDataSet.Add(dp);
+                try
+                {
+                    SensorDataSet.Add(dp);
+                }
+                catch
+                {
+                    //TODO: this feels dirty
+                }
             }
         }
         public void DeactivatePlot()
@@ -91,7 +106,11 @@ namespace MCP.Measurements
             IsPlotActivated = false;
             DataSource = null;
             if (SensorDataSet.Count > 0)
-                SensorDataSet.Clear();
+                try
+                {
+                    SensorDataSet.Clear();
+                }
+                catch { }
         }
     }
 }

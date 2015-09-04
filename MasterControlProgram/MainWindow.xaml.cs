@@ -73,6 +73,7 @@ namespace MasterControlProgram
             {
                 if (plotter.Children[i] is LineChart)
                 {
+                    //(plotter.Children[i] as LineChart).RemoveFromPlotter();
                     (plotter.Children[i] as LineChart).RemoveFromPlotter();
                     //plotter.Children.RemoveAt(i);
                     i--;

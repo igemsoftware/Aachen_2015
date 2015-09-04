@@ -64,11 +64,9 @@ namespace MCP.Curves
 
         public static double[] AverageAndStd(IEnumerable<double> data)
         {
-            if (data.Count() < 2)
-                return new double[] { double.NaN, double.NaN };
             double average = data.Average(d => d);
             double std = double.NaN;
-            if (data.Count() > 2)
+            if (data.Count() > 2) // for less, std will stay NaN
             {
                 double sumOfSquaresOfDifferences = data.Select(val => (val - average) * (val - average)).Sum();
                 std = Math.Sqrt(sumOfSquaresOfDifferences / (data.Count() - 1));

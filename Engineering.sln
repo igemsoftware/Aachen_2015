@@ -46,9 +46,34 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODCalibrator", "ODCalibrato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GasSensorCalibrator", "GasSensorCalibrator\GasSensorCalibrator.csproj", "{44A41EC2-BE43-4E7A-809C-47031E4C189B}"
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Dependencies", "http://localhost:55024", "{7C68102C-9F79-48CD-B26F-2BFE45539BF4}"
+	ProjectSection(WebsiteProperties) = preProject
+		SccProjectName = "SAK"
+		SccAuxPath = "SAK"
+		SccLocalPath = "SAK"
+		SccProvider = "SAK"
+		UseIISExpress = "true"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_55024"
+		Debug.AspNetCompiler.PhysicalPath = "Dependencies\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_55024\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_55024"
+		Release.AspNetCompiler.PhysicalPath = "Dependencies\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_55024\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		SlnRelativePath = "Dependencies\"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 11
+		SccNumberOfProjects = 12
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://igemaachen.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -84,6 +109,11 @@ Global
 		SccProjectUniqueName10 = GasSensorCalibrator\\GasSensorCalibrator.csproj
 		SccProjectName10 = GasSensorCalibrator
 		SccLocalPath10 = GasSensorCalibrator
+		SccWebProject11 = true
+		SccProjectUniqueName11 = http://localhost:55024
+		SccProjectName11 = Dependencies
+		SccLocalPath11 = Dependencies
+		SccProjectEnlistmentChoice11 = 2
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -194,6 +224,16 @@ Global
 		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{44A41EC2-BE43-4E7A-809C-47031E4C189B}.Release|Win32.ActiveCfg = Release|Any CPU
+		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Release|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Release|Win32.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

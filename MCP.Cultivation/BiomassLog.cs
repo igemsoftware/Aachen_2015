@@ -17,7 +17,7 @@ namespace MCP.Cultivation
         {
             this._FilePath = path;
 
-            MinimumSamples = 50;
+            MinimumSamples = 1; // only one of these criteria has to be fullfilled
             MinimumTime = 30;
             ResetInterval();
 
