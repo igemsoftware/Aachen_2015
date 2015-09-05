@@ -1,4 +1,5 @@
-﻿using MCP.Curves;
+﻿using DynamicDataDisplay.Markers.DataSources;
+using MCP.Curves;
 using MCP.Protocol;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System;
@@ -8,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 using TCD;
 
@@ -24,13 +26,10 @@ namespace GasSensorCalibrator
         public static ViewModel Current { get; private set; }
 
         #region Data
-        private SensorDataPointCollection _SensorDataCollection = new SensorDataPointCollection();//contains only recent datapoints
-        public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; } }
-
         private ObservableCollection<DataPoint> _SensorDataSet = new ObservableCollection<DataPoint>();//contains all datapoints
         public ObservableCollection<DataPoint> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; } }
 
-        public EnumerableDataSource<DataPoint> DataSource { get; set; }
+        public EnumerableDataSource DataSource { get; set; }
 
         private DateTime StartTime { get; set; }
         #endregion
@@ -83,9 +82,8 @@ namespace GasSensorCalibrator
             }
             //data collection
             StartTime = DateTime.Now;
-            DataSource = SensorDataCollection.AsDataSource<DataPoint>();
-            DataSource.SetXMapping(x => (x.Time - StartTime).TotalSeconds);
-            DataSource.SetYMapping(y => y.YValue);
+            DataSource = new EnumerableDataSource(SensorDataSet);
+            DataSource.DataToPoint = new Func<object, Point>(rd => new Point(((rd as DataPoint).Time - StartTime).TotalSeconds, (rd as DataPoint).YValue - SensorDataSet.First().YValue));
         }
 
 
@@ -101,7 +99,6 @@ namespace GasSensorCalibrator
                             double val = Convert.ToDouble(message.Contents[1]);
                             DataPoint dp = new DataPoint(DateTime.Now, val);
                             SensorDataSet.Add(dp);
-                            SensorDataCollection.Add(dp);
                             if (Calibrator.ActiveCalibrationSub != null)
                                 Calibrator.ActiveCalibrationSub.AddPoint(new DataPoint(DateTime.Now, val));
                         }

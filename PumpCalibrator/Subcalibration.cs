@@ -1,4 +1,5 @@
-﻿using MCP.Calibration;
+﻿using DynamicDataDisplay.Markers.DataSources;
+using MCP.Calibration;
 using MCP.Curves;
 using MCP.Measurements;
 using MCP.Protocol;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using TCD;
 
 namespace PumpCalibrator
@@ -17,12 +19,9 @@ namespace PumpCalibrator
     public class Subcalibration : PropertyChangedBase
     {
         #region Data Collection
-        private SensorDataPointCollection _SensorDataCollection = new SensorDataPointCollection();//contains only recent datapoints
-        public SensorDataPointCollection SensorDataCollection { get { return _SensorDataCollection; } set { _SensorDataCollection = value; } }
-
         private ObservableCollection<DataPoint> _SensorDataSet = new ObservableCollection<DataPoint>();//contains all datapoints
         public ObservableCollection<DataPoint> SensorDataSet { get { return _SensorDataSet; } set { _SensorDataSet = value; } }
-        public EnumerableDataSource<DataPoint> DataSource { get; set; }
+        public EnumerableDataSource DataSource { get; set; }
 
         /// <summary>
         /// Returns the difference between the last and the first divided by the time difference.
@@ -96,9 +95,8 @@ namespace PumpCalibrator
             this.Duration = duration;
             this.Symbol = symbol;
             this.Unit = unit;
-            DataSource = new EnumerableDataSource<DataPoint>(SensorDataCollection);
-            DataSource.SetXMapping(x => (x.Time - SensorDataSet.First().Time).TotalSeconds);
-            DataSource.SetYMapping(y => y.YValue - SensorDataSet.First().YValue);
+            DataSource = new EnumerableDataSource(SensorDataSet);
+            DataSource.DataToPoint = new Func<object, Point>(rd => new Point(((rd as DataPoint).Time - SensorDataSet.First().Time).TotalSeconds, (rd as DataPoint).YValue - SensorDataSet.First().YValue));
         }
 
         public async Task<bool> RunAsync()
@@ -111,10 +109,8 @@ namespace PumpCalibrator
             initialDelay.Start();
             await initialDelay;//always wait a few seconds to give the hardware time to react
             //reset all caches
-            SensorDataCollection.Clear();
             SensorDataSet.Clear();
-            DataSource.SetXMapping(x => (x.Time - SensorDataSet.First().Time).TotalSeconds);
-            DataSource.SetYMapping(y => y.YValue - SensorDataSet.First().YValue);
+            DataSource.DataToPoint = new Func<object, Point>(rd => new Point(((rd as DataPoint).Time - SensorDataSet.First().Time).TotalSeconds, (rd as DataPoint).YValue - SensorDataSet.First().YValue));
             //start the calibration interval
             StartTimer();
             await waitTask;//wait for the interval to finish
@@ -129,7 +125,6 @@ namespace PumpCalibrator
         }
         public void Abort()
         {
-            SensorDataCollection.Clear();
             SensorDataSet.Clear();
             if (!waitTask.IsCompleted)
                 waitTask.Start();
@@ -146,17 +141,17 @@ namespace PumpCalibrator
             if (!initialDelay.IsCompleted)
                 return;
             SensorDataSet.Add(data);
-            if (Target == CalibrationTarget.Stirrer)
-            {
-                DataPoint prev = SensorDataCollection.LastOrDefault();
-                double preval = 0;
-                if (prev != null)
-                    preval = prev.YValue;
-                DataPoint data2 = new DataPoint(data.Time, preval + data.YValue);
-                SensorDataCollection.Add(data2);
-            }
-            else
-                SensorDataCollection.Add(data);
+            //if (Target == CalibrationTarget.Stirrer)
+            //{
+            //    DataPoint prev = SensorDataSet.LastOrDefault();
+            //    double preval = 0;
+            //    if (prev != null)
+            //        preval = prev.YValue;
+            //    DataPoint data2 = new DataPoint(data.Time, preval + data.YValue);
+            //    SensorDataSet.Add(data2);
+            //}
+            //else
+            //    SensorDataSet.Add(data);
         }
     }
 }

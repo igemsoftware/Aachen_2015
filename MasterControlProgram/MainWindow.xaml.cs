@@ -34,6 +34,8 @@ namespace MasterControlProgram
             graphsFilterRight.ItemsSource = DimensionSymbol.MeasuredParameters;
             graphsFilterLeft.SelectAll();
             graphsFilterRight.SelectAll();
+            plotterLeft.Legend.HorizontalAlignment = HorizontalAlignment.Left;
+            plotterRight.Legend.HorizontalAlignment = HorizontalAlignment.Left;
         }
 
         private void SelectedCultivation_Changed(object sender, SelectionChangedEventArgs e)
@@ -92,7 +94,6 @@ namespace MasterControlProgram
                         case DimensionSymbol.CO2_Saturation:
                         case DimensionSymbol.CHx_Saturation:
                             //TODO: modify this - the first plot comes onto the left y axis - all additional plots get their own y-axes (which have to be created!!)
-
                             plotter.AddLineChart(cultivation.PostprocessingLogs[param].DataSource).WithDescription(param).WithStroke(new SolidColorBrush(DimensionSymbol.ParameterColors[param])).WithStrokeThickness(2);
                             //plotter.AddLineGraph((cultivation.PostprocessingLogs[param] as DataPostprocessingLog).DataSource, DimensionSymbol.ParameterColors[param], 2, param);
                             break;

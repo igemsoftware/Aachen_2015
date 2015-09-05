@@ -17,6 +17,7 @@ using TCD.Controls;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using MCP.Protocol;
 using MCP.Calibration;
+using Microsoft.Research.DynamicDataDisplay.Markers2;
 
 namespace PumpCalibrator
 {
@@ -41,7 +42,7 @@ namespace PumpCalibrator
             //remove old graphs
             for (int i = 0; i < plotter.Children.Count; i++)
             {
-                if (plotter.Children[i] is LineGraph)
+                if (plotter.Children[i] is LineChart)
                 {
                     plotter.Children.RemoveAt(i);
                     i--;
@@ -50,7 +51,7 @@ namespace PumpCalibrator
             //add new graphs
             foreach (Subcalibration sub in ViewModel.Current.Calibrator.Subcalibrations)
             {
-                plotter.AddLineGraph(sub.DataSource, GetRandomColor(), 2, sub.Setpoint.ToString());    
+                plotter.AddLineChart(sub.DataSource).WithDescription(sub.Setpoint.ToString()).WithStroke(new SolidColorBrush(GetRandomColor())).WithStrokeThickness(2);
             }
         }
 
