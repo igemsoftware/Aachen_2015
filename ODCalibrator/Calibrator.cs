@@ -33,8 +33,9 @@ namespace ODCalibrator
         private ObservableCollection<Subcalibration> _Subcalibrations = new ObservableCollection<Subcalibration>();
         public ObservableCollection<Subcalibration> Subcalibrations { get { return _Subcalibrations; } set { _Subcalibrations = value; OnPropertyChanged(); } }
 
-        private CalibrationMode _CalibrationMode = CalibrationMode.Standard;
-        public CalibrationMode CalibrationMode { get { return _CalibrationMode; } set { _CalibrationMode = value; OnPropertyChanged(); } }
+        private int _TotalCalibrationPoints = 7;
+        public int TotalCalibrationPoints { get { return _TotalCalibrationPoints; } set { _TotalCalibrationPoints = value; OnPropertyChanged(); UpdateNumberOfSubcalibrations(); } }
+        
 
         private CalibrationTarget _CalibrationTarget = CalibrationTarget.Biomass;
         public CalibrationTarget CalibrationTarget { get { return _CalibrationTarget; } set { _CalibrationTarget = value; OnPropertyChanged(); } }
@@ -49,7 +50,6 @@ namespace ODCalibrator
             {
                 _ActiveCalibrationSub = value;
                 OnPropertyChanged();
-                StartOverCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -60,17 +60,6 @@ namespace ODCalibrator
 
         public Calibrator()
         {
-            StartOverCommand = new RelayCommand(delegate
-            {
-                Subcalibrations.Clear();
-                foreach (BiomassResponseData brd in CalibrationProfiles.Profiles[CalibrationTarget][CalibrationMode])
-                    Subcalibrations.Add(new Subcalibration(brd, CalibrationProfiles.Symbols[CalibrationTarget], CalibrationProfiles.Units[CalibrationTarget]) { Target = CalibrationTarget });
-                foreach (Subcalibration sub in Subcalibrations)
-                {
-                    sub.RequestCapture += sub_RequestCapture;
-                    sub.CaptureEnded += sub_CaptureEnded;
-                }
-            }, () => ActiveCalibrationSub == null);
             FinalizeCommand = new RelayCommand(delegate
             {
                 PrepareResults();
@@ -86,7 +75,28 @@ namespace ODCalibrator
             };
             progressTimer.Start();
             //Initialize
-            StartOverCommand.Execute(null);
+            UpdateNumberOfSubcalibrations();
+        }
+
+        private void UpdateNumberOfSubcalibrations()
+        {
+            if (Subcalibrations.Count > TotalCalibrationPoints) // case 1: zu viele -> range löschen
+            {
+                //remove extra subcalibrations
+                for (int i = TotalCalibrationPoints; i < Subcalibrations.Count; i++)
+                    Subcalibrations.RemoveAt(i);
+            }
+            else if (TotalCalibrationPoints > Subcalibrations.Count) // case 2: zu wenige -> hinzufügen
+            {
+                for (int i = Subcalibrations.Count; i < TotalCalibrationPoints; i++)
+                {
+                    BiomassResponseData brd = new BiomassResponseData() { OD = 0.1 * Math.Pow(2, i), CalibrationDuration = 20 };
+                    Subcalibration sub = new Subcalibration(brd, CalibrationProfiles.Symbols[CalibrationTarget], CalibrationProfiles.Units[CalibrationTarget]) { Target = CalibrationTarget };
+                    sub.RequestCapture += sub_RequestCapture;
+                    sub.CaptureEnded += sub_CaptureEnded;
+                    Subcalibrations.Add(sub);
+                }
+            }
         }
 
         private async void sub_RequestCapture(Subcalibration sender, EventArgs e)

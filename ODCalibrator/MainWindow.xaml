@@ -21,54 +21,55 @@
                     </Grid.RowDefinitions>
                     <GroupBox Grid.Row="0" Header="Calibration Settings" DataContext="{Binding Calibrator}" IsEnabled="{Binding ActiveCalibrationSub, Converter={StaticResource UIConverter}, ConverterParameter=IsNull}">
                         <StackPanel Margin="5">
-                            <TextBlock Text="Presets" Style="{StaticResource SubtleTextBlockStyle}" />
+                            <TextBlock Text="Number of Calibration Points" Style="{StaticResource SubtleTextBlockStyle}" />
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="3*" />
                                     <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="3*" />
                                 </Grid.ColumnDefinitions>
-                                <ComboBox x:Name="modeBox" Grid.Column="0" Margin="0,0,5,5" SelectedItem="{Binding CalibrationMode, Mode=TwoWay}" />
-                                <Button Content="Apply" Grid.Column="1" Command="{Binding StartOverCommand}" Margin="5,0,5,5" />
+                                <toolkit:IntegerUpDown Grid.Column="0" Margin="0,0,5,5" IsEnabled="{Binding ActiveCalibrationSub, Converter={StaticResource UIConverter}, ConverterParameter=IsNull}" Value="{Binding TotalCalibrationPoints, Mode=TwoWay}" Minimum="3" Maximum="30" />
                             </Grid>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Grid.Row="1" Header="Curve">
-                        <StackPanel>
-                            <Grid Margin="5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="OD   [-]" Grid.Column="0" />
-                                <TextBlock Text="CDW   [mg/mL]" Grid.Column="1" />
-                                <TextBlock Text="Readout" Grid.Column="2" />
-                            </Grid>
-                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                                <ItemsControl ItemsSource="{Binding Calibrator.Subcalibrations}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="*" />
-                                                </Grid.ColumnDefinitions>
-                                                <toolkit:DoubleUpDown Grid.Column="0" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.OD, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
-                                                <toolkit:DoubleUpDown Grid.Column="1" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.CDW, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
-                                                <Button Command="{Binding AbortCommand}" Grid.Column="2" HorizontalContentAlignment="Stretch" Height="24" Padding="0" VerticalContentAlignment="Stretch">
-                                                    <Grid>
-                                                        <ProgressBar Margin="0" Value="{Binding ProgressPercent}" BorderThickness="0" />
-                                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Abort" />
-                                                    </Grid>
-                                                </Button>
-                                                <Button Command="{Binding CaptureCommand}" Visibility="{Binding State, Converter={StaticResource UIConverter}, ConverterParameter=StateToCaptureVisibility}" Grid.Column="2" Content="{Binding ResponsePoint, Converter={StaticResource UIConverter}, ConverterParameter=ResponsePointAvAndStd}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </StackPanel>
+                        <ScrollViewer>
+                            <StackPanel>
+                                <Grid Margin="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="OD   [-]" Grid.Column="0" />
+                                    <TextBlock Text="CDW   [mg/mL]" Grid.Column="1" />
+                                    <TextBlock Text="Readout" Grid.Column="2" />
+                                </Grid>
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{Binding Calibrator.Subcalibrations}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <toolkit:DoubleUpDown Grid.Column="0" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.OD, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
+                                                    <toolkit:DoubleUpDown Grid.Column="1" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.CDW, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
+                                                    <Button Command="{Binding AbortCommand}" Grid.Column="2" HorizontalContentAlignment="Stretch" Height="24" Padding="0" VerticalContentAlignment="Stretch">
+                                                        <Grid>
+                                                            <ProgressBar Margin="0" Value="{Binding ProgressPercent}" BorderThickness="0" />
+                                                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Abort" />
+                                                        </Grid>
+                                                    </Button>
+                                                    <Button Command="{Binding CaptureCommand}" Visibility="{Binding State, Converter={StaticResource UIConverter}, ConverterParameter=StateToCaptureVisibility}" Grid.Column="2" Content="{Binding ResponsePoint, Converter={StaticResource UIConverter}, ConverterParameter=ResponsePointAvAndStd}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </StackPanel>
+                        </ScrollViewer>
                     </GroupBox>
                     <GroupBox Grid.Row="2" Header="Import / Export">
                         <StackPanel>

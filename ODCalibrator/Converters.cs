@@ -57,6 +57,7 @@ namespace ODCalibrator
                         return string.Format("{0} +- {1}", brd.Analog.ToString("0.00"), brd.AnalogStd.ToString("0.00"));
                 case "IsParticipantIDOfReactor": return ((int)value >= (int)ParticipantID.Reactor_1);
                 case "IsNotNull": return (value != null);
+                case "IsNull": return (value == null);
                 case "BoolToVisibility": return ((bool)value == true) ? Visibility.Visible : Visibility.Collapsed;
                 case "InvertBool": return ((bool)value == false);
                 case "StateToCaptureVisibility": return ((SubcalibrationState)value != SubcalibrationState.Running) ? Visibility.Visible : Visibility.Hidden;
