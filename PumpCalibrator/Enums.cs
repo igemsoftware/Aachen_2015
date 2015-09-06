@@ -16,7 +16,9 @@ namespace MCP.Calibration
         [Display(Name = "Standard")]
         Standard,
         [Display(Name = "Precise")]
-        Precise
+        Precise,
+        [Display(Name = "Precise Aeration")]
+        AerationPrecise
     }
     public enum CalibrationTarget
     {

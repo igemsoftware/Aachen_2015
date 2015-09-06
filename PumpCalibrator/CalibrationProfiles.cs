@@ -65,6 +65,18 @@ namespace PumpCalibrator
                         subcals.Add(new int[] { 30000, 60 });
                         subcals.Add(new int[] { 40000, 45 });
                         break;
+                    case CalibrationMode.AerationPrecise:
+                        subcals.Add(new int[] {   40000, 15 });
+                        subcals.Add(new int[] {   70000, 15 });
+                        subcals.Add(new int[] {  150000, 15 });
+                        subcals.Add(new int[] {  300000, 15 });
+                        subcals.Add(new int[] {  600000, 15 });
+                        subcals.Add(new int[] {  900000, 15 });
+                        subcals.Add(new int[] { 1200000, 15 });
+                        subcals.Add(new int[] { 1500000, 15 });
+                        subcals.Add(new int[] { 2000000, 15 });
+                        subcals.Add(new int[] { 2500000, 15 });
+                        break;
                 }
                 Profiles[CalibrationTarget.Pump].Add(mode, subcals);
             }
