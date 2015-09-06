@@ -22,8 +22,6 @@ namespace ODCalibrator
     public class Calibrator : PropertyChangedBase
     {
         #region Commands
-        private RelayCommand _StartOverCommand;
-        public RelayCommand StartOverCommand { get { return _StartOverCommand; } set { _StartOverCommand = value; OnPropertyChanged(); } }
         private RelayCommand _FinalizeCommand;
         public RelayCommand FinalizeCommand { get { return _FinalizeCommand; } set { _FinalizeCommand = value; OnPropertyChanged(); } }
         private RelayCommand _OpenFileCommand;
