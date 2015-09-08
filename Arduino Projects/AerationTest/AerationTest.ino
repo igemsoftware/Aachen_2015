@@ -1,9 +1,10 @@
 #define Step 13
 #define Dir 12
 long now = 0;
-long lastUp = 0;
+long last = 0;
 boolean isLow = false;
-long delay_t = 1000000;
+long duration_signal  =  500;
+long period_trigger   = 500;
 
 void setup() {
 	// put your setup code here, to run once:
@@ -15,35 +16,23 @@ void setup() {
 
 void loop()
 {
-	// put your main code here, to run repeatedly:
-	now = micros() + 2144483647;
+	now = micros(); // this is the reference time when the iteration began
 	MakeSteps();
 }
 void MakeSteps()
 {
-	if (calcElapsedTime(lastUp, now) > delay_t && !isLow)
+	if (calcElapsedTime(last, now) > period_trigger && isLow) // give signals
 	{
-		digitalWrite(Step, HIGH);
-		isLow = true;
-		Serial.print(calcElapsedTime(lastUp, now));
-		Serial.print(" ... ");
-        Serial.print(lastUp);
-        Serial.print(" ... ");
-        Serial.print(now);
-		Serial.println(" ... HIGH ");
-		lastUp = now;
-	}
-	else if (calcElapsedTime(lastUp, now) > delay_t && isLow)
-	{
-		digitalWrite(Step, LOW);
+		digitalWrite(Step, HIGH); // turn the LED on
 		isLow = false;
-		Serial.print(calcElapsedTime(lastUp, now));
-		Serial.print(" ... ");
-		Serial.print(lastUp);
-		Serial.print(" ... ");
-		Serial.print(now);
-		Serial.println(" ... LOW ");
-		lastUp = now;
+		Serial.println(calcElapsedTime(last, now)); // for DEBUG give out the period. For checking if we can do it really fast
+		last = now; // save when the last signal was given
+	}
+	else if (calcElapsedTime(last, now) > duration_signal && !isLow) // turn signals off
+	{
+		digitalWrite(Step, LOW); // turn off the LED
+		isLow = true; // keep track of the current state to avoid overlappings
+		Serial.println(calcElapsedTime(last, now)); // for DEBUG give out the period. For checking if we can do it really fast
 	}
 }
 long calcElapsedTime(long before, long after)
@@ -52,7 +41,7 @@ long calcElapsedTime(long before, long after)
 	{
 		return after - before;
 	}
-	else// the long has overlown. calculate the time that has elapsed
+	else// the long has overflown. calculate the time that has elapsed
 	{
 		return (2147483647 - before) + (after + 2147483648 );
 	}
