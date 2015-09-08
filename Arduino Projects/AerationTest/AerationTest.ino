@@ -2,9 +2,7 @@
 #define Dir 12
 long now = 0;
 long last = 0;
-boolean isLow = false;
-long duration_signal  =  500;
-long period_trigger   = 500;
+long period_trigger   = 1000;
 
 void setup() {
 	// put your setup code here, to run once:
@@ -21,18 +19,16 @@ void loop()
 }
 void MakeSteps()
 {
-	if (calcElapsedTime(last, now) > period_trigger && isLow) // give signals
+	if (calcElapsedTime(last, now) >= period_trigger) // give signals
 	{
-		digitalWrite(Step, HIGH); // turn the LED on
-		isLow = false;
+		for (int i = 0; i < 6; i++)
+		{
+			digitalWrite(Step, HIGH); // turn the LED on
+			digitalWrite(Step, LOW); // turn the LED off
+			delayMicroseconds(6000 / 6);
+		}
 		Serial.println(calcElapsedTime(last, now)); // for DEBUG give out the period. For checking if we can do it really fast
 		last = now; // save when the last signal was given
-	}
-	else if (calcElapsedTime(last, now) > duration_signal && !isLow) // turn signals off
-	{
-		digitalWrite(Step, LOW); // turn off the LED
-		isLow = true; // keep track of the current state to avoid overlappings
-		Serial.println(calcElapsedTime(last, now)); // for DEBUG give out the period. For checking if we can do it really fast
 	}
 }
 long calcElapsedTime(long before, long after)
