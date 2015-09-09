@@ -95,7 +95,8 @@ void UpdatePumpSetpoint(int pump, String pname, float stepsPerHour)
 {
   if (stepsPerHour < 0)
     sph[pump] = 0;
-  sph[pump] = stepsPerHour;
+  else
+    sph[pump] = stepsPerHour;
   t_R[pump] = now;
   s_done[pump] = 0;
 
@@ -154,9 +155,9 @@ void MakeComplexSteps()
 		for (int i = 0; i < s_diff[m]; i++)
 		{
 			digitalWrite(stepPins[m], HIGH);
-			delayMicroseconds(100);
+			delayMicroseconds(20);
 			digitalWrite(stepPins[m], LOW);
-			delayMicroseconds(10);
+			delayMicroseconds(20);
 			s_done[m]++; // count all steps that were executed
 		}
 	}
