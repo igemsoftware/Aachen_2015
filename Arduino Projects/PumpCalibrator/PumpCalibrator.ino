@@ -93,15 +93,21 @@ void ReadIncoming()
 }
 void UpdatePumpSetpoint(int pump, String pname, float stepsPerHour)
 {
-  if (stepsPerHour < 0)
-    sph[pump] = 0;
-  else
-    sph[pump] = stepsPerHour;
-  t_R[pump] = now;
-  s_done[pump] = 0;
+	if (stepsPerHour < 0)
+	{
+		sph[pump] = 0;
+		digitalWrite(enablePins[pump], HIGH);
+	}
+	else
+	{
+		sph[pump] = stepsPerHour;
+		digitalWrite(enablePins[pump], LOW);
+	}
+	t_R[pump] = now;
+	s_done[pump] = 0;
 
-  String answer[] = { pname, String(sph[pump]), "sph" };//report back
-  SendMessage(Master, MCP, Data, answer);
+	String answer[] = { pname, String(sph[pump]), "sph" };//report back
+	SendMessage(Master, MCP, Data, answer);
 }
 
 void SendMessage(int sender, int receiver, int type, String contents[])
