@@ -10,9 +10,16 @@ int sens = 1;
 #define numberofpumps 1
 int stepPins[numberofpumps] = { 13 } ;
 int enablePins[numberofpumps] = { 10 } ;
-long lastUp[numberofpumps];
-float periods[numberofpumps];
-boolean isLow[numberofpumps];
+// setpoints
+float sph[numberofpumps] = { 0 };
+// reference values that should be reset at some point
+long t_R[numberofpumps] = { 0 };
+unsigned long s_done[numberofpumps] = { 0 };
+// values that are calculated in every loop
+unsigned long now = 0;
+long delta_t[numberofpumps] = { 0 };
+long s_sofar[numberofpumps] = { 0 };
+int s_diff[numberofpumps] = { 0 };
 //=========================================Protocol definitions
 typedef enum
 {
@@ -39,8 +46,6 @@ void setup()
     pinMode(stepPins[i], OUTPUT);
     pinMode(enablePins[i], OUTPUT);
     digitalWrite(enablePins[i], HIGH);
-    isLow[i] = false;
-    periods[i] = -1;// -1 indicates OFF
   }
   //initialize the serial connections
   Serial.begin(9600, SERIAL_8N2);
@@ -49,9 +54,10 @@ void setup()
 //=========================================Loop
 void loop()
 {
-  ReadIncoming();
-  ReadScale();
-  MakeSteps();
+	now = millis();
+	ReadIncoming();
+	ReadScale();
+	MakeComplexSteps();
 }
 
 void ReadScale()
@@ -87,11 +93,13 @@ void ReadIncoming()
 }
 void UpdatePumpSetpoint(int pump, String pname, float stepsPerHour)
 {
-  if (stepsPerHour <= 0)
-    periods[pump] = -1;
-  else
-    periods[pump] = 3600000 / stepsPerHour;//calculate the period
-  String answer[] = { pname, String(periods[pump]), "ms/step" };//report back
+  if (stepsPerHour < 0)
+    sph[pump] = 0;
+  sph[pump] = stepsPerHour;
+  t_R[pump] = now;
+  s_done[pump] = 0;
+
+  String answer[] = { pname, String(sph[pump]), "sph" };//report back
   SendMessage(Master, MCP, Data, answer);
 }
 
@@ -131,26 +139,37 @@ String getValue(String data, char separator, int index)
   return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
-void MakeSteps()
+void MakeComplexSteps()
 {
-  //adjust outputs
-  long now1 = millis();
-  //turn the motors
-  for (int m = 0; m < numberofpumps; m++)
-  {
-    if (now1 - lastUp[m] > periods[m] && periods[m] > 0)//if the period is over, but not -1 (turned off)
-    {
-      digitalWrite(enablePins[m], LOW);
-      digitalWrite(stepPins[m], HIGH);          //turn the pin on
-      lastUp[m] = now1;
-      isLow[m] = false;
-    }
-    else if (!isLow[m] && now1 - lastUp[m] > 10)//the period is not yet over, but the pin was HIGH for > 10 ms
-    {
-      digitalWrite(stepPins[m], LOW);          //turn the pin off
-      digitalWrite(enablePins[m], HIGH);
-      isLow[m] = true;
-    }
-  }
+	for (int m = 0; m < numberofpumps; m++)
+	{
+		delta_t[m] = calcElapsedTime(t_R[m], now); // time since the interval began
+		// note: the now value overflows after 50 days
+		//       delta_t will overflow 50 days after the setpoint was changed the last time
+		//       s_done overflows after 4,294,967,295 steps (24 days of really fast aeration)
+		//		 s_sofar overflow or rounding errors are possible
+		s_sofar[m] = sph[m] * delta_t[m] / 3600000 - 1; // steps that should have been completed until now
+		s_diff[m] = s_sofar[m] - s_done[m]; // steps we are lagging behind
+
+		for (int i = 0; i < s_diff[m]; i++)
+		{
+			digitalWrite(stepPins[m], HIGH);
+			delayMicroseconds(100);
+			digitalWrite(stepPins[m], LOW);
+			delayMicroseconds(10);
+			s_done[m]++; // count all steps that were executed
+		}
+	}
 }
 
+long calcElapsedTime(long before, long after)
+{
+	if (after >= before)
+	{
+		return after - before;
+	}
+	else// the long has overflown. calculate the time that has elapsed
+	{
+		return (2147483647 - before) + (after + 2147483648);
+	}
+}
