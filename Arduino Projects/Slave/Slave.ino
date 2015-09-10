@@ -24,15 +24,19 @@ int setpoint_n = 0;
 
 ////////////////////////  OD  ////////////////////////////////
 #define OD_MEASUREMENT_TIME 500
-#define OD_SENSOR_PIN 4
+#define OD_SENSOR_PIN 3
 
 unsigned long last_time;
 volatile unsigned long counter;
 
-void od_interrupt_process(){counter++;}
+void od_interrupt_process() {
+  counter++;
+}
 
 /////////////////// Communication ////////////////////////////
 #define BAUD_RATE 9600
+#define SOFTSERIAL_RX 5
+#define SOFTSERIAL_TX 8
 typedef enum
 {
   Data = 0,
@@ -47,8 +51,10 @@ typedef enum
   Master = 1
 } ParticipantID;
 
-SoftwareSerial softSerial(5, 8);
+SoftwareSerial softSerial(SOFTSERIAL_RX, SOFTSERIAL_TX);
 String message;
+/////////////////// Pre-Defines ///////////////////////////////
+void SendMessage(int sender, int receiver, int type, String contents[]);
 
 /////////////////// Setup and Loop ////////////////////////////
 void setup()
@@ -74,8 +80,8 @@ void setup()
   last_time = millis();
   //Communication
   Serial.begin(BAUD_RATE);
-  softSerial.begin(9600);
-  
+  softSerial.begin(BAUD_RATE);
+
   //for debugging
   UpdatePumpSetpoint(1, "S_fin", 40000);
 }
@@ -91,16 +97,16 @@ void loop()
 ///////////////////////////// Pumps ////////////////////////////////
 void UpdatePumpSetpoint(int pump, String pname, float stepsPerHour)
 {
-	if (stepsPerHour <= 0)
-		periods[pump] = -1;
-	else
-		periods[pump] = 3600000 / stepsPerHour;//calculate the period
-  
-	char setpoint_pump[10];  //  Hold The Convert Data
-	dtostrf(stepsPerHour,5,0,setpoint_pump);
+  if (stepsPerHour <= 0)
+    periods[pump] = -1;
+  else
+    periods[pump] = 3600000 / stepsPerHour;//calculate the period
 
-	String answer[] = { pname, setpoint_pump, "ms/step" };//report back the SPH setpoint
-	SendMessage(ReactorID, MCP, Data, answer);
+  char setpoint_pump[10];  //  Hold The Convert Data
+  dtostrf(stepsPerHour, 5, 0, setpoint_pump);
+
+  String answer[] = { pname, setpoint_pump, "ms/step" };//report back the SPH setpoint
+  SendMessage(ReactorID, MCP, Data, answer);
 }
 void MakeSteps()
 {
@@ -144,15 +150,15 @@ void SetStirrer()
 ////////////////////////  OD  ////////////////////////////////
 void ReadOD()
 {
-  if(now - last_time >= OD_MEASUREMENT_TIME){
-  
+  if (now - last_time >= OD_MEASUREMENT_TIME) {
+
     String send_value;
     send_value += counter;
     counter = 0;
-  
+
     String package[] = { "Biomass", send_value, "-" };
-    SendMessage(2, 0, 0, package);
-    
+    SendMessage(id, 0, 0, package);
+
     last_time = now;
   }
 }
@@ -160,42 +166,55 @@ void ReadOD()
 /////////////////// Communication ////////////////////////////
 void ReadIncoming()
 {
-  if(softSerial.available()){
-    while(softSerial.available()){
-      message = softSerial.readStringUntil('\n');
-    }  
-    Serial.println(message);
+  if (softSerial.available()) {
+    String message = softSerial.readStringUntil('\n');
+    int sender = (char)message[0];
+    int receiver = (char)message[1];
+    MessageType type = (MessageType)message[2];
+    String content = message.substring(3);
+    SendMessage(sender, receiver, type, content);
   }
-
-  if(Serial.available()){
-    while(Serial.available()){
-      message = Serial.readStringUntil('\n');
-    }  
-    if(message[1] == id)
-      int sender = message[0];
-      int receiver = message[1];
-      MessageType type = (MessageType)message[2];
-      String content = message.substring(3);
+  
+  if (Serial.available())//there's something incoming
+  {
+    String message = Serial.readStringUntil('\n');//read the whole message
+    int sender = (char)message[0];
+    int receiver = (char)message[1];
+    MessageType type = (MessageType)message[2];
+    String content = message.substring(3);
+    //SendMessage(3, 0, 0, "Erhalten 1");
+    if(receiver == id){
+      //SendMessage(3, 0, 0, getValue(content, '\t', 1));
+       SendMessage(id, 0, 0, "Step 1");
       switch (type)
       {
         case Command:
-          if (getValue(content, '\t', 0) == "n")
-            if (getValue(content, '\t', 2) == "rpm")//check if we're speaking the same protocol language/version
+          if (getValue(content, '\t', 0) == "n"){
+           
+            //if (String(getValue(content, '\t', 2)) == "rpm"){//check if we're speaking the same protocol language/version PROBLEMATIC READOUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+              SendMessage(id, 0, 0, "Step 2");
               UpdateStirrerSetpoint(getValue(content, '\t', 1).toInt()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
+            //}
+          }
+          
           if (getValue(content, '\t', 0) == "S_fin")
-            if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
+            //if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
               UpdatePumpSetpoint(1, "S_fin", getValue(content, '\t', 1).toFloat()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
           if (getValue(content, '\t', 0) == "S_fout")
-            if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
+            //if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
               UpdatePumpSetpoint(0, "S_fout", getValue(content, '\t', 1).toFloat()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
           if (getValue(content, '\t', 0) == "q_g")
-            if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
+            //if (getValue(content, '\t', 2) == "sph")//check if we're speaking the same protocol language/version
               UpdatePumpSetpoint(2, "q_g", getValue(content, '\t', 1).toFloat()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
           break;
-       }
+      }
+    }else{
+      softSerial.write(sender);
+      softSerial.write(receiver);
+      softSerial.write(type);
+      softSerial.println(content);
+      //softSerial.write(tmp);
     }
-    else{
-      softSerial.println(message);
   }
 }
 void SendMessage(int sender, int receiver, int type, String contents[])
@@ -214,6 +233,15 @@ void SendMessage(int sender, int receiver, int type, String contents[])
     }
   }
 }
+
+void SendMessage(int sender, int receiver, int type, String content)
+{
+  Serial.write(sender);
+  Serial.write(receiver);
+  Serial.write(type);
+  Serial.println(content);
+}
+
 String getValue(String data, char separator, int index)
 {
   //taken from http://stackoverflow.com/questions/9072320/split-string-into-string-array
