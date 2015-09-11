@@ -90,6 +90,8 @@ namespace ODCalibrator
                             double val = Convert.ToDouble(message.Contents[1]);
                             DataPoint dp = new DataPoint(DateTime.Now, val);
                             SensorDataSet.Add(dp);
+                            if (SensorDataSet.Count > 200)
+                                SensorDataSet.RemoveAt(0);
                             if (Calibrator.ActiveCalibrationSub != null)
                                 Calibrator.ActiveCalibrationSub.AddPoint(new DataPoint(DateTime.Now, val));
                         }
