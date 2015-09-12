@@ -51,7 +51,7 @@
                     </Grid>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description" DataContext="{Binding ElementName=experimentsList, Path=SelectedItem}">
-                    <TextBox Text="{Binding Description, Mode=TwoWay}" />
+                    <TextBox Text="{Binding Description, Mode=TwoWay}" AcceptsReturn="True" />
                 </GroupBox>
                 <GroupBox Grid.Row="2" Header="Debug" DataContext="{Binding}" Visibility="{Binding IsDebugMode, Converter={StaticResource UIConverter}, ConverterParameter=BoolToVisibility}">
                     <StackPanel>
