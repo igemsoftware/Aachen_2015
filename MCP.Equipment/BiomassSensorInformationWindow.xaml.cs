@@ -30,7 +30,8 @@ namespace MCP.Equipment
             InitializeComponent();
             this.Title = title;
             sensorIDbox.IsEnabled = canEditID;
-            saveButton.IsEnabled = canEditID;
+            if (!canEditID)
+                saveButton.IsEnabled = false;
             this.DataContext = context;
             if ((from rd in context.ResponseCurve where double.IsNaN(rd.OD) select rd).Count() == 0)
             {

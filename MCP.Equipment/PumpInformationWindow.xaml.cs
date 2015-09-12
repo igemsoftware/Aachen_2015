@@ -31,8 +31,10 @@ namespace MCP.Equipment
             InitializeComponent();
             this.Title = title;
             pumpIDbox.IsEnabled = canEditID;
-            saveButton.IsEnabled = canEditID;
+            if (!canEditID)
+                saveButton.IsEnabled = false;
             this.DataContext = context;
+            plotter.Legend.HorizontalAlignment = HorizontalAlignment.Left;
             plotter.AddLineChart(context.DataSource).WithDescription("Response Curve").WithStroke(new SolidColorBrush(DesignColors.Blue)).WithStrokeThickness(2);
             context.LoadResponseCurve();
         }

@@ -29,7 +29,8 @@ namespace MCP.Equipment
         {
             InitializeComponent();
             this.Title = title;
-            sensorIDbox.IsEnabled = canEditID;
+            if (!canEditID)
+                sensorIDbox.IsEnabled = false;
             saveButton.IsEnabled = canEditID;
             this.DataContext = context;
             if ((from rd in context.ResponseCurve where double.IsNaN(rd.Percent) select rd).Count() == 0)

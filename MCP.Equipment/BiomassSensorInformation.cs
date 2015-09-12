@@ -20,7 +20,7 @@ namespace MCP.Equipment
     [XmlTypeAttribute(AnonymousType = true)]
     public class BiomassSensorInformation : PropertyChangedBase
     {
-        private string _SensorID;
+        private string _SensorID = null;
         public string SensorID { get { return _SensorID; } set { _SensorID = value; OnPropertyChanged(); } }
 
         private List<BiomassResponseData> _ResponseCurve = new List<BiomassResponseData>();

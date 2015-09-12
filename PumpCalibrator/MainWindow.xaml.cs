@@ -29,6 +29,7 @@ namespace PumpCalibrator
         public MainWindow()
         {
             InitializeComponent();
+            plotter.Legend.HorizontalAlignment = HorizontalAlignment.Left;
             fluidBox.SetUpItems(CalibrationFluid.Water);
             targetBox.UseEnumItemTemplate();
             targetBox.ItemsSource = (new CalibrationTarget[] { CalibrationTarget.Pump, CalibrationTarget.Stirrer });
