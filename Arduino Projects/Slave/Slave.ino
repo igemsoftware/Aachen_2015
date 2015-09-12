@@ -3,20 +3,25 @@
 ////////////////////// Defines //////////////////////////////
 #define ReactorID 2
 ////////////////////// for everyone //////////////////////////////
-long now = millis();
+unsigned long now = 0;
 int id = 2;
 ////////////////////// Pumps ////////////////////////////////
 //Pin assignments (except step pins)
 #define Dir  12
-//Direction and Pump Setup
+//=========================================Direction and Pump Setup
 int sens = 1;
 #define numberofpumps 3
-int stepPins[numberofpumps] = { 13, 10, 9 } ;
-int enablePins[numberofpumps] =  { 7, 11, 2 }  ;
-long lastUp[numberofpumps];
-float periods[numberofpumps];
-boolean isLow[numberofpumps];
-
+int stepPins[numberofpumps] = { 13, 10, 9 };
+int enablePins[numberofpumps] = { 7, 11, 2 };
+// setpoints
+float sph[numberofpumps] = { 0 };
+// reference values that should be reset at some point
+long t_R[numberofpumps] = { 0 };
+unsigned long s_done[numberofpumps] = { 0 };
+// values that are calculated in every loop
+long delta_t[numberofpumps] = { 0 };
+long s_sofar[numberofpumps] = { 0 };
+int s_diff[numberofpumps] = { 0 };
 //////////////////////// Stirrer /////////////////////////////
 //Pin assignments (except step pins)
 int pin_stirrer = 6;
@@ -63,13 +68,12 @@ void setup()
   //set direction
   pinMode(Dir, OUTPUT);
   digitalWrite(Dir, sens);
-  for (int i = 0; i < numberofpumps; i++)//initialize all step pins
+  //initialize all step pins
+  for (int i = 0; i < numberofpumps; i++)
   {
-    pinMode(enablePins[i], OUTPUT);
-    digitalWrite(enablePins[i], LOW);//turn the pumps off in the beginning
-    pinMode(stepPins[i], OUTPUT);
-    isLow[i] = false;
-    periods[i] = -1;// -1 indicates OFF
+	  pinMode(stepPins[i], OUTPUT);
+	  pinMode(enablePins[i], OUTPUT);
+	  digitalWrite(enablePins[i], HIGH);
   }
   //Stirrer
   pinMode(pin_stirrer, OUTPUT);
@@ -81,15 +85,12 @@ void setup()
   //Communication
   Serial.begin(BAUD_RATE);
   softSerial.begin(BAUD_RATE);
-
-  //for debugging
-  UpdatePumpSetpoint(1, "S_fin", 40000);
 }
 void loop()
 {
   ReadIncoming();
   now = millis();
-  MakeSteps();
+  MakeComplexSteps();
   SetStirrer();
   ReadOD();
 }
@@ -97,41 +98,43 @@ void loop()
 ///////////////////////////// Pumps ////////////////////////////////
 void UpdatePumpSetpoint(int pump, String pname, float stepsPerHour)
 {
-  if (stepsPerHour <= 0)
-    periods[pump] = -1;
-  else
-    periods[pump] = 3600000 / stepsPerHour;//calculate the period
+	if (stepsPerHour < 0)
+	{
+		sph[pump] = 0;
+		digitalWrite(enablePins[pump], HIGH);
+	}
+	else
+	{
+		sph[pump] = stepsPerHour;
+		digitalWrite(enablePins[pump], LOW);
+	}
+	t_R[pump] = now;
+	s_done[pump] = 0;
 
-  char setpoint_pump[10];  //  Hold The Convert Data
-  dtostrf(stepsPerHour, 5, 0, setpoint_pump);
-
-  String answer[] = { pname, setpoint_pump, "ms/step" };//report back the SPH setpoint
-  SendMessage(ReactorID, MCP, Data, answer);
+	String answer [] = { pname, String(sph[pump]), "sph" };//report back
+	SendMessage(ReactorID, MCP, Data, answer);
 }
-void MakeSteps()
+void MakeComplexSteps()
 {
-  //set the enable pins
-  //turn the motors
-  for (int m = 0; m < numberofpumps; m++)
-  {
-    if (now - lastUp[m] > periods[m] && periods[m] > 0)//if the period is over && the pump is not turned off
-    {
-      digitalWrite(enablePins[m], LOW);         //turn the pump on because it might have been switched off before
-      digitalWrite(stepPins[m], HIGH);          //turn the pin on
-      lastUp[m] = now;
-      isLow[m] = false;
-    }
-    else if (!isLow[m] && now - lastUp[m] > 10)//the pin is HIGH && and it was for > 10 ms
-    {
-      digitalWrite(stepPins[m], LOW);          //turn the pin off
-      digitalWrite(enablePins[m], HIGH);
-      isLow[m] = true;
-    }
-    if (periods[m] <= 0)//the pump is turned off
-    {
-      //digitalWrite(enablePins[m], HIGH);//turn the current off to prevent heating
-    }
-  }
+	for (int m = 0; m < numberofpumps; m++)
+	{
+		delta_t[m] = calcElapsedTime(t_R[m], now); // time since the interval began
+		// note: the now value overflows after 50 days
+		//       delta_t will overflow 50 days after the setpoint was changed the last time
+		//       s_done overflows after 4,294,967,295 steps (24 days of really fast aeration)
+		//		 s_sofar overflow or rounding errors are possible
+		s_sofar[m] = sph[m] * delta_t[m] / 3600000 - 1; // steps that should have been completed until now
+		s_diff[m] = s_sofar[m] - s_done[m]; // steps we are lagging behind
+
+		for (int i = 0; i < s_diff[m]; i++)
+		{
+			digitalWrite(stepPins[m], HIGH);
+			delayMicroseconds(20);
+			digitalWrite(stepPins[m], LOW);
+			delayMicroseconds(20);
+			s_done[m]++; // count all steps that were executed
+		}
+	}
 }
 
 //////////////////////// Stirrer /////////////////////////////
@@ -241,7 +244,7 @@ void SendMessage(int sender, int receiver, int type, String content)
   Serial.write(type);
   Serial.println(content);
 }
-
+/////////////////// Helper Functions /////////////////////////
 String getValue(String data, char separator, int index)
 {
   //taken from http://stackoverflow.com/questions/9072320/split-string-into-string-array
@@ -259,4 +262,16 @@ String getValue(String data, char separator, int index)
     }
   }
   return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
+long calcElapsedTime(long before, long after)
+{
+	if (after >= before)
+	{
+		return after - before;
+	}
+	else// the long has overflown. calculate the time that has elapsed
+	{
+		return (2147483647 - before) + (after + 2147483648);
+	}
 }
