@@ -29,7 +29,19 @@ namespace ProtocolPuppet
             fromCB.SetUpItems(ParticipantID.MCP);
             toCB.SetUpItems(ParticipantID.Reactor_1);
             typeCB.SetUpItems(MessageType.Command);
+            (App.Current.Resources["ViewModel"] as ViewModel).PropertyChanged += MainWindow_PropertyChanged;
+        }
 
+        void MainWindow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "MessageLog":
+                    logBlock.ScrollToEnd();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

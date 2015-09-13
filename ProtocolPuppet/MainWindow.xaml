@@ -55,7 +55,7 @@
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1">
-            <ScrollViewer>
+            <ScrollViewer x:Name="logBlock">
                 <TextBlock FontFamily="Consolas" Text="{Binding MessageLog, Mode=TwoWay}" />
             </ScrollViewer>
         </Grid>
