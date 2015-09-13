@@ -29,6 +29,7 @@ namespace ProtocolPuppet
             fromCB.SetUpItems(ParticipantID.MCP);
             toCB.SetUpItems(ParticipantID.Reactor_1);
             typeCB.SetUpItems(MessageType.Command);
+            baudrateBox.SetUpItems(BaudRate._9600);
             (App.Current.Resources["ViewModel"] as ViewModel).PropertyChanged += MainWindow_PropertyChanged;
         }
 
