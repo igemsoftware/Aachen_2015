@@ -71,9 +71,11 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Dependencies", "http://loca
 		SlnRelativePath = "Dependencies\"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolPuppet", "ProtocolPuppet\ProtocolPuppet.csproj", "{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 12
+		SccNumberOfProjects = 13
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://igemaachen.visualstudio.com/defaultcollection
 		SccLocalPath0 = .
@@ -114,6 +116,9 @@ Global
 		SccProjectName11 = Dependencies
 		SccLocalPath11 = Dependencies
 		SccProjectEnlistmentChoice11 = 2
+		SccProjectUniqueName12 = ProtocolPuppet\\ProtocolPuppet.csproj
+		SccProjectName12 = ProtocolPuppet
+		SccLocalPath12 = ProtocolPuppet
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -234,6 +239,16 @@ Global
 		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Release|Mixed Platforms.Build.0 = Debug|Any CPU
 		{7C68102C-9F79-48CD-B26F-2BFE45539BF4}.Release|Win32.ActiveCfg = Debug|Any CPU
+		{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{878CB4D9-1BB2-4DF0-A220-6FD7403BCE8F}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,63 @@
+﻿<Window x:Class="ProtocolPuppet.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Protocol Puppet" Height="350" Width="678.709" DataContext="{StaticResource ViewModel}">
+    
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="10,10,10,0" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="10,5,10,10" />
+            <Setter Property="MinWidth" Value="80" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="10,5,10,10" />
+            <Setter Property="MinWidth" Value="80" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="15,30,15,0" />
+            <Setter Property="MinWidth" Value="120" />
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="From" />
+                <ComboBox x:Name="fromCB" SelectedItem="{Binding From, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="To" />
+                <ComboBox x:Name="toCB" SelectedItem="{Binding To, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="Type" />
+                <ComboBox x:Name="typeCB" SelectedItem="{Binding Type, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Grid.Column="3">
+                <TextBlock Text="Contents" />
+                <TextBox Text="{Binding Contents, Mode=TwoWay}" MinWidth="150" />
+            </StackPanel>
+            <StackPanel Grid.Column="4">
+                <Button Command="{Binding SendMessageCommand}" MinWidth="50" Content="Send" />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <ScrollViewer>
+                <TextBlock FontFamily="Consolas" Text="{Binding MessageLog, Mode=TwoWay}" />
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>
