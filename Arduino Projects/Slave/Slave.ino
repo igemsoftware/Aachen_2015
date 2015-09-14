@@ -39,7 +39,7 @@ void od_interrupt_process() {
 }
 
 /////////////////// Communication ////////////////////////////
-#define BAUD_RATE 9600
+#define BAUD_RATE 31250
 #define SOFTSERIAL_RX 5
 #define SOFTSERIAL_TX 8
 typedef enum
@@ -188,14 +188,14 @@ void ReadIncoming()
     //SendMessage(3, 0, 0, "Erhalten 1");
     if(receiver == id){
       //SendMessage(3, 0, 0, getValue(content, '\t', 1));
-       SendMessage(id, 0, 0, "Step 1");
+      //SendMessage(id, 0, 0, "Step 1");
       switch (type)
       {
         case Command:
           if (getValue(content, '\t', 0) == "n"){
            
             //if (String(getValue(content, '\t', 2)) == "rpm"){//check if we're speaking the same protocol language/version PROBLEMATIC READOUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-              SendMessage(id, 0, 0, "Step 2");
+              //SendMessage(id, 0, 0, "Step 2");
               UpdateStirrerSetpoint(getValue(content, '\t', 1).toInt()); //set the pump to the desired pumping rate - use float because on ATmega168 int16 will cause trouble
             //}
           }
