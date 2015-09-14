@@ -175,7 +175,7 @@ void ReadIncoming()
     int receiver = (char)message[1];
     MessageType type = (MessageType)message[2];
     String content = message.substring(3);
-    SendMessage(sender, receiver, type, content);
+    SendMessageShort(sender, receiver, type, content);
   }
   
   if (Serial.available())//there's something incoming
@@ -237,7 +237,7 @@ void SendMessage(int sender, int receiver, int type, String contents[])
   }
 }
 
-void SendMessage(int sender, int receiver, int type, String content)
+void SendMessageShort(int sender, int receiver, int type, String content)
 {
   Serial.write(sender);
   Serial.write(receiver);
