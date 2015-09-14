@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
 using TCD;
@@ -39,10 +40,13 @@ namespace MCP.Protocol
         public SerialPort ActivePort { get { return _ActivePort; } set { _ActivePort = value; OnPropertyChanged("ActivePort"); } }
         public static SerialIO Current { get; private set; }
 
+        private List<Message> _MessageQueue = new List<Message>();
+        private Timer _SendTimer = new Timer(100) { AutoReset = true, Enabled = true };
 
         public SerialIO()
         {
             Current = this;
+            _SendTimer.Elapsed += _SendTimer_Elapsed;
             //ports
             CommandRefreshPorts = new RelayCommand(delegate
             {
@@ -51,6 +55,16 @@ namespace MCP.Protocol
                 SelectedPort = 0;
             });
             CommandRefreshPorts.Execute(null);
+        }
+
+        private void _SendTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (_MessageQueue.Count > 0)
+            {
+                SendString(_MessageQueue[0].Raw);
+                System.Diagnostics.Debug.WriteLine(_MessageQueue[0].ToString());
+                _MessageQueue.RemoveAt(0);
+            }            
         }
         private void ChangePort()
         {
@@ -91,10 +105,9 @@ namespace MCP.Protocol
             }));
         }
 
-        public bool SendMessage(Message msg)
+        public void SendMessage(Message msg)
         {
-            System.Diagnostics.Debug.WriteLine(msg.ToString());
-            return SendString(msg.Raw);
+            _MessageQueue.Add(msg);
         }
         public bool SendString(string text)
         {

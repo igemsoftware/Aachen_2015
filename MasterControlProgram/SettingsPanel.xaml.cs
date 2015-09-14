@@ -42,7 +42,7 @@ namespace MasterControlProgram
         public SettingsPanel()
         {
             InitializeComponent();
-            baudrateBox.SetUpItems(BaudRate._9600);
+            baudrateBox.SetUpItems(BaudRate._31250);
         }
     }
 }
