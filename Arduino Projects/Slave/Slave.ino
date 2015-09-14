@@ -80,7 +80,7 @@ void setup()
   /// OD measurement
   pinMode(OD_SENSOR_PIN, INPUT);
   digitalWrite(OD_SENSOR_PIN, HIGH);
-  attachInterrupt(1, od_interrupt_process, RISING);
+  //attachInterrupt(1, od_interrupt_process, RISING);
   last_time = millis();
   //Communication
   Serial.begin(BAUD_RATE);
@@ -92,7 +92,7 @@ void loop()
   now = millis();
   MakeComplexSteps();
   SetStirrer();
-  ReadOD();
+  //ReadOD();
 }
 
 ///////////////////////////// Pumps ////////////////////////////////
