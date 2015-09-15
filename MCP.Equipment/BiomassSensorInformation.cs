@@ -23,6 +23,10 @@ namespace MCP.Equipment
         private string _SensorID = null;
         public string SensorID { get { return _SensorID; } set { _SensorID = value; OnPropertyChanged(); } }
 
+        private double _AirThreshold;
+        [XmlElement]
+        public double AirThreshold { get { return _AirThreshold; } set { _AirThreshold = value; OnPropertyChanged(); } }
+        
         private List<BiomassResponseData> _ResponseCurve = new List<BiomassResponseData>();
         /// <summary>
         /// What actual OD/CDW correlates to the analog sensor values?

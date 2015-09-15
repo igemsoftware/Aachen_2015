@@ -19,6 +19,10 @@
                 <TextBlock Text="Sensor ID" Style="{StaticResource SubtleTextBlockStyle}" />
                 <TextBox x:Name="sensorIDbox" Text="{Binding SensorID, Mode=TwoWay}" Margin="0,5" />
             </StackPanel>
+            <StackPanel Margin="10">
+                <TextBlock Text="Air Threshold" Style="{StaticResource SubtleTextBlockStyle}" />
+                <toolkit:IntegerUpDown Minimum="0" Maximum="2000" Increment="1" Value="{Binding AirThreshold, Mode=TwoWay}" />
+            </StackPanel>
         </StackPanel>
         <d3:ChartPlotter x:Name="plotter" Grid.Row="1" Grid.ColumnSpan="2" LegendVisible="True" Margin="10">
             <!--<d3:InjectedPlotter Name="innerPlotter">

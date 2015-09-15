@@ -242,9 +242,13 @@ namespace MCP.Cultivation
                 case DimensionSymbol.Biomass:
                     if (Reactor.BiomassSensor != null)
                     {
+                        double value = Convert.ToDouble(contents[1]);
                         //signal processing (and logging) has to be performed with the transformed value. Otherwise there is no way to calculate the Std on the processing result
-                        PostprocessingLogs[DimensionSymbol.Turbidity].AddRawData(new DataPoint(DateTime.Now, Reactor.BiomassSensor.CaluclateOD(Convert.ToDouble(contents[1]))));
-                        PostprocessingLogs[DimensionSymbol.Biomass_Concentration].AddRawData(new DataPoint(DateTime.Now, Reactor.BiomassSensor.CaluclateCDW(Convert.ToDouble(contents[1]))));
+                        if (value > Reactor.BiomassSensor.AirThreshold)
+                        {
+                            PostprocessingLogs[DimensionSymbol.Turbidity].AddRawData(new DataPoint(DateTime.Now, Reactor.BiomassSensor.CaluclateOD(value)));
+                            PostprocessingLogs[DimensionSymbol.Biomass_Concentration].AddRawData(new DataPoint(DateTime.Now, Reactor.BiomassSensor.CaluclateCDW(value)));
+                        }
                     }
                     break;
                 case DimensionSymbol.O2_Saturation:
