@@ -23,7 +23,7 @@
             </StackPanel>
             <StackPanel Margin="10">
                 <TextBlock Text="Description" Style="{StaticResource SubtleTextBlockStyle}" />
-                <TextBox Text="{Binding Description, Mode=TwoWay}" Margin="0,5" AcceptsReturn="True" Height="150" />
+                <TextBox Text="{Binding Description, Mode=TwoWay}" Margin="0,5" AcceptsReturn="True" Height="150" TextWrapping="Wrap" />
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="1">

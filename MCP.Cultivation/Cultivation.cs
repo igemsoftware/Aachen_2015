@@ -86,7 +86,7 @@ namespace MCP.Cultivation
         {
             get
             {
-                return Reactor.HarvestPump.CalculateSetpoint(DilutionRateSetpoint * CultureVolume * 1.15);
+                return Reactor.HarvestPump.CalculateSetpoint(DilutionRateSetpoint * CultureVolume * 1.30);
             }
         }
         #endregion
@@ -162,6 +162,7 @@ namespace MCP.Cultivation
             LiveLogs.Add(DimensionSymbol.Feed_Rate, new DataLiveLog(Path.Combine(_BaseDirectory, "FeedRate.log"), DimensionSymbol.Feed_Rate, Unit.SPH));
             LiveLogs.Add(DimensionSymbol.Harvest_Rate, new DataLiveLog(Path.Combine(_BaseDirectory, "HarvestRate.log"), DimensionSymbol.Harvest_Rate, Unit.SPH));
             LiveLogs.Add(DimensionSymbol.Temperature, new DataLiveLog(Path.Combine(_BaseDirectory, "Temperature.log"), DimensionSymbol.Temperature, Unit.Celsius));
+            LiveLogs.Add(DimensionSymbol.Biomass, new DataLiveLog(Path.Combine(_BaseDirectory, "Biomass.log"), DimensionSymbol.Biomass, Unit.Analog));
         }
 
 
@@ -244,6 +245,7 @@ namespace MCP.Cultivation
                     {
                         double value = Convert.ToDouble(contents[1]);
                         //signal processing (and logging) has to be performed with the transformed value. Otherwise there is no way to calculate the Std on the processing result
+                        LiveLogs[DimensionSymbol.Biomass].AddRawData(new DataPoint(DateTime.Now, Convert.ToDouble(contents[1])));
                         if (value > Reactor.BiomassSensor.AirThreshold)
                         {
                             PostprocessingLogs[DimensionSymbol.Turbidity].AddRawData(new DataPoint(DateTime.Now, Reactor.BiomassSensor.CaluclateOD(value)));

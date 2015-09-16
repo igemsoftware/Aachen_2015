@@ -82,10 +82,20 @@ namespace MCP.Curves
             SimpleLinearRegression slr = SimpleLinearRegression.FromData(curve.Select(p => p.Analog).ToArray(), curve.Select(p => p.OD).ToArray());
             return slr.Compute(analog);
         }
+        public static double ExponentialTransformAnalogToOD(this List<BiomassResponseData> curve, double analog)
+        {
+            PolynomialRegression pr = PolynomialRegression.FromData(3, curve.Select(p => p.Analog).ToArray(), curve.Select(p => p.OD).ToArray());
+            return pr.Compute(analog);
+        }
         public static double LinearTransformAnalogToCDW(this List<BiomassResponseData> curve, double analog)
         {
             SimpleLinearRegression slr = SimpleLinearRegression.FromData(curve.Select(p => p.Analog).ToArray(), curve.Select(p => p.CDW).ToArray());
             return slr.Compute(analog);
+        }
+        public static double ExponentialTransformAnalogToCDW(this List<BiomassResponseData> curve, double analog)
+        {
+            PolynomialRegression pr = PolynomialRegression.FromData(3, curve.Select(p => p.Analog).ToArray(), curve.Select(p => p.CDW).ToArray());
+            return pr.Compute(analog);
         }
         public static double LinearTransformAnalogToPercent(this List<GasSensorResponseData> curve, double analog)
         {

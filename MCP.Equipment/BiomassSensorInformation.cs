@@ -73,11 +73,11 @@ namespace MCP.Equipment
 
         public double CaluclateOD(double analog)
         {
-            return ResponseCurve.LinearTransformAnalogToOD(analog);
+            return ResponseCurve.ExponentialTransformAnalogToOD(analog);
         }
         public double CaluclateCDW(double analog)
         {
-            return ResponseCurve.LinearTransformAnalogToCDW(analog);
+            return ResponseCurve.ExponentialTransformAnalogToCDW(analog);
         }
 
         public void SaveTo(string folder)

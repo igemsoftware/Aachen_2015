@@ -17,8 +17,8 @@ namespace MCP.Cultivation
         {
             this._FilePath = path;
 
-            MinimumSamples = 1; // only one of these criteria has to be fullfilled
-            MinimumTime = 30;
+            MinimumSamples = 60; // only one of these criteria has to be fullfilled
+            MinimumTime = 180;
             ResetInterval();
 
             string title = string.Format("{0} [{1}]", symbol, unit);

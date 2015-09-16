@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,9 +38,9 @@ namespace MCP.Curves
             if (text.Length >= 1)
                 this.Time = Convert.ToDateTime(text[0]);
             if (text.Length >= 2)
-                this.YValue = Convert.ToDouble(text[1]);
+                this.YValue = Convert.ToDouble(text[1].Replace(',','.'), CultureInfo.InvariantCulture);
             if (text.Length >= 3)
-                this.StandardDeviation = Convert.ToDouble(text[2]);
+                this.StandardDeviation = Convert.ToDouble(text[2].Replace(',', '.'), CultureInfo.InvariantCulture);
         }
         public DataPoint(DateTime intervalStart, DateTime intervalEnd, IEnumerable<double> data)
         {
@@ -58,7 +59,7 @@ namespace MCP.Curves
 
         public override string ToString()
         {
-            return string.Format("{0}\t{1}\t{2}", Time.ToString("dd.MM.yyyy HH:mm:ss"), YValue, StandardDeviation);//TODO: make Time.ToString or something that is okay with Excel
+            return string.Format("{0}\t{1}\t{2}", Time.ToString("dd.MM.yyyy HH:mm:ss"), YValue.ToString(CultureInfo.InvariantCulture), StandardDeviation.ToString(CultureInfo.InvariantCulture));//TODO: make Time.ToString or something that is okay with Excel
         }
 
 
