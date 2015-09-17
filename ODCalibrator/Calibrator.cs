@@ -16,6 +16,7 @@ using TCD.Controls;
 using MCP.NUI;
 using System.Windows.Forms;
 using MCP.Calibration;
+using System.Windows;
 
 namespace ODCalibrator
 {
@@ -24,6 +25,10 @@ namespace ODCalibrator
         #region Commands
         private RelayCommand _FinalizeCommand;
         public RelayCommand FinalizeCommand { get { return _FinalizeCommand; } set { _FinalizeCommand = value; OnPropertyChanged(); } }
+
+        private RelayCommand _CopyCommand;
+        public RelayCommand CopyCommand { get { return _CopyCommand; } set { _CopyCommand = value; OnPropertyChanged(); } }
+
         private RelayCommand _OpenFileCommand;
         public RelayCommand OpenFileCommand { get { return _OpenFileCommand; } set { _OpenFileCommand = value; OnPropertyChanged(); } }
         #endregion
@@ -60,7 +65,27 @@ namespace ODCalibrator
         {
             FinalizeCommand = new RelayCommand(delegate
             {
-                PrepareResults();
+                var si = PrepareResults();
+                ShowResults(si);
+            });
+            CopyCommand = new RelayCommand(delegate
+            {
+                var si = PrepareResults();
+                // now copy the response points 
+                var outputTabbed = "Raw\tsRaw\tOD\r\n";
+                foreach (BiomassResponseData rd in si.ResponseCurve)
+	            {
+		            outputTabbed += string.Format("{0}\t{1}\t{2}\r\n", rd.Analog, rd.AnalogStd, rd.OD);
+                }                    
+                outputTabbed = outputTabbed.TrimEnd('\n', '\r');
+                try
+                {
+                    System.Windows.Clipboard.SetDataObject(outputTabbed, true);
+                }
+                catch (Exception ex)
+                {
+                    Task t = CustomMessageBox.ShowAsync("Error", "Export to Clipboard failed.\n\nPlease try again.", MessageBoxImage.Warning, 0, "Ok");
+                }
             });
             OpenFileCommand = new RelayCommand(delegate
             {
@@ -110,12 +135,16 @@ namespace ODCalibrator
             ActiveCalibrationSub = null;
         }
 
-        private async void PrepareResults()
+        private BiomassSensorInformation PrepareResults()
         {
             BiomassSensorInformation si = new BiomassSensorInformation();
             foreach (Subcalibration sub in Subcalibrations)
                 if (!double.IsNaN(sub.ResponsePoint.Analog))
                     si.ResponseCurve.Add(sub.ResponsePoint);
+            return si;
+        }
+        private async void ShowResults(BiomassSensorInformation si)
+        {
             BiomassSensorInformationWindow piw = new BiomassSensorInformationWindow("Save Sensor Calibration", true, si);
             piw.Show();
             await piw.WaitTask;

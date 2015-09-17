@@ -85,7 +85,14 @@
                         <GroupBox Grid.Row="2" Header="Import / Export">
                             <StackPanel>
                                 <Button Content="Open Calibration File" Command="{Binding Calibrator.OpenFileCommand}" />
-                                <Button Content="Show Result" Command="{Binding Calibrator.FinalizeCommand}" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Content="Show Result" Command="{Binding Calibrator.FinalizeCommand}" Grid.Column="0" />
+                                    <Button Content="Copy for Excel" Command="{Binding Calibrator.CopyCommand}" Grid.Column="1" />
+                                </Grid>
                             </StackPanel>
                         </GroupBox>
                     </Grid>
