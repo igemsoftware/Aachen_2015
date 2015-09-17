@@ -65,6 +65,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BiomassLog.cs" />
     <Compile Include="DataLiveLog.cs" />
     <Compile Include="DataLogBase.cs" />
     <Compile Include="DataPostprocessingLog.cs" />

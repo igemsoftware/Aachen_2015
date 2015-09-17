@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MCP.Equipment;
 using MCP.Curves;
 using MCP.Protocol;
 using System.IO;
 
-namespace MCP.Cultivation
+namespace MCP.Measurements
 {
     public class BiomassLog : DataPostprocessingLog
     {

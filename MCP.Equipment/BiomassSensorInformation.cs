@@ -12,6 +12,7 @@ using Microsoft.Research.DynamicDataDisplay;
 using Microsoft.Research.DynamicDataDisplay.DataSources;
 using System.Collections.ObjectModel;
 using MCP.Curves;
+using Accord.Statistics.Models.Regression.Linear;
 using DynamicDataDisplay.Markers.DataSources;
 using System.Windows;
 
@@ -33,6 +34,10 @@ namespace MCP.Equipment
         /// </summary>
         [XmlArray]
         public List<BiomassResponseData> ResponseCurve { get { return _ResponseCurve; } set { _ResponseCurve = value; OnPropertyChanged(); } }
+
+        private PolynomialRegression _ResponseRegressionOD;
+        [XmlIgnore]
+        public PolynomialRegression ResponseRegressionOD { get { return _ResponseRegressionOD; } set { _ResponseRegressionOD = value; OnPropertyChanged(); } }
         
         private RelayCommand _EditSensorCommand;
         [XmlIgnore]
@@ -69,11 +74,14 @@ namespace MCP.Equipment
             {
                 ResponseDataSet.Add(ri);
             }
+            // do the polynomial regression
+            ResponseRegressionOD = PolynomialRegression.FromData(3, ResponseCurve.Select(p => p.Analog).ToArray(), ResponseCurve.Select(p => p.OD).ToArray());
         }
 
         public double CaluclateOD(double analog)
         {
-            return ResponseCurve.ExponentialTransformAnalogToOD(analog);
+            return ResponseRegressionOD.Compute(analog);
+            //return ResponseCurve.ExponentialTransformAnalogToOD(analog);
         }
         public double CaluclateCDW(double analog)
         {
@@ -104,6 +112,7 @@ namespace MCP.Equipment
                 BiomassSensorInformation sensorInfo = (BiomassSensorInformation)deserializer.Deserialize(textReader);
                 textReader.Close();
                 textReader.Dispose();
+                sensorInfo.LoadResponseCurve();
                 return sensorInfo;
             }
             catch (Exception ex)

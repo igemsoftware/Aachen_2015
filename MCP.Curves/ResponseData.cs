@@ -139,5 +139,17 @@ namespace MCP.Curves
             }
             return ret;
         }
+
+        public static double TransformForward(this PolynomialRegression reg, double x)
+        {
+            double result = 0;
+            int pow = reg.Coefficients.Length - 1;
+            foreach (double coefficient in reg.Coefficients)
+            {
+                result += coefficient * Math.Pow(x, pow);
+                pow--;
+            }
+            return result;
+        }
     }
 }

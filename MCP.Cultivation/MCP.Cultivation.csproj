@@ -84,7 +84,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BiomassLog.cs" />
     <Compile Include="Cultivation.cs" />
     <Compile Include="Experiment.cs" />
     <Compile Include="ExperimentInformationWindow.xaml.cs">

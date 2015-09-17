@@ -5,78 +5,95 @@
         xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
         Title="OD Calibrator" MinHeight="600" MinWidth="800" Width="1000" DataContext="{StaticResource ViewModel}" ResizeMode="CanResizeWithGrip" Icon="icon.png">
     
+    <Window.Resources>
+        <Style TargetType="Button" x:Key="MarginButtonStyle">
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="Padding" Value="5" />
+        </Style>
+        <DataTemplate x:Key="DataPointListBoxTemplate">
+            <TextBlock Text="{Binding}" />
+        </DataTemplate>
+    </Window.Resources>
+    
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" MinWidth="300" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
         <TabControl Grid.Column="0">
             <TabItem Header="Calibration">
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <GroupBox Grid.Row="0" Header="Calibration Settings" DataContext="{Binding Calibrator}" IsEnabled="{Binding ActiveCalibrationSub, Converter={StaticResource UIConverter}, ConverterParameter=IsNull}">
-                        <StackPanel Margin="5">
-                            <TextBlock Text="Number of Calibration Points" Style="{StaticResource SubtleTextBlockStyle}" />
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="3*" />
-                                </Grid.ColumnDefinitions>
-                                <toolkit:IntegerUpDown Grid.Column="0" Margin="0,0,5,5" IsEnabled="{Binding ActiveCalibrationSub, Converter={StaticResource UIConverter}, ConverterParameter=IsNull}" Value="{Binding TotalCalibrationPoints, Mode=TwoWay}" Minimum="3" Maximum="30" />
-                            </Grid>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Grid.Row="1" Header="Curve">
-                        <ScrollViewer>
-                            <StackPanel>
-                                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="300" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <GroupBox Grid.Row="0" Header="Calibration Settings" DataContext="{Binding Calibrator}" IsEnabled="{Binding ActiveCalibrationSub, Converter={StaticResource UIConverter}, ConverterParameter=IsNull}">
+                            <StackPanel Margin="5">
+                                <TextBlock Text="Number of Calibration Points" Style="{StaticResource SubtleTextBlockStyle}" />
+                                <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="3*" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="OD   [-]" Grid.Column="0" />
-                                    <TextBlock Text="CDW   [mg/mL]" Grid.Column="1" />
-                                    <TextBlock Text="Readout" Grid.Column="2" />
+                                    <toolkit:IntegerUpDown Grid.Column="0" Margin="0,0,5,5" IsEnabled="{Binding ActiveCalibrationSub, Converter={StaticResource UIConverter}, ConverterParameter=IsNull}" Value="{Binding TotalCalibrationPoints, Mode=TwoWay}" Minimum="3" Maximum="30" />
                                 </Grid>
-                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                                    <ItemsControl ItemsSource="{Binding Calibrator.Subcalibrations}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <toolkit:DoubleUpDown Grid.Column="0" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.OD, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
-                                                    <toolkit:DoubleUpDown Grid.Column="1" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.CDW, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
-                                                    <Button Command="{Binding AbortCommand}" Grid.Column="2" HorizontalContentAlignment="Stretch" Height="24" Padding="0" VerticalContentAlignment="Stretch">
-                                                        <Grid>
-                                                            <ProgressBar Margin="0" Value="{Binding ProgressPercent}" BorderThickness="0" />
-                                                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Abort" />
-                                                        </Grid>
-                                                    </Button>
-                                                    <Button Command="{Binding CaptureCommand}" Visibility="{Binding State, Converter={StaticResource UIConverter}, ConverterParameter=StateToCaptureVisibility}" Grid.Column="2" Content="{Binding ResponsePoint, Converter={StaticResource UIConverter}, ConverterParameter=ResponsePointAvAndStd}" />
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </ScrollViewer>
                             </StackPanel>
-                        </ScrollViewer>
-                    </GroupBox>
-                    <GroupBox Grid.Row="2" Header="Import / Export">
-                        <StackPanel>
-                            <Button Content="Open Calibration File" Command="{Binding Calibrator.OpenFileCommand}" />
-                            <Button Content="Show Result" Command="{Binding Calibrator.FinalizeCommand}" />
-                        </StackPanel>
-                    </GroupBox>
+                        </GroupBox>
+                        <GroupBox Grid.Row="1" Header="Curve">
+                            <ScrollViewer>
+                                <StackPanel>
+                                    <Grid Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="OD   [-]" Grid.Column="0" />
+                                        <TextBlock Text="CDW   [mg/mL]" Grid.Column="1" />
+                                        <TextBlock Text="Readout" Grid.Column="2" />
+                                    </Grid>
+                                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding Calibrator.Subcalibrations}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <toolkit:DoubleUpDown Grid.Column="0" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.OD, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
+                                                        <toolkit:DoubleUpDown Grid.Column="1" Width="80" VerticalAlignment="Center" Value="{Binding ResponsePoint.CDW, Mode=TwoWay}" Increment="0.01" FormatString="0.00"  />
+                                                        <Button Command="{Binding AbortCommand}" Grid.Column="2" HorizontalContentAlignment="Stretch" Height="24" Padding="0" VerticalContentAlignment="Stretch">
+                                                            <Grid>
+                                                                <ProgressBar Margin="0" Value="{Binding ProgressPercent}" BorderThickness="0" />
+                                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Abort" />
+                                                            </Grid>
+                                                        </Button>
+                                                        <Button Command="{Binding CaptureCommand}" Visibility="{Binding State, Converter={StaticResource UIConverter}, ConverterParameter=StateToCaptureVisibility}" Grid.Column="2" Content="{Binding ResponsePoint, Converter={StaticResource UIConverter}, ConverterParameter=ResponsePointAvAndStd}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </GroupBox>
+                        <GroupBox Grid.Row="2" Header="Import / Export">
+                            <StackPanel>
+                                <Button Content="Open Calibration File" Command="{Binding Calibrator.OpenFileCommand}" />
+                                <Button Content="Show Result" Command="{Binding Calibrator.FinalizeCommand}" />
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+                    <d3:ChartPlotter x:Name="plotter" Grid.Column="1" LegendVisible="True" Margin="10" DataContext="{Binding Calibrator}">
+                        <d3:Header Content="Raw Values"/>
+                        <d3:HorizontalAxisTitle Content="time   [s]"/>
+                        <d3:VerticalAxisTitle Content="Interrupts   [-]" />
+                    </d3:ChartPlotter>
                 </Grid>
             </TabItem>
             <TabItem Header="Connection">
@@ -118,12 +135,32 @@
                     </TextBlock>
                 </StackPanel>
             </TabItem>
+            <TabItem Header="Transform" IsEnabled="True" DataContext="{Binding Transformer}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                        <Button Content="Open Calibration File" Command="{Binding OpenFileCommand}" Style="{StaticResource MarginButtonStyle}" />
+                        <TextBlock Text="{Binding CalibrationFileInfoText}" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding InfoRaw}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" />
+                            <Button Command="{Binding LoadRawFileCommand}" Content="Load Raw Values" Style="{StaticResource MarginButtonStyle}" />
+                            <Button Command="{Binding TransformToODCommand}" Content="apply calibration" Style="{StaticResource MarginButtonStyle}" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
         </TabControl>
-        <d3:ChartPlotter x:Name="plotter" Grid.Column="1" LegendVisible="True" Margin="10" DataContext="{Binding Calibrator}">
-            <d3:Header Content="Raw Values"/>
-            <d3:HorizontalAxisTitle Content="time   [s]"/>
-            <d3:VerticalAxisTitle Content="Interrupts   [-]" />
-        </d3:ChartPlotter>
     </Grid>
     
 </Window>

@@ -23,6 +23,9 @@ namespace ODCalibrator
         private Calibrator _Calibrator = new Calibrator();
         public Calibrator Calibrator { get { return _Calibrator; } set { _Calibrator = value; OnPropertyChanged(); } }
 
+        private Transformer _Transformer = new Transformer();
+        public Transformer Transformer { get { return _Transformer; } set { _Transformer = value; OnPropertyChanged(); } }
+        
         public static ViewModel Current { get; private set; }
 
         #region Data
