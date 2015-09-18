@@ -3,3 +3,4 @@
 * text=auto
 
 *.cs     diff=csharp
+*.ino     diff=c
